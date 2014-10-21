@@ -12,15 +12,14 @@
 
 int create_socket()
 {   
-    int ret;
-    ret = socket(AF_INET, SOCK_STREAM, 0);
-    if (ret < 0)
+    int fd;
+    fd = socket(AF_INET, SOCK_STREAM, 0);
+    if (fd < 0)
     {
         printf("Could not create socket");
         exit(1);
     }
-    printf("%i\n", ret);
-    return ret;
+    return fd;
 }
 
 void connect_to_socket(int sock, struct sockaddr_in dest)
@@ -28,6 +27,17 @@ void connect_to_socket(int sock, struct sockaddr_in dest)
     if (connect(sock , (struct sockaddr *)&dest , sizeof(dest)) < 0)
     {
         printf("connect failed. Error");
+        exit(1);
+    }
+}
+
+void get_message(int sock, char* msg)
+{
+    int n;
+    n = read(sock, msg, MSGL-1);
+    if (n < 0)
+    {
+        printf("ERROR reading from socket");
         exit(1);
     }
 }
@@ -49,11 +59,12 @@ int main (int argc, char* const argv[])
 	int socket_client;
 	struct sockaddr_in dest;
 
-    char in_buf[MSGL];
-    char out_buf[MSGL];
+    char in_buf[256];
+    char out_buf[256];
 
     bzero(in_buf, MSGL);
     bzero(out_buf, MSGL);
+
 
 
 	socket_client = create_socket();
@@ -68,21 +79,27 @@ int main (int argc, char* const argv[])
     connect_to_socket(socket_client, dest);
 
 
-    send_message(socket_client, msgbuf);
 
 
+    while(1)
+    {   
+        //scanf("message to client: %s", out_buf);
+        fgets(in_buf, MSGL, stdin);
+        if (strcmp(in_buf,"quit") == 0){
+            exit(0);
+        }
 
+        printf("sending: %s\n", out_buf);
+        
+        send_message(socket_client, out_buf);
+        
 
-
-
-    /* output response
-    char buf[10000];
-    while (recv(socket_client,buf,sizeof(buf)-1,0)) {
-        printf("%s",buf);
+        get_message(socket_client, in_buf);
+        printf("server sayz: %s\n", in_buf); 
     }
-    */
+    
      
-    //close(socket_client);
+    close(socket_client);
 
 
     return 0;

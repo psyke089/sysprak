@@ -11,14 +11,14 @@
 
 int create_socket()
 {	
-	int ret;
-	ret = socket(AF_INET, SOCK_STREAM, 0);
-	if (ret < 0)
+	int fd;
+	fd = socket(AF_INET, SOCK_STREAM, 0);
+	if (fd < 0)
 	{
 		printf("Could not create socket");
 		exit(1);
 	}
-	return ret;
+	return fd;
 }
 
 void bind_socket(int sock, struct sockaddr_in serv_addr)
@@ -57,15 +57,15 @@ void send_message(int sock, char* msg)
 
 int accept_connection(int sock, struct sockaddr_in cli_addr)
 {
-	int ret;
+	int fd;
 	int cli_addr_len = sizeof(cli_addr);
-	ret = accept(sock, (struct sockaddr *)&cli_addr, &cli_addr_len);
-    if (ret < 0) 
+	fd = accept(sock, (struct sockaddr *)&cli_addr, &cli_addr_len);
+    if (fd < 0) 
     {
         printf("ERROR on accept");
         exit(1);
     }
-    return ret;
+    return fd;
 }
 
 int main(int argc, char const *argv[])
@@ -79,8 +79,8 @@ int main(int argc, char const *argv[])
 	int socket_client;
 	int n;
 
-	char in_buf[MSGL];
-	char out_buf[MSGL];
+	char in_buf[256];
+	char out_buf[256];
 
 	bzero(in_buf, MSGL);
 	bzero(out_buf, MSGL);
@@ -109,13 +109,24 @@ int main(int argc, char const *argv[])
     while(1)
     {
     	get_message(socket_client, in_buf);
-
 	    printf("client sayz: %s\n", in_buf);
 
-	    scanf("message to client: %s", out_buf);
+	    //scanf("message to client: %s", out_buf);
+	    fgets(in_buf, MSGL, stdin);
+	    if (strcmp(in_buf,"quit") == 0){
+   			exit(0);
+   		}
+
+	    
+	    printf("sending: %s\n", out_buf);
+	    
 
 	    send_message(socket_client, out_buf);
     }
+
+
+    close(socket_client);
+    close(socket_server);
 
 
 	return 0;
