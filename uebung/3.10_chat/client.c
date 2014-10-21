@@ -23,8 +23,10 @@ int create_socket()
 }
 
 void connect_to_socket(int sock, struct sockaddr_in dest)
-{
-    if (connect(sock , (struct sockaddr *)&dest , sizeof(dest)) < 0)
+{   
+    int n;
+    n = connect(sock , (struct sockaddr *)&dest , sizeof(dest));
+    if (n < 0)
     {
         printf("connect failed. Error");
         exit(1);
