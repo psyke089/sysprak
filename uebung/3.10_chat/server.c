@@ -119,7 +119,7 @@ int main(int argc, char const *argv[])
         bzero(out_buf, MSGL);
         fgets(out_buf, MSGL, stdin);
         if (strcmp(out_buf,"quit\n") == 0){
-            exit(0);
+            break;
         }
 
         //send input
