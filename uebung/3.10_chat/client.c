@@ -5,8 +5,6 @@
 #include <sys/types.h> 
 #include <netinet/in.h>
 
-//#define IP "192.168.178.22"
-//#define IP "127.0.0.1"
 #define PORT 4711
 #define MSGL 256
 
@@ -61,7 +59,7 @@ void send_message(int sock, char* msg)
 int main (int argc, char* const argv[])
 {
     int socket_client;
-	struct sockaddr_in dest;
+    struct sockaddr_in dest;
 
     char in_buf[MSGL];
     char out_buf[MSGL];
@@ -71,7 +69,7 @@ int main (int argc, char* const argv[])
 
 
 
-	socket_client = create_socket();
+    socket_client = create_socket();
 
      
     bzero((char *) &dest, sizeof(dest));
