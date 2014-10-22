@@ -109,20 +109,22 @@ int main(int argc, char const *argv[])
 
     while(1)
     {	
+    	//wait for reply
     	printf("waiting for reply...\n");
     	bzero(in_buf, MSGL);
     	get_message(socket_client, in_buf);
 	    printf("client sayz: %s\n", in_buf);
 
-
+	    //get input
 	    printf("Message to client: ");
 	    bzero(out_buf, MSGL);
 	    fgets(out_buf, MSGL, stdin);
 	    if (strcmp(out_buf,"quit\n") == 0){
    			exit(0);
    		}
-	    printf("sending: %s\n", out_buf);
 
+	    //send input
+	    printf("sending: %s\n", out_buf);
 	    send_message(socket_client, out_buf);
     }
 
