@@ -6,7 +6,7 @@
 #include <netinet/in.h>
 
 //#define IP "192.168.178.22"
-#define IP "127.0.0.1"
+//#define IP "127.0.0.1"
 #define PORT 4711
 #define MSGL 256
 
@@ -75,7 +75,7 @@ int main (int argc, char* const argv[])
 
      
     bzero((char *) &dest, sizeof(dest));
-    dest.sin_addr.s_addr = inet_addr( IP );
+    dest.sin_addr.s_addr = inet_addr( argv[1] );
     dest.sin_family = AF_INET;
     dest.sin_port = htons( PORT );
 

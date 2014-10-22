@@ -116,6 +116,7 @@ int main(int argc, char const *argv[])
     	get_message(socket_client, in_buf);
 	    printf("client sayz: %s\n", in_buf);
 
+
 	    printf("Message to client: ");
 	    bzero(out_buf, MSGL);
 	    fgets(out_buf, MSGL, stdin);
