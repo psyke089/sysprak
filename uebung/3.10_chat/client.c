@@ -19,6 +19,7 @@ int create_socket()
         printf("Could not create socket");
         exit(1);
     }
+    printf("socket created...\n");
     return fd;
 }
 
@@ -31,12 +32,13 @@ void connect_to_socket(int sock, struct sockaddr_in dest)
         printf("connect failed. Error");
         exit(1);
     }
+    printf("connected to socket...\n");
 }
 
 void get_message(int sock, char* msg)
 {
     int n;
-    n = read(sock, msg, sizeof(msg));
+    n = read(sock, msg, MSGL);
     if (n < 0)
     {
         printf("ERROR reading from socket");
@@ -47,7 +49,7 @@ void get_message(int sock, char* msg)
 void send_message(int sock, char* msg)
 {   
     int n;
-    n = write(sock, msg, strlen(msg));
+    n = write(sock, msg, MSGL);
     if (n < 0)
     {
         printf("ERROR writing to socket");
@@ -85,16 +87,18 @@ int main (int argc, char* const argv[])
 
     while(1)
     {   
+        printf("Message to server: ");
+        bzero(out_buf, MSGL);
         fgets(out_buf, MSGL, stdin);
-        if (strcmp(in_buf,"quit") == 0){
+        if (strcmp(out_buf,"quit\n") == 0){
             exit(0);
         }
-
         printf("sending: %s\n", out_buf);
         
         send_message(socket_client, out_buf);
         
-
+        printf("waiting for reply...\n");
+        bzero(in_buf, MSGL);
         get_message(socket_client, in_buf);
         printf("server sayz: %s\n", in_buf); 
     }
