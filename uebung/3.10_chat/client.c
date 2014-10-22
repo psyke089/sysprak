@@ -60,7 +60,7 @@ void send_message(int sock, char* msg)
 
 int main (int argc, char* const argv[])
 {
-	int socket_client;
+    int socket_client;
 	struct sockaddr_in dest;
 
     char in_buf[MSGL];

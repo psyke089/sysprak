@@ -77,10 +77,8 @@ int main(int argc, char const *argv[])
 	struct sockaddr_in server_addr;
 	struct sockaddr_in client_addr;
 
-	int client_addr_len = sizeof(client_addr);
 	int socket_server;
 	int socket_client;
-	int n;
 
 	char in_buf[MSGL];
 	char out_buf[MSGL];
