@@ -82,8 +82,8 @@ int main(int argc, char const *argv[])
 	int socket_client;
 	int n;
 
-	char in_buf[256];
-	char out_buf[256];
+	char in_buf[MSGL];
+	char out_buf[MSGL];
 
 	bzero(in_buf, MSGL);
 	bzero(out_buf, MSGL);
