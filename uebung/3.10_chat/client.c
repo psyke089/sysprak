@@ -36,7 +36,7 @@ void connect_to_socket(int sock, struct sockaddr_in dest)
 void get_message(int sock, char* msg)
 {
     int n;
-    n = read(sock, msg, MSGL-1);
+    n = read(sock, msg, sizeof(msg));
     if (n < 0)
     {
         printf("ERROR reading from socket");
@@ -47,7 +47,7 @@ void get_message(int sock, char* msg)
 void send_message(int sock, char* msg)
 {   
     int n;
-    n = write(sock, msg, MSGL-1);
+    n = write(sock, msg, strlen(msg));
     if (n < 0)
     {
         printf("ERROR writing to socket");
@@ -85,8 +85,7 @@ int main (int argc, char* const argv[])
 
     while(1)
     {   
-        //scanf("message to client: %s", out_buf);
-        fgets(in_buf, MSGL, stdin);
+        fgets(out_buf, MSGL, stdin);
         if (strcmp(in_buf,"quit") == 0){
             exit(0);
         }
