@@ -61,7 +61,7 @@ void send_message(int sock, char* msg)
 int accept_connection(int sock, struct sockaddr_in cli_addr)
 {
     int fd;
-    int cli_addr_len = sizeof(cli_addr);
+    socklen_t cli_addr_len = sizeof(cli_addr);
     fd = accept(sock, (struct sockaddr *)&cli_addr, &cli_addr_len);
     if (fd < 0) 
     {
