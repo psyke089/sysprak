@@ -11,4 +11,4 @@ client: client.c
 	$(CC) $(CFLAGS) -o client client.c
 
 clean:
-	rm –f *.o server client
+	rm *.o server client
