@@ -2,13 +2,23 @@ CFLAGS = -g -Wall -std=c99
 
 CC = gcc
 
-all: server client
+all: netlib server client clean_nobin wurstbrot
 
-server: server.c 
-	$(CC) $(CFLAGS) -o server server.c
+netlib: netlib.c
+	$(CC) $(CFLAGS) -c netlib.c
+	ar -q netlib.a netlib.o
 
-client: client.c
-	$(CC) $(CFLAGS) -o client client.c
+server: server.c netlib.a
+	$(CC) $(CFLAGS) -o server server.c netlib.a
+
+client: client.c netlib.a
+	$(CC) $(CFLAGS) -o client client.c netlib.a
+
+clean_nobin: 
+	rm *.o rm *.a
 
 clean:
-	rm *.o server client
+	rm *.o *.a server client
+
+wurstbrot:
+	@toilet --gay GREAT SUCCESS! 
