@@ -47,8 +47,10 @@ main(){
 
     unsigned long long guessed;
 
-    printf ("Please enter the possible prim value:\n");
+    printf ("Please enter the possible (positive) prim value:\n");
     do {scanf("%llu",&guessed);} while (getchar() != '\n');
+
+    clock_t start = clock(), diff;
 
 t_args args1;
        args1.guessed = guessed;
@@ -94,15 +96,15 @@ t_args args4;
 
     /* if every thread returns 1 the counter should be the amount of threads*/
     switch (counter == NUM_THREADS){
-        case true: printf ("\nIs prime!"); break;
-        default  : printf ("\nSorry, not a prime!"); break;
+        case true: printf ("\nIs prime!\n"); break;
+        default  : printf ("\nSorry, not a prime!\n"); break;
     }
 
     /*returning the passed time*/
-/*    diff = clock() - start;
+    diff = clock() - start;
     int msec = diff * 1000 / CLOCKS_PER_SEC;
     printf ("\nFunction took %ds and %d milliseconds to complete.", msec/1000, msec%1000);
-   */
+   
     exit(0);
     
 }
@@ -143,7 +145,9 @@ handler (void *ptr){
 bool
 isPrimeIt (unsigned long long num, unsigned long long boundsFrom, unsigned long long boundsTo){
   bool test = true;
-
+  if (num == 1)              {test = false;}
+  if (num == 2)              {test = true;}     // bugs when there is no else
+  else{
   if (num % 2 == 0)          {test = false;}
   if (boundsFrom % 2 == 0)   {boundsFrom++;}
   if (boundsFrom <= 1)       {boundsFrom = 3;}
@@ -154,6 +158,7 @@ isPrimeIt (unsigned long long num, unsigned long long boundsFrom, unsigned long 
                     i = boundsTo;
                 }   else {i +=1;}
   }
+}
  return test;
 }
 
