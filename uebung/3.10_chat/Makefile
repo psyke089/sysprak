@@ -15,10 +15,15 @@ client: client.c netlib.a
 	$(CC) $(CFLAGS) -o client client.c netlib.a
 
 clean_nobin: 
-	rm *.o rm *.a
+	rm -f *.o
+	rm -f *.a
 
 clean:
-	rm *.o *.a server client
+	rm -f *.o
+	rm -f *.a
+	rm -f server
+	rm -f client
 
 wurstbrot:
-	@toilet --gay GREAT SUCCESS! 
+	@toilet --gay GREAT
+	@toilet --gay SUCCESS! 
