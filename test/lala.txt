@@ -1,3 +1,7 @@
+<<<<<<< HEAD
 ss
 ghhtz45
 
+=======
+erste zeile
+>>>>>>> 6f679977018c7dcefca87b9b02731ff2fc3b6396
