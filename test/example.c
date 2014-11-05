@@ -2,7 +2,7 @@
 
 void main (){
 
-  printf ("Hello World by cirquit");
+  printf ("Hello World by Alex");
   
 }
 
