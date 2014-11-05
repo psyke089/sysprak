@@ -20,8 +20,6 @@ git add .
     - adds everyhing in the current repository
 git commit -m "sample text"
     - commits everything you added with a message "sample text"
-git commit -am "sample text"
-    - commits everything with a message "sample text" | adds automatically everything
 git status
     - gives you all the information, what has been commited/changed/added
 gitk
@@ -36,7 +34,7 @@ git rm --cached FILENAME
     - the opposite of git add => removing the file from the to-commit-list
 git config color.ui true
     - the status of the files is now colored
-git mergetool
+git mergetool --tool=vim
     - if you have a merge conflict, use this to let git know whose code is more important
 
 How to ignore files:
