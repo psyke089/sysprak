@@ -1,11 +1,23 @@
+#include "main.h"
 
+int main(int argc, char *argv[]) {// Kommandozeilenparameter einlesen
+  char *id, *to;
+  id = NULL;
+  to = NULL;
+  int ret;
 
-#define GAMEKINDNAME "NMMorris"
-#define PORTNUMBER 1357
-#define HOSTNAME "sysprak.priv.lab.nm.ifi.lmu.de"
-
-int main(int argc, char const *argv[])
-{
-	/* code */
-	return 0;
+  while ((ret=getopt(argc, argv, "i:a:")) != -1) {
+    switch (ret) {
+        case 'i':
+          id = optarg;
+          printf("Ihre id ist: %s\n",optarg);
+           break;
+        case 'a':
+           to = optarg;
+           break;
+        default:
+         //unter 2
+          printf("Defaulllt");
+      }
+    }
 }
