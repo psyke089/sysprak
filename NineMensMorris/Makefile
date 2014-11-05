@@ -2,7 +2,8 @@ CFLAGS = -g -Wall -std=c99
 
 CC = gcc
 
-all:
+all: main.c
+	$(CC) $(CLFAGS) main.c -o /src/client
 
 clean:
 	rm -f *.o
