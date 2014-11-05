@@ -3,7 +3,7 @@
 void main (){
    int x = 0;
 
-   printf ("Dies ist meine Variable x: %i", x); 
+   printf ("Dies ist meine neue Variable y: %i", x); 
 
 }
 
