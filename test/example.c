@@ -2,7 +2,7 @@
 
 void main (){
    int x = 0;
-
+   //Kommentar
    printf ("Dies ist meine Variable x: %i", x); 
 
 }
