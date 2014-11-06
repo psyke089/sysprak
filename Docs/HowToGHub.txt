@@ -8,9 +8,11 @@ Part 3.5 : http://www.youtube.com/watch?v=7RrP9kbHFnc&list=UU3pzbTVgo01qT-maRchk
 Part 4 : http://www.youtube.com/watch?v=4De86_igTTk&list=UU3pzbTVgo01qT-maRchkbIg (necessary mergeconflicts)
 Part 5: http://www.youtube.com/watch?v=nUuOitvzFrQ&list=UU3pzbTVgo01qT-maRchkbIg  (necessary mergeconflicts)
 
-Git Tutorials by GitHub:
+Tutorials:
 
 https://help.github.com/articles/set-up-git/
+
+https://www.codeschool.com/courses/try-git
 
 
 
@@ -36,6 +38,15 @@ git config color.ui true
     - the status of the files is now colored
 git mergetool --tool=vim
     - if you have a merge conflict, use this to let git know whose code is more important
+git branch BRANCHNAME
+    - copy everything to a brach named BRANCHNAME
+git checkout BRANCHNAME
+    - switch the actual working space to the branch named BRANCHNAME
+git merge BRANCHNAME
+    - use checkout to go in the maste branch again and then merge
+git branch -d BRANCHNAME
+    - delete the unused branch after merging
+
 
 How to ignore files:
 

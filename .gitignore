@@ -1,5 +1,7 @@
 .DS_Store
 *.DS_Store
-/bin/*
+NineMensMorris/bin/*
 .nfs*
 *.swp
+*.o
+*.a
