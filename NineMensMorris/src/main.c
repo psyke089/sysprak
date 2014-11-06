@@ -8,7 +8,7 @@ void printHowToUse (){
          "NAME:                                              \n"
          "           client - Unser 'Nine Mens Morris' client\n"
          "OPTIONS:                                           \n"
-         "          -i Game-ID                               \n"
+         "          -i Game-ID (11 Zeichen lang)             \n"
          "          -a PLACEHOLDER                           \n"
          "\n");
   exit(0);

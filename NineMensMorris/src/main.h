@@ -12,4 +12,5 @@
 #define GAMEKINDNAME "NMMorris"
 #define PORTNUMBER 1357
 #define HOSTNAME "sysprak.priv.lab.nm.ifi.lmu.de"
+#define CVERSION 1.0
 
