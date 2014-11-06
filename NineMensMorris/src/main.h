@@ -5,6 +5,9 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <getopt.h>
+#include <string.h>
+
+
 
 #define GAMEKINDNAME "NMMorris"
 #define PORTNUMBER 1357
