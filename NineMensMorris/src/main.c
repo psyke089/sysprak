@@ -46,10 +46,7 @@ int main(int argc, char *argv[]) {
 
   parseArgs(argc, argv);
 
-  //DEBUG
-  printf("Ihre (-a) lautet: %s\n",to);
-
-  return EXIT_SUCCESS;
+  return 0;
 }
 
 
