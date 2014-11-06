@@ -4,6 +4,7 @@
 #include <time.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <getopt.h>
 
 #define GAMEKINDNAME "NMMorris"
 #define PORTNUMBER 1357
