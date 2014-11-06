@@ -13,6 +13,12 @@ void printHowToUse (){
 }
 
 
+/* parseArgs schaut ob die übergeben Parameter in der Kommandozeile valide sind
+ * ansonsten terminiert das Programm
+ *
+ * -i ist die Game-ID und muss genau 11 Zeichen lang sein
+ * -a ist ein Platzhalter
+ */
 void parseArgs(int argc, char *argv[]){
 
   int pArg; 
@@ -32,7 +38,6 @@ void parseArgs(int argc, char *argv[]){
     printf ("Die Länge der Game-ID muss 11 Zeichen lang sein!");
     exit(0);
   }
-
 }
 
 
@@ -42,7 +47,7 @@ int main(int argc, char *argv[]) {
   parseArgs(argc, argv);
 
   //DEBUG
-  printf("Ihre (-a) to ist: %s\n",to);
+  printf("Ihre (-a) lautet: %s\n",to);
 
   return EXIT_SUCCESS;
 }
