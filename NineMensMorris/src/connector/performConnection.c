@@ -5,6 +5,7 @@
 #include <strings.h>
 #include <arpa/inet.h>
 #include <netdb.h>
+#include <sys/ioctl.h>
 
 #include "../main.h"
 
@@ -15,25 +16,25 @@ char words[32][64];
 
 /**
  *  Löst HOSTNAME in eine Ip auf und
- *  erstellt und initialisiert ein sockaddr_in struct daraus. 
+ *  erstellt und initialisiert ein sockaddr_in struct daraus.
  *
  *  returns: struct sockaddr_in
  */
 
 struct sockaddr_in init_server_addr()
 {
-  
+
   struct hostent *hp = gethostbyname(HOSTNAME);
   struct sockaddr_in ret;
 
   if (hp == NULL) {
-    printf("gethostbyname() failed\n");
+    perror(ANSI_COLOR_RED "gethostbyname() failed\n");
     exit(1);
   }
 
   // server_addr initilaisieren
   bzero((char *) &ret, sizeof(ret));
-  
+
   //Server-IP in sockaddr_in struct kopieren
   memcpy(&ret.sin_addr, hp->h_addr_list[0], hp->h_length);
 
@@ -54,15 +55,15 @@ struct sockaddr_in init_server_addr()
 
 int create_socket()
 {
-    int fd;
-    fd = socket(AF_INET, SOCK_STREAM, 0);
-    if (fd < 0)
-    {
-        printf("Could not create socket");
-        exit(1);
-    }
-    printf("socket created...\n");
-    return fd;
+  int fd;
+  fd = socket(AF_INET, SOCK_STREAM, 0);
+  if (fd < 0)
+  {
+    perror(ANSI_COLOR_RED "Could not create socket");
+    exit(1);
+  }
+  printf("socket created...\n");
+  return fd;
 }
 
 /**
@@ -74,14 +75,14 @@ int create_socket()
 
 void connect_to_socket(int sock, struct sockaddr_in dest)
 {
-    int n;
-    n = connect(sock , (struct sockaddr *)&dest , sizeof(dest));
-    if (n < 0)
-    {
-        printf("connect failed. Error");
-        exit(1);
-    }
-    printf("connected to socket...\n");
+  int n;
+  n = connect(sock , (struct sockaddr *)&dest , sizeof(dest));
+  if (n < 0)
+  {
+    perror(ANSI_COLOR_RED "connect failed. Error");
+    exit(1);
+  }
+  printf("connected to socket...\n");
 }
 
 /**
@@ -94,7 +95,7 @@ void connect_to_socket(int sock, struct sockaddr_in dest)
  */
 
 void parseServerMsg(char *buf){
-  
+
   //char words[32][64];
   char word [64];
   int wordLength = 0;
@@ -104,15 +105,15 @@ void parseServerMsg(char *buf){
   {
     bzero(words[i], 64);
   }
-  
+
 
   while ( sscanf(buf, "%63[^ ]%n", word, &wordLength) == 1 ){
-      
+
     sprintf(words[wordCount], "%s", word);
     //printf("parsedMsg Nr.%i\t::  \"%s\"\n", wordCount, word);
     ++wordCount;
 
-    buf += wordLength; 
+    buf += wordLength;
     if ( *buf != ' ' ){
       break;
     }
@@ -146,19 +147,24 @@ void parseServerMsg(char *buf){
  *  Liest von einem Socket.
  *
  *  sock: Socket filedescriptor
- *  buf:  Pointer auf buffer, 
+ *  buf:  Pointer auf buffer,
  *        in den die erhaltene Nachricht geschrieben werden soll
  */
 
 void get_message(int sock, char* buf)
 {
-    int n;
-    n = read(sock, buf, MSGL);
-    if (n < 0)
-    {
-        printf("ERROR reading from socket");
-        exit(1);
-    }
+
+
+  int n;
+
+  n = recv(sock, buf, MSGL, 0);
+  if (n < 0)
+  {
+    perror(ANSI_COLOR_RED "ERROR reading from socket");
+    exit(1);
+  }
+  printf("\nreceived %i bytes:\n", n);
+
 }
 
 /**
@@ -170,14 +176,15 @@ void get_message(int sock, char* buf)
 
 void send_message(int sock, char* buf)
 {
-    int n;
-    printf("<= : %s\n", buf);
-    n = write(sock, buf, MSGL);
-    if (n < 0)
-    {
-        printf("ERROR writing to socket");
-        exit(1);
-    }
+
+  int n;
+  printf("<= : %s\n", buf);
+  n = write(sock, buf, MSGL);
+  if (n < 0)
+  {
+    perror(ANSI_COLOR_RED "ERROR writing to socket");
+    exit(1);
+  }
 
 }
 
@@ -185,7 +192,7 @@ void send_message(int sock, char* buf)
 
 int main(int argc, char const *argv[])
 {
-  
+
   //char id[] = "Y.Z36w4VXdc#";
 
   int le_socket;
@@ -212,7 +219,7 @@ int main(int argc, char const *argv[])
 
   while(1)
   {
-    
+
     bzero(in_buf, MSGL);
     get_message(le_socket, in_buf);
     parseServerMsg(in_buf);
@@ -220,28 +227,36 @@ int main(int argc, char const *argv[])
     if(strcmp(words[1], "MNM") == 0) {
 
       sprintf(out_buf, "VERSION %0.1f\n", CVERSION);
-      send_message(le_socket, out_buf);  
+      send_message(le_socket, out_buf);
 
     }else if(strcmp(words[1], "Client") == 0) {
-      
+
       sprintf(out_buf, "ID %s\n", argv[1]);
       send_message(le_socket, out_buf);
 
     }else if(strcmp(words[1], "PLAYING") == 0) {
-      
+
       bzero(in_buf, MSGL);
       get_message(le_socket, in_buf);
       parseServerMsg(in_buf);
-      
+
       sprintf(out_buf, "PLAYER\n");
-      send_message(le_socket, out_buf); 
+      send_message(le_socket, out_buf);
 
     }else if(strcmp(words[1], "YOU") == 0) {
-      
+
       bzero(in_buf, MSGL);
       get_message(le_socket, in_buf);
       parseServerMsg(in_buf);
 
+    }else if(strcmp(words[1], "TOTAL") == 0) {
+
+      bzero(in_buf, MSGL);
+      get_message(le_socket, in_buf);
+      parseServerMsg(in_buf);
+
+    }else{
+      break;
     }
 
   }
@@ -249,7 +264,7 @@ int main(int argc, char const *argv[])
 /*
   while(1)
   {
-    
+
     //warten auf Nachricht vom Server
     bzero(in_buf, MSGL);
     get_message(le_socket, in_buf);
