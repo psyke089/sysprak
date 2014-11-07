@@ -69,7 +69,6 @@ int main (int argc, char* const argv[])
     bzero(out_buf, MSGL);
 
 
-
     socket_client = create_socket();
 
 
@@ -80,7 +79,6 @@ int main (int argc, char* const argv[])
 
 
     connect_to_socket(socket_client, dest);
-
 
 
 
