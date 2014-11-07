@@ -81,7 +81,6 @@ int main (int argc, char* const argv[])
     connect_to_socket(socket_client, dest);
 
 
-
     while(1)
     {
         //get input
