@@ -7,8 +7,8 @@ all: client clean
 client:	src/main.c
 	$(CC) $(CFLAGS) $(OUT) src/main.c 
 
-performConnection: src/connector/performConnection.c clean
-	$(CC) $(CFLAGS) -o bin/performConnection src/performConnection.c
+performConnection: src/connector/performConnection.c
+	$(CC) $(CFLAGS) -o bin/performConnection src/connector/performConnection.c
 
 clean:
 	rm -f src/*.o

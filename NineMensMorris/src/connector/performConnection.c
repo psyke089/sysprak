@@ -82,6 +82,48 @@ void connect_to_socket(int sock, struct sockaddr_in dest)
 }
 
 /**
+ * parseServerMsg parsed die Nachricht die vom Server kommt
+ * sie benutzt das Leerzeichen als delimiter und speichert dir Teile als Array
+ *
+ * aktuelle maximale Wortlänge sind 64 Zeichen
+ *
+ * buf: die zu parsende Nachricht
+ */
+
+void parseServerMsg(char *buf){
+  
+  char words[32][64];
+  char word [64];
+  int wordLength = 0;
+  int wordCount = 0;
+
+  while ( sscanf(buf, "%63[^ ]%n", word, &wordLength) == 1 ){
+      
+    sprintf(words[wordCount], "%s", word);
+    //printf("parsedMsg Nr.%i\t::  \"%s\"\n\x1b[0m", wordCount, word);
+    ++wordCount;
+
+    buf += wordLength; 
+    if ( *buf != ' ' ){
+              break;
+    }
+    ++buf;
+
+  }
+
+  switch (*words[0]) {
+    case '+' :
+      printf("<= : \x1b[32m");
+      break;
+    case '-' :
+      printf("<= : \x1b[31m");
+      break;
+    default: break;
+  }
+
+}
+
+/**
  *  Liest von einem Socket.
  *
  *  sock: Socket filedescriptor
@@ -93,6 +135,8 @@ void get_message(int sock, char* buf)
 {
     int n;
     n = read(sock, buf, MSGL);
+    parseServerMsg(buf);
+    printf("%s\n\x1b[0m", buf);
     if (n < 0)
     {
         printf("ERROR reading from socket");
@@ -110,6 +154,7 @@ void get_message(int sock, char* buf)
 void send_message(int sock, char* buf)
 {
     int n;
+    printf("=> : %s\n", buf);
     n = write(sock, buf, MSGL);
     if (n < 0)
     {
@@ -122,6 +167,7 @@ void send_message(int sock, char* buf)
 int main(int argc, char const *argv[])
 {
   
+  char id[] = "Y.Z36w4VXdc#";
 
   int le_socket;
   struct sockaddr_in server_addr;
@@ -142,6 +188,41 @@ int main(int argc, char const *argv[])
   connect_to_socket(le_socket, server_addr);
 
   printf("\n");
+
+
+
+  bzero(in_buf, MSGL);
+  get_message(le_socket, in_buf);
+
+  sprintf(out_buf, "VERSION %0.1f\n", CVERSION);
+  send_message(le_socket, out_buf);
+
+  bzero(in_buf, MSGL);
+  get_message(le_socket, in_buf);
+
+  sprintf(out_buf, "ID %s\n", id);
+  send_message(le_socket, out_buf);
+
+  bzero(in_buf, MSGL);
+  get_message(le_socket, in_buf);
+
+  bzero(in_buf, MSGL);
+  get_message(le_socket, in_buf);
+
+  sprintf(out_buf, "PLAYER\n");
+  send_message(le_socket, out_buf);
+
+  bzero(in_buf, MSGL);
+  get_message(le_socket, in_buf);
+
+  bzero(in_buf, MSGL);
+  get_message(le_socket, in_buf);
+
+  bzero(in_buf, MSGL);
+  get_message(le_socket, in_buf);
+
+
+/*
   while(1)
   {
     
@@ -163,6 +244,7 @@ int main(int argc, char const *argv[])
     send_message(le_socket, out_buf);
 
   }
+*/
 
   close(le_socket);
 
