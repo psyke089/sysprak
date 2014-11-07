@@ -50,10 +50,38 @@ void parseArgs(int argc, char *argv[]){
 }
 
 
+/* parseServerMsg parsed die Nachricht die vom Server kommt
+ * sie benutzt das Leerzeichen als delimiter und druckt jedes Wort aus
+ *
+ * aktuelle maximale Wortlänge sind 64 Zeichen
+ * Abspeichern in einem großzügig angelegten 2D Array um mit Sicherheit keine Wörter zu verlieren
+ * TODO ^ || gerade wird die Nachricht einfach in die Konsole ausgedruckt
+ * Wenn performConnection fertig ist, muss man diese Funktion noch dahin verlegen
+ */
+void parseServerMsg(char *msg){
+  char word [64];
+  int wordLength = 0;
+  int wordCount = 0;
+
+   while ( sscanf(msg, "%63[^ ]%n", word, &wordLength) == 1 ){
+      wordCount++;
+      printf("parsedMsg Nr.%i = \"%s\"\n", wordCount, word);
+      msg += wordLength; 
+           if ( *msg != ' ' ){
+                break;
+           }
+      ++msg;
+    }
+}
 
 int main(int argc, char *argv[]) { 
 
   parseArgs(argc, argv);
+
+  // DEBUG START
+  printf("\nTesting parseServerMsg with \"+ MNM Gameserver\" \n");
+  parseServerMsg("+ MNM Gameserver");
+  // DEBUG END
   return 0;
 }
 
