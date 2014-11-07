@@ -10,6 +10,9 @@
 
 #define MSGL 256
 
+
+char words[32][64];
+
 /**
  *  Löst HOSTNAME in eine Ip auf und
  *  erstellt und initialisiert ein sockaddr_in struct daraus. 
@@ -92,20 +95,26 @@ void connect_to_socket(int sock, struct sockaddr_in dest)
 
 void parseServerMsg(char *buf){
   
-  char words[32][64];
+  //char words[32][64];
   char word [64];
   int wordLength = 0;
   int wordCount = 0;
 
+  for (int i = 0; i < 32; ++i)
+  {
+    bzero(words[i], 64);
+  }
+  
+
   while ( sscanf(buf, "%63[^ ]%n", word, &wordLength) == 1 ){
       
     sprintf(words[wordCount], "%s", word);
-    //printf("parsedMsg Nr.%i\t::  \"%s\"\n\x1b[0m", wordCount, word);
+    //printf("parsedMsg Nr.%i\t::  \"%s\"\n", wordCount, word);
     ++wordCount;
 
     buf += wordLength; 
     if ( *buf != ' ' ){
-              break;
+      break;
     }
     ++buf;
 
@@ -113,13 +122,23 @@ void parseServerMsg(char *buf){
 
   switch (*words[0]) {
     case '+' :
-      printf("<= : \x1b[32m");
+      printf("=> : " ANSI_COLOR_GREEN);
       break;
     case '-' :
-      printf("<= : \x1b[31m");
+      printf("=> : " ANSI_COLOR_RED);
       break;
     default: break;
   }
+
+  for (int i = 0; i < 32; ++i)
+  {
+    if (strcmp(words[i], "") == 0) {
+      //printf(ANSI_COLOR_RESET "Words: %i\n", i);
+      break;
+    }
+    printf("%s ", words[i]);
+  }
+  printf("\n" ANSI_COLOR_RESET);
 
 }
 
@@ -135,8 +154,6 @@ void get_message(int sock, char* buf)
 {
     int n;
     n = read(sock, buf, MSGL);
-    parseServerMsg(buf);
-    printf("%s\n\x1b[0m", buf);
     if (n < 0)
     {
         printf("ERROR reading from socket");
@@ -154,7 +171,7 @@ void get_message(int sock, char* buf)
 void send_message(int sock, char* buf)
 {
     int n;
-    printf("=> : %s\n", buf);
+    printf("<= : %s\n", buf);
     n = write(sock, buf, MSGL);
     if (n < 0)
     {
@@ -164,10 +181,12 @@ void send_message(int sock, char* buf)
 
 }
 
+
+
 int main(int argc, char const *argv[])
 {
   
-  char id[] = "Y.Z36w4VXdc#";
+  //char id[] = "Y.Z36w4VXdc#";
 
   int le_socket;
   struct sockaddr_in server_addr;
@@ -177,6 +196,7 @@ int main(int argc, char const *argv[])
 
   bzero(in_buf, MSGL);
   bzero(out_buf, MSGL);
+
 
 
   printf("\n");
@@ -190,37 +210,41 @@ int main(int argc, char const *argv[])
   printf("\n");
 
 
+  while(1)
+  {
+    
+    bzero(in_buf, MSGL);
+    get_message(le_socket, in_buf);
+    parseServerMsg(in_buf);
 
-  bzero(in_buf, MSGL);
-  get_message(le_socket, in_buf);
+    if(strcmp(words[1], "MNM") == 0) {
 
-  sprintf(out_buf, "VERSION %0.1f\n", CVERSION);
-  send_message(le_socket, out_buf);
+      sprintf(out_buf, "VERSION %0.1f\n", CVERSION);
+      send_message(le_socket, out_buf);  
 
-  bzero(in_buf, MSGL);
-  get_message(le_socket, in_buf);
+    }else if(strcmp(words[1], "Client") == 0) {
+      
+      sprintf(out_buf, "ID %s\n", argv[1]);
+      send_message(le_socket, out_buf);
 
-  sprintf(out_buf, "ID %s\n", id);
-  send_message(le_socket, out_buf);
+    }else if(strcmp(words[1], "PLAYING") == 0) {
+      
+      bzero(in_buf, MSGL);
+      get_message(le_socket, in_buf);
+      parseServerMsg(in_buf);
+      
+      sprintf(out_buf, "PLAYER\n");
+      send_message(le_socket, out_buf); 
 
-  bzero(in_buf, MSGL);
-  get_message(le_socket, in_buf);
+    }else if(strcmp(words[1], "YOU") == 0) {
+      
+      bzero(in_buf, MSGL);
+      get_message(le_socket, in_buf);
+      parseServerMsg(in_buf);
 
-  bzero(in_buf, MSGL);
-  get_message(le_socket, in_buf);
+    }
 
-  sprintf(out_buf, "PLAYER\n");
-  send_message(le_socket, out_buf);
-
-  bzero(in_buf, MSGL);
-  get_message(le_socket, in_buf);
-
-  bzero(in_buf, MSGL);
-  get_message(le_socket, in_buf);
-
-  bzero(in_buf, MSGL);
-  get_message(le_socket, in_buf);
-
+  }
 
 /*
   while(1)
