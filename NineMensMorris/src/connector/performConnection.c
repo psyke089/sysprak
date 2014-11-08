@@ -6,10 +6,12 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <sys/ioctl.h>
+#include <sys/select.h>
+#include <errno.h>
 
 #include "../main.h"
 
-#define MSGL 256
+#define MSGL 2048
 
 
 char words[32][64];
@@ -28,7 +30,7 @@ struct sockaddr_in init_server_addr()
   struct sockaddr_in ret;
 
   if (hp == NULL) {
-    perror(ANSI_COLOR_RED "gethostbyname() failed\n");
+    perror(RED "gethostbyname() failed\n" RESET);
     exit(1);
   }
 
@@ -59,7 +61,7 @@ int create_socket()
   fd = socket(AF_INET, SOCK_STREAM, 0);
   if (fd < 0)
   {
-    perror(ANSI_COLOR_RED "Could not create socket");
+    perror(RED "Could not create socket" RESET);
     exit(1);
   }
   printf("socket created...\n");
@@ -79,7 +81,7 @@ void connect_to_socket(int sock, struct sockaddr_in dest)
   n = connect(sock , (struct sockaddr *)&dest , sizeof(dest));
   if (n < 0)
   {
-    perror(ANSI_COLOR_RED "connect failed. Error");
+    perror(RED "connect failed. Error" RESET);
     exit(1);
   }
   printf("connected to socket...\n");
@@ -123,10 +125,10 @@ void parseServerMsg(char *buf){
 
   switch (*words[0]) {
     case '+' :
-      printf("=> : " ANSI_COLOR_GREEN);
+      printf("=> : " GREEN);
       break;
     case '-' :
-      printf("=> : " ANSI_COLOR_RED);
+      printf("=> : " RED);
       break;
     default: break;
   }
@@ -134,12 +136,12 @@ void parseServerMsg(char *buf){
   for (int i = 0; i < 32; ++i)
   {
     if (strcmp(words[i], "") == 0) {
-      //printf(ANSI_COLOR_RESET "Words: %i\n", i);
+      //printf(RESET "Words: %i\n", i);
       break;
     }
     printf("%s ", words[i]);
   }
-  printf("\n" ANSI_COLOR_RESET);
+  printf("\n" RESET);
 
 }
 
@@ -151,19 +153,24 @@ void parseServerMsg(char *buf){
  *        in den die erhaltene Nachricht geschrieben werden soll
  */
 
-void get_message(int sock, char* buf)
+int get_message(int sock, char* buf)
 {
 
-
   int n;
-
-  n = recv(sock, buf, MSGL, 0);
+  //n = recv(sock, buf, MSGL, 0);
+  n = read(sock, buf, MSGL);
   if (n < 0)
   {
-    perror(ANSI_COLOR_RED "ERROR reading from socket");
+    if ((errno == EAGAIN) || (errno == EWOULDBLOCK)){
+      printf("non-blocking operation returned EAGAIN or EWOULDBLOCK\n");
+    }else{
+      printf("recv returned unrecoverable error(errno=%d)\n", errno);
+    }
+    perror(RED "ERROR reading from socket" RESET);
     exit(1);
   }
   printf("\nreceived %i bytes:\n", n);
+  return n;
 
 }
 
@@ -179,21 +186,35 @@ void send_message(int sock, char* buf)
 
   int n;
   printf("<= : %s\n", buf);
-  n = write(sock, buf, MSGL);
+  //n = write(sock, buf, MSGL);
+  int len = strlen(buf);
+  n = send(sock, buf, len, 0);
   if (n < 0)
   {
-    perror(ANSI_COLOR_RED "ERROR writing to socket");
+    perror(RED "ERROR writing to socket" RESET);
     exit(1);
   }
 
 }
 
+/**
+ *  Setzt einen Socket in nonblocking mode.
+ *
+ *  sock: S
+ */
+
+int setNonblocking(int sock)
+{
+    int flags;
+    if (-1 == (flags = fcntl(sock, F_GETFL, 0)))
+        flags = 0;
+    return fcntl(sock, F_SETFL, flags | O_NONBLOCK);
+}   
+
 
 
 int main(int argc, char const *argv[])
 {
-
-  //char id[] = "Y.Z36w4VXdc#";
 
   int le_socket;
   struct sockaddr_in server_addr;
@@ -216,7 +237,7 @@ int main(int argc, char const *argv[])
 
   printf("\n");
 
-
+  
   while(1)
   {
 
@@ -224,7 +245,12 @@ int main(int argc, char const *argv[])
     get_message(le_socket, in_buf);
     parseServerMsg(in_buf);
 
-    if(strcmp(words[1], "MNM") == 0) {
+    if(strcmp(words[0], "-") == 0) {
+      
+      printf(RED "negative response from server\n" RESET);
+      break;
+
+    }else if(strcmp(words[1], "MNM") == 0) {
 
       sprintf(out_buf, "VERSION %0.1f\n", CVERSION);
       send_message(le_socket, out_buf);
@@ -244,46 +270,33 @@ int main(int argc, char const *argv[])
       send_message(le_socket, out_buf);
 
     }else if(strcmp(words[1], "YOU") == 0) {
-
-      bzero(in_buf, MSGL);
-      get_message(le_socket, in_buf);
-      parseServerMsg(in_buf);
+      
+      printf(YELLOW "!YOU!\n" RESET);
 
     }else if(strcmp(words[1], "TOTAL") == 0) {
+      
+      printf(YELLOW "!TOTAL!\n" RESET);
 
-      bzero(in_buf, MSGL);
-      get_message(le_socket, in_buf);
-      parseServerMsg(in_buf);
+    }else if(strcmp(words[1], "ENDPLAYERS") != 0){
+     
+      printf(YELLOW "!ENDPLAYERS!\n" RESET);
+     
+    }else if(strcmp(words[1], "CAPTURE") != 0){
+     
+      printf(YELLOW "!CAPTURE!\n" RESET);
+
+    }else if(strcmp(words[1], "ENDPLAYERS") != 0){
+     
+      printf(YELLOW "!ENDPIECELIST!\n" RESET);
 
     }else{
+
+      printf(YELLOW "!WAT!\n" RESET);
       break;
+
     }
 
   }
-
-/*
-  while(1)
-  {
-
-    //warten auf Nachricht vom Server
-    bzero(in_buf, MSGL);
-    get_message(le_socket, in_buf);
-    printf("%s\n", in_buf);
-
-    //get input
-    printf("> ");
-    bzero(out_buf, MSGL);
-    fgets(out_buf, MSGL, stdin);
-    printf("\n");
-    if (strcmp(out_buf,"quit\n") == 0){
-        break;
-    }
-
-    //send input
-    send_message(le_socket, out_buf);
-
-  }
-*/
 
   close(le_socket);
 

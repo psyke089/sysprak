@@ -1,0 +1,34 @@
++ MNM Gameserver v1.0 accepting connections
+VERSION 1
++ Client version accepted - please send Game-ID to join
+ID mqKgzIfxb5Y
++ PLAYING NMMorris
++ le_game2
+PLAYER
++ YOU 0 Player 1
++ TOTAL 2
++ 2 Player 2 0
++ ENDPLAYERS
++ MOVE 3000
++ CAPTURE 0
++ PIECELIST 2,9
++ PIECE0.0 A
++ PIECE0.1 A
++ PIECE0.2 A
++ PIECE0.3 A
++ PIECE0.4 A
++ PIECE0.5 A
++ PIECE0.6 A
++ PIECE0.7 A
++ PIECE0.8 A
++ PIECE1.0 A
++ PIECE1.1 A
++ PIECE1.2 A
++ PIECE1.3 A
++ PIECE1.4 A
++ PIECE1.5 A
++ PIECE1.6 A
++ PIECE1.7 A
++ PIECE1.8 A
++ ENDPIECELIST
+- Socket timeout - please be quicker next time
