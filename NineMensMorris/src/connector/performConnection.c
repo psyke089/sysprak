@@ -11,7 +11,7 @@
 
 #include "../main.h"
 
-#define MSGL 2048
+#define MSGL 4096
 
 
 char words[32][64];
@@ -100,6 +100,7 @@ void parseServerMsg(char *buf){
 
   //char words[32][64];
   char word [64];
+  char buf2[MSGL];
   int wordLength = 0;
   int wordCount = 0;
 
@@ -108,6 +109,7 @@ void parseServerMsg(char *buf){
     bzero(words[i], 64);
   }
 
+  sprintf(buf2, "%s", buf);
 
   while ( sscanf(buf, "%63[^ ]%n", word, &wordLength) == 1 ){
 
@@ -133,15 +135,7 @@ void parseServerMsg(char *buf){
     default: break;
   }
 
-  for (int i = 0; i < 32; ++i)
-  {
-    if (strcmp(words[i], "") == 0) {
-      //printf(RESET "Words: %i\n", i);
-      break;
-    }
-    printf("%s ", words[i]);
-  }
-  printf("\n" RESET);
+  printf("%s" RESET, buf2);
 
 }
 
@@ -157,8 +151,8 @@ int get_message(int sock, char* buf)
 {
 
   int n;
-  //n = recv(sock, buf, MSGL, 0);
-  n = read(sock, buf, MSGL);
+  n = recv(sock, buf, MSGL, 0);
+  //n = read(sock, buf, MSGL);
   if (n < 0)
   {
     if ((errno == EAGAIN) || (errno == EWOULDBLOCK)){
@@ -205,11 +199,11 @@ void send_message(int sock, char* buf)
 
 int setNonblocking(int sock)
 {
-    int flags;
-    if (-1 == (flags = fcntl(sock, F_GETFL, 0)))
-        flags = 0;
-    return fcntl(sock, F_SETFL, flags | O_NONBLOCK);
-}   
+  int flags;
+  if (-1 == (flags = fcntl(sock, F_GETFL, 0)))
+    flags = 0;
+  return fcntl(sock, F_SETFL, flags | O_NONBLOCK);
+}
 
 
 
@@ -235,9 +229,11 @@ int main(int argc, char const *argv[])
 
   connect_to_socket(le_socket, server_addr);
 
+//  setNonblocking(le_socket);
+
   printf("\n");
 
-  
+
   while(1)
   {
 
@@ -246,7 +242,7 @@ int main(int argc, char const *argv[])
     parseServerMsg(in_buf);
 
     if(strcmp(words[0], "-") == 0) {
-      
+
       printf(RED "negative response from server\n" RESET);
       break;
 
@@ -270,28 +266,16 @@ int main(int argc, char const *argv[])
       send_message(le_socket, out_buf);
 
     }else if(strcmp(words[1], "YOU") == 0) {
-      
+
       printf(YELLOW "!YOU!\n" RESET);
 
     }else if(strcmp(words[1], "TOTAL") == 0) {
-      
+
       printf(YELLOW "!TOTAL!\n" RESET);
-
-    }else if(strcmp(words[1], "ENDPLAYERS") != 0){
-     
-      printf(YELLOW "!ENDPLAYERS!\n" RESET);
-     
-    }else if(strcmp(words[1], "CAPTURE") != 0){
-     
-      printf(YELLOW "!CAPTURE!\n" RESET);
-
-    }else if(strcmp(words[1], "ENDPLAYERS") != 0){
-     
-      printf(YELLOW "!ENDPIECELIST!\n" RESET);
 
     }else{
 
-      printf(YELLOW "!WAT!\n" RESET);
+      printf(YELLOW "!DONE!\n" RESET);
       break;
 
     }
