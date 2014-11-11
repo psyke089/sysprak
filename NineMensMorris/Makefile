@@ -11,6 +11,8 @@ client:	src/main.c
 performConnection: src/connector/performConnection.c
 	$(CC) $(CFLAGS) -o bin/performConnection src/connector/performConnection.c
 
+pc: performConnection
+
 clean:
 	rm -f src/*.o
 	rm -f src/*.a
