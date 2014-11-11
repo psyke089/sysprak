@@ -206,12 +206,14 @@ int setNonblocking(int sock)
 }
 
 
-void errMessagesRoutine(){
+void errMessageRoutine(){
 
   if (strcmp(words[1],"Socket") == 0 && strcmp(words[2],"timeout") == 0){
-    printf(RED "You took too long to answer - you have ~3 second to send THINKING\n" RESET);
+    printf(RED "This message is redundant (took too long to answer)\n" RESET);
   }
-
+ if (strcmp(words[1],"No") == 0 && strcmp(words[2], "free") == 0){
+  printf(RED "This message is redundant (no free computer players).\n" RESET);
+  }  
 }
 
 int main(int argc, char const *argv[])
@@ -249,8 +251,8 @@ int main(int argc, char const *argv[])
     parseServerMsg(in_buf);
 
     if(strcmp(words[0], "-") == 0) {
-
-      printf(RED "negative response from server\n" RESET);
+      errMessageRoutine();
+    //  printf(RED "negative response from server\n" RESET);
       break;
 
     }else if(strcmp(words[1], "MNM") == 0) {
@@ -282,7 +284,9 @@ int main(int argc, char const *argv[])
 
       sprintf(out_buf, "THINKING\n");
       send_message(le_socket, out_buf);
-
+    }else if(strcmp(words[1], "OKTHINK") == 0){
+      printf(YELLOW "!IM THINKING RIGHT NOW!");
+      // here comes the forking action
     }else{
 
       printf(YELLOW "!DONE!\n" RESET);
