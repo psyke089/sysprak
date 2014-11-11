@@ -2,7 +2,8 @@ CFLAGS = -g -Wall -Werror -std=c99
 OUT = -o bin/client
 CC = gcc
 
-all: client clean
+all: client performConnection clean
+
 
 client:	src/main.c
 	$(CC) $(CFLAGS) $(OUT) src/main.c 

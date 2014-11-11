@@ -25,8 +25,8 @@ void printHowToUse (){
 void parseArgs(int argc, char *argv[]){
 
   if (argc <= 1){
-    id = "12345678900";
-    printf("\nDie Game-ID wurde automatisch auf 12345678900 gesetzt.\n");
+    printf("\nZu wenig Argumente...\n");
+    exit(0);
   }
   else {
 
@@ -40,10 +40,15 @@ void parseArgs(int argc, char *argv[]){
              default:
                 printHowToUse(); break;
           }
-     }
+     }  
   
       if (id != NULL && strlen(id) != 11){
-          printf ("Die Länge der Game-ID muss 11 Zeichen lang sein!\n");
+          printf("Die Länge der Game-ID muss 11 Zeichen lang sein!\n");
+          exit(0);
+      }
+      if (id == NULL){
+          printf("\nDie ID wurde nicht erfolgreich gesetzt!\n");
+          printHowToUse();
           exit(0);
       }
   }
@@ -52,6 +57,17 @@ void parseArgs(int argc, char *argv[]){
 
 
 int main(int argc, char *argv[]) { 
+  parseArgs(argc, argv);
+
+
+  char *help[3];
+  help [0] = "bin/performConnection";
+  help [1] = id;
+  help [2] = NULL;
+
+
+
+  execv("bin/performConnection", help);
   return 0;
 }
 
