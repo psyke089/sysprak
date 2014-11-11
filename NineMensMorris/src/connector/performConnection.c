@@ -206,6 +206,13 @@ int setNonblocking(int sock)
 }
 
 
+void errMessagesRoutine(){
+
+  if (strcmp(words[1],"Socket") == 0 && strcmp(words[2],"timeout") == 0){
+    printf(RED "You took too long to answer - you have ~3 second to send THINKING\n" RESET);
+  }
+
+}
 
 int main(int argc, char const *argv[])
 {
@@ -272,6 +279,9 @@ int main(int argc, char const *argv[])
     }else if(strcmp(words[1], "TOTAL") == 0) {
 
       printf(YELLOW "!TOTAL!\n" RESET);
+
+      sprintf(out_buf, "THINKING\n");
+      send_message(le_socket, out_buf);
 
     }else{
 
