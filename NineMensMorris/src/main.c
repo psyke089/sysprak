@@ -1,9 +1,8 @@
 #include "main.h"
 
-char *id = NULL, *to = NULL;
+char *idFlag = NULL, *aFlag = NULL;
 
-
-void printHowToUse (){
+void printHowaFlagUse (){
   printf("\n"
          "NAME:                                              \n"
          "           client - Unser 'Nine Mens Morris' client\n"
@@ -18,9 +17,8 @@ void printHowToUse (){
 /* parseArgs schaut ob die übergeben Parameter in der Kommandozeile valide sind
  * ansonsten terminiert das Programm
  *
- * -i ist die Game-ID und muss genau 11 Zeichen lang sein
- *    pauschal auf 12345678900
- * -a ist ein Platzhalter
+ * -i ist die Game-ID und muss genau 11 Zeichen lang sein (wird in idFlag abgespeichert)
+ * -a ist ein Platzhalter                                 (wird in aFlag abgespeichert)
  */
 void parseArgs(int argc, char *argv[]){
 
@@ -34,21 +32,21 @@ void parseArgs(int argc, char *argv[]){
      while ((pArg=getopt(argc, argv, "i:a:")) != -1) {
          switch (pArg) {
              case 'i':
-                id = optarg; break;
+                idFlag = optarg; break;
              case 'a':
-                to = optarg; break;
+                aFlag = optarg; break;
              default:
-                printHowToUse(); break;
+                printHowaFlagUse(); break;
           }
      }  
   
-      if (id != NULL && strlen(id) != 11){
+      if (idFlag != NULL && strlen(idFlag) != 11){
           printf("Die Länge der Game-ID muss 11 Zeichen lang sein!\n");
           exit(0);
       }
-      if (id == NULL){
+      if (idFlag == NULL){
           printf("\nDie ID wurde nicht erfolgreich gesetzt!\n");
-          printHowToUse();
+          printHowaFlagUse();
           exit(0);
       }
   }
@@ -56,18 +54,27 @@ void parseArgs(int argc, char *argv[]){
 
 
 
+/* creates an array aFlag pass down the arguments aFlag performConnection
+ * 
+ * arg [0] is always the path itself
+ * arg [1..] are the arguments
+ * arg [last] is always NULL
+ */
+void startPerformConnection(){
+  char *connectionArgs[3];
+
+    connectionArgs [0] = "bin/performConnection";
+    connectionArgs [1] = idFlag;
+    connectionArgs [2] = NULL;
+
+  execv("bin/performConnection", connectionArgs);
+}
+
 int main(int argc, char *argv[]) { 
+
   parseArgs(argc, argv);
+  startPerformConnection();
 
-
-  char *help[3];
-  help [0] = "bin/performConnection";
-  help [1] = id;
-  help [2] = NULL;
-
-
-
-  execv("bin/performConnection", help);
   return 0;
 }
 
