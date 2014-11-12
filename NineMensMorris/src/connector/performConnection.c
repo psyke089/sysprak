@@ -206,12 +206,19 @@ int setNonblocking(int sock)
 }
 
 
+/*
+ * Ist für alle Fehlerbehandlungen verantwortlich
+ * 
+ * prüft words[1] und words[2]
+ */
+
 void errMessageRoutine(){
 
   if (strcmp(words[1],"Socket") == 0 && strcmp(words[2],"timeout") == 0){
     printf(RED "This message is redundant (took too long to answer)\n" RESET);
   }
- if (strcmp(words[1],"No") == 0 && strcmp(words[2], "free") == 0){
+
+  if (strcmp(words[1],"No") == 0 && strcmp(words[2], "free") == 0){
   printf(RED "This message is redundant (no free computer players).\n" RESET);
   }  
 }
@@ -284,9 +291,16 @@ int main(int argc, char const *argv[])
 
       sprintf(out_buf, "THINKING\n");
       send_message(le_socket, out_buf);
+
     }else if(strcmp(words[1], "OKTHINK") == 0){
       printf(YELLOW "!IM THINKING RIGHT NOW!");
       // here comes the forking action
+
+    }else if(strcmp(words[1], "WAIT") == 0){
+      
+      sprintf(out_buf, "OKWAIT\n");
+      send_message(le_socket, out_buf);
+
     }else{
 
       printf(YELLOW "!DONE!\n" RESET);
