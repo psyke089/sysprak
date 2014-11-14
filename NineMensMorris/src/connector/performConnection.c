@@ -10,6 +10,8 @@
 #include <errno.h>
 
 #include "../main.h"
+#include "../logger/logger.h"
+
 
 #define MSGL 4096
 
