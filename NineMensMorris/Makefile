@@ -13,6 +13,9 @@ performConnection: src/connector/performConnection.c
 
 pc: performConnection
 
+pcwlog:
+	$(CC) $(CFLAGS)  src/logger/logger.c src/connector/performConnection.c -o bin/performConnectionwLog
+
 clean:
 	rm -f src/*.o
 	rm -f src/*.a
