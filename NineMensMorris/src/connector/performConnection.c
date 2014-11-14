@@ -163,9 +163,11 @@ int get_message(int sock, char* buf)
       printf("recv returned unrecoverable error(errno=%d)\n", errno);
     }
     perror(RED "ERROR reading from socket" RESET);
+    //logPrnt('r','q',"ERROR reading from socket");
     exit(1);
   }
   printf("\nreceived %i bytes:\n", n);
+  ///@todo in logfile integrieren @tim
   return n;
 
 }
@@ -188,6 +190,7 @@ void send_message(int sock, char* buf)
   if (n < 0)
   {
     perror(RED "ERROR writing to socket" RESET);
+    // logPrnt('r','q',"ERROR writing to socket");
     exit(1);
   }
 
@@ -218,10 +221,13 @@ void errMessageRoutine(){
 
   if (strcmp(words[1],"Socket") == 0 && strcmp(words[2],"timeout") == 0){
     printf(RED "This message is redundant (took too long to answer)\n" RESET);
+    // logPrnt('r','e',"This message is redundant (no free computer players).\n");
+
   }
 
   if (strcmp(words[1],"No") == 0 && strcmp(words[2], "free") == 0){
-  printf(RED "This message is redundant (no free computer players).\n" RESET);
+    printf(RED "This message is redundant (no free computer players).\n" RESET);
+    // logPrnt('r','e',"This message is redundant (no free computer players).\n");
   }  
 }
 
@@ -286,16 +292,20 @@ int main(int argc, char const *argv[])
     }else if(strcmp(words[1], "YOU") == 0) {
 
       printf(YELLOW "!YOU!\n" RESET);
+      //logPrnt('y','s',"!YOU!\n");
 
     }else if(strcmp(words[1], "TOTAL") == 0) {
 
       printf(YELLOW "!TOTAL!\n" RESET);
+      //logPrnt('y','s',"!TOTAL!\n");
 
       sprintf(out_buf, "THINKING\n");
       send_message(le_socket, out_buf);
 
     }else if(strcmp(words[1], "OKTHINK") == 0){
       printf(YELLOW "!IM THINKING RIGHT NOW!");
+      //logPrnt('y','s',"IM THINKING RIGHT NOW!");
+
       // here comes the forking action
 
     }else if(strcmp(words[1], "WAIT") == 0){
@@ -306,6 +316,7 @@ int main(int argc, char const *argv[])
     }else{
 
       printf(YELLOW "!DONE!\n" RESET);
+      //logPrnt('y','s',"!DONE!\n");
       break;
 
     }
