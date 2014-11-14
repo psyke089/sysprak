@@ -1,14 +1,14 @@
 #include "main.h"
 
-char *idFlag = NULL, *aFlag = NULL;
+char *idFlag = NULL, *configFlag = NULL;
 
-void printHowaFlagUse (){
+void printHowToUse (){
   printf("\n"
          "NAME:                                              \n"
          "           client - Unser 'Nine Mens Morris' client\n"
          "OPTIONS:                                           \n"
          "          -i Game-ID (11 Zeichen lang)             \n"
-         "          -a PLACEHOLDER                           \n"
+         "          -c Configdatei (optional)                \n"
          "\n");
   exit(0);
 }
@@ -18,7 +18,7 @@ void printHowaFlagUse (){
  * ansonsten terminiert das Programm
  *
  * -i ist die Game-ID und muss genau 11 Zeichen lang sein (wird in idFlag abgespeichert)
- * -a ist ein Platzhalter                                 (wird in aFlag abgespeichert)
+ * -c ist für die optionale Config Datei              (wird in configFlag abgespeichert)
  */
 void parseArgs(int argc, char *argv[]){
 
@@ -29,14 +29,14 @@ void parseArgs(int argc, char *argv[]){
   else {
 
      int pArg; 
-     while ((pArg=getopt(argc, argv, "i:a:")) != -1) {
+     while ((pArg=getopt(argc, argv, "i:c:")) != -1) {
          switch (pArg) {
              case 'i':
                 idFlag = optarg; break;
              case 'a':
-                aFlag = optarg; break;
+                configFlag = optarg; break;
              default:
-                printHowaFlagUse(); break;
+                printHowToUse(); break;
           }
      }  
   
@@ -46,7 +46,7 @@ void parseArgs(int argc, char *argv[]){
       }
       if (idFlag == NULL){
           printf("\nDie ID wurde nicht erfolgreich gesetzt!\n");
-          printHowaFlagUse();
+          printHowToUse();
           exit(0);
       }
   }
@@ -54,26 +54,41 @@ void parseArgs(int argc, char *argv[]){
 
 
 
-/* creates an array aFlag pass down the arguments aFlag performConnection
- * 
- * arg [0] is always the path itself
- * arg [1..] are the arguments
- * arg [last] is always NULL
+/**
+ * forks into two processes
+ *
+ * child = Connector
+ * parent = Thinker
  */
-void startPerformConnection(){
-  char *connectionArgs[3];
 
-    connectionArgs [0] = "bin/performConnection";
-    connectionArgs [1] = idFlag;
-    connectionArgs [2] = NULL;
+void forkingAction(){
+  int pid = fork();
 
-  execv("bin/performConnection", connectionArgs);
+  switch (pid){
+      case -1:
+        perror(RED "Failed to fork in main.c @ forkingAction: " RESET);
+        exit(0);
+      break;
+
+      case 0:  //child
+        // start Connection here
+      break;
+
+      default: // parent
+        // start Thinker here
+
+        waitpid(pid, NULL, 0);
+        exit(0);
+      break;
+
+  } 
 }
+
+
 
 int main(int argc, char *argv[]) { 
 
   parseArgs(argc, argv);
-  startPerformConnection();
 
   return 0;
 }
