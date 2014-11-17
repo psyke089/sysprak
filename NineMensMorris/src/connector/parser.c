@@ -78,6 +78,10 @@ void parseMessages(int sock)
     parseSingleMessage(in_buf);
 
     switch (*words[0]) {
+      
+      /**
+       * G A M E   L O G I C
+       */
       case '+' :
         
         if(strcmp(words[1], "WAIT\n") == 0 || 
@@ -150,9 +154,11 @@ void parseMessages(int sock)
           //logPrnt('y','s',"...out of options.\n");
 
         }
-
         break;
 
+      /**
+       * E R R O R   H A N D L I N G
+       */
       case '-' :
         if(strcmp(words[2], "timeout") == 0){
 
