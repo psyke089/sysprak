@@ -42,14 +42,16 @@ void clear_shm(shm_struct *shm_s){
     memset(shm_s, 0, SHMSZ);
 }
 
-void delete_shm(int shm_id){
-   if(shmctl(shm_id, IPC_RMID, NULL) == -1){
+void delete_shm(int shm_id, shm_struct *shm_s){
+   
+   if(shmdt(shm_s) != 0){
+     perror ("Could not detach memory segment @ shmManager\n");
+     exit(0);
+   }
+
+
+   if(shmctl(shm_id, IPC_RMID, NULL) == -1) {
      perror("Could not destroy memory segment @ shmManager.c \n");
      exit(0);
    }
-}
-
-
-int main(){
- return 1;
 }

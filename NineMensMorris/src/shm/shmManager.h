@@ -79,8 +79,9 @@ shm_struct* attach_shm(int shm_id);
 void clear_shm(shm_struct *shm_s);
 
 /**
- * sends IPC_RIMD - the segment it to delete 
+ * detaches shared memory by id
+ * sends IPC_RIMD by pointer - the segment it to delete 
  */
 
-void delete_shm(int shm_id);
+void delete_shm(int shm_id,  shm_struct *shm_s);
 

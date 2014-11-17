@@ -24,10 +24,18 @@ connector: 	src/main.h\
 pcwlog: src/logger/logger.c\
 				src/connector/performConnection.c
 
-	$(CC) $(CFLAGS) -o bin/performConnectionwLog \ 
+	$(CC) $(CFLAGS) -o bin/performConnectionwLog \
 		src/logger/logger.c \
 		src/connector/performConnection.c
 
+shmmanager: src/shm/shmManager.c\
+				    src/shm/shmManager.h\
+						src/main.h\
+						src/main.c
+
+	$(CC) $(CFLAGS) -o bin/clientwSHM \
+		src/shm/shmManager.c \
+		src/main.c
 
 clean:
 	rm -f src/*.o

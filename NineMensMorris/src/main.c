@@ -65,8 +65,12 @@ void parseArgs(int argc, char *argv[]){
 
 void forkingAction(){
   int pid = fork();
-  int shm_id;
-  shm_struct* shm_s;
+  int shm_id_parent;
+  shm_struct* shm_s_parent;
+ 
+// int shm_id_child;
+ 
+ // shm_struct* shm_s_child;
 
 
   switch (pid){
@@ -83,11 +87,11 @@ void forkingAction(){
         // start Thinker here
 
         
-        shm_id = create_shm();
+        shm_id_parent = create_shm();
 
-        shm_s = attach_shm(shm_id);
+        shm_s_parent = attach_shm(shm_id_parent);
 
-        clear_shm(shm_s);
+        clear_shm(shm_s_parent);
 
         waitpid(pid, NULL, 0);
         exit(0);
