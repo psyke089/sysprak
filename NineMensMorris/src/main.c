@@ -1,5 +1,6 @@
 #include "main.h"
 
+
 char *idFlag = NULL, *configFlag = NULL;
 
 void printHowToUse (){
@@ -33,7 +34,7 @@ void parseArgs(int argc, char *argv[]){
          switch (pArg) {
              case 'i':
                 idFlag = optarg; break;
-             case 'a':
+             case 'c':
                 configFlag = optarg; break;
              default:
                 printHowToUse(); break;
@@ -70,12 +71,23 @@ void forkingAction(){
         exit(0);
       break;
 
-      case 0:  //child
+      case 0:  //child =^ sends 
         // start Connection here
       break;
 
-      default: // parent
+      default: // parent =^ recieves
         // start Thinker here
+        
+        int shm_id = create_shm();
+
+        shm_struct* shm_s = attach_shm(shm_id);
+
+        clear_shm (shm_s);
+
+        //do something here
+
+        //end it
+
 
         waitpid(pid, NULL, 0);
         exit(0);

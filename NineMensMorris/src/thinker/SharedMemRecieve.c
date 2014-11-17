@@ -10,12 +10,14 @@
 // http://www.lainoox.com/tag/shmget-example/
 // http://beej.us/guide/bgipc/output/html/multipage/shm.html
  
-main(int argc, char **argv)
+int main(int argc, char **argv)
 {
-  char c, tmp;
+ // char c;
+  char tmp;
   int shmid;
   key_t key;
-  char *shm, *s;  
+  char *shm;
+  //char *s;  
  
     /*
      * Shared memory segment at 1234
@@ -43,7 +45,7 @@ main(int argc, char **argv)
    * Zero out memory segment
    */
   memset(shm,0,SHMSZ);
-  s = shm;
+ // s = shm;
  
   /*
   * Read user input from client code and tell
@@ -61,5 +63,8 @@ main(int argc, char **argv)
   if(shmdt(shm) != 0)
     fprintf(stderr, "Could not close memory segment.\n");
  
+  if(shmctl(shmid, IPC_RMID, NULL) == -1){
+    fprintf(stderr, "Could not destroy memory segment. \n");
+  }
   return 0;
 }

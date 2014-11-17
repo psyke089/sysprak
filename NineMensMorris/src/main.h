@@ -8,6 +8,8 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include "thinker/thinker.h"
+
 
 /**
  * Config
@@ -17,6 +19,7 @@
 #define PORTNUMBER 1357
 #define HOSTNAME "sysprak.priv.lab.nm.ifi.lmu.de"
 #define CVERSION 1.0
+
 
 /**
  * Farben

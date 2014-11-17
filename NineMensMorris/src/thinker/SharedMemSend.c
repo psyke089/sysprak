@@ -7,11 +7,12 @@
 
 #define SHMSZ     1024
 
-main()
+int main()
 {
   int shmid;
   key_t key;
-  char *shm, *s;
+  char *shm;
+/*  char *s;*/
 
   /*
   * We need to get the segment named
@@ -39,7 +40,7 @@ main()
   * Zero out memory segment
   */
   memset(shm,0,SHMSZ);
-  s = shm;
+/*  s = shm;*/
 
   /*
   * Client writes user input character to memory
