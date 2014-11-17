@@ -54,7 +54,10 @@ void parseArgs(int argc, char *argv[]){
   }
 }
 
-
+/**
+ * prettyPrint for shm_struct
+ *
+ **/
 void read_shm_struct(shm_struct* shm_str){
   printf (BLUE "\nRecieved =>> \n"
                "gameName    = %s\n"
@@ -68,27 +71,19 @@ void read_shm_struct(shm_struct* shm_str){
            shm_str -> c_pid,
            shm_str -> p_pid);
 
-  printf (BLUE "\nPlayer 1 =>> \n"
-               "playerID    = %i\n"
-               "playerName  = %s\n"
-               "isReady     = %i\n"
-               "isLoggedIn  = %i\n" RESET,
-               shm_str -> p_structs[0].playerID,
-               shm_str -> p_structs[0].playerName,
-               shm_str -> p_structs[0].isReady,
-               shm_str -> p_structs[0].isLoggedIn);
+  for (int i = 0; i < shm_str -> playerCount; i++){
 
-
-  printf (BLUE "\nPlayer 2 =>> \n"
-               "playerID    = %i\n"
-               "playerName  = %s\n"
-               "isReady     = %i\n"
-               "isLoggedIn  = %i\n" RESET,
-               shm_str -> p_structs[1].playerID,
-               shm_str -> p_structs[1].playerName,
-               shm_str -> p_structs[1].isReady,
-               shm_str -> p_structs[1].isLoggedIn);
-
+       printf (BLUE "\nPlayer %i =>> \n"
+                    "playerID    = %i\n"
+                    "playerName  = %s\n"
+                    "isReady     = %i\n"
+                    "isLoggedIn  = %i\n" RESET,
+                     (i+1),
+                     shm_str -> p_structs[i].playerID,
+                     shm_str -> p_structs[i].playerName,
+                     shm_str -> p_structs[i].isReady,
+                     shm_str -> p_structs[i].isLoggedIn);
+ }
 }
 
 
@@ -144,7 +139,7 @@ void forkingAction(){
         shm_str_child -> p_structs[1] = player2;
         shm_str_child -> c_pid        = getpid();
         shm_str_child -> p_pid        = getppid();
-        printf(GREEN "Child set filled the shm_struct!" RESET);
+        printf(GREEN "Child filled the shm_struct!" RESET);
 
         detach_shm(shm_str_child);
         exit(0);
@@ -161,7 +156,7 @@ void forkingAction(){
         clear_shm(shm_str_parent);
 
         waitpid(pid, NULL, 0);
-        
+
         read_shm_struct(shm_str_parent);
         
         detach_shm(shm_str_parent);
