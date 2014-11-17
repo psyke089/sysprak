@@ -1,4 +1,6 @@
-#include <string.h>
+#include "../main.h"
+#include "../logger/logger.h"
+
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <netinet/in.h>
@@ -8,9 +10,6 @@
 #include <sys/ioctl.h>
 #include <sys/select.h>
 #include <errno.h>
-
-#include "../main.h"
-#include "../logger/logger.h"
 
 #define MSGL 4096
 
