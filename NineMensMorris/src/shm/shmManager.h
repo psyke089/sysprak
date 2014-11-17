@@ -51,10 +51,19 @@ typedef struct{
 /**
  * Key is IPC_PRIVATE 
  * Size is SHMSZ
- * 
+ * Permissions are 0666
+ *
  * returns the shm_id
  */
 int create_shm();
+
+/**
+ * Key is IPC_PRIVATE 
+ * Size is SHMSZ
+ * 
+ * returns the shm_id
+ */
+int locate_shm();
 
 /**
  * returns the attached struct

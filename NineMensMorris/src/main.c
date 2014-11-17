@@ -1,4 +1,5 @@
 #include "main.h"
+#include "shm/shmManager.h"
 
 
 char *idFlag = NULL, *configFlag = NULL;
@@ -64,6 +65,9 @@ void parseArgs(int argc, char *argv[]){
 
 void forkingAction(){
   int pid = fork();
+  int shm_id;
+  shm_struct* shm_s;
+
 
   switch (pid){
       case -1:
@@ -77,17 +81,13 @@ void forkingAction(){
 
       default: // parent =^ recieves
         // start Thinker here
+
         
-        int shm_id = create_shm();
+        shm_id = create_shm();
 
-        shm_struct* shm_s = attach_shm(shm_id);
+        shm_s = attach_shm(shm_id);
 
-        clear_shm (shm_s);
-
-        //do something here
-
-        //end it
-
+        clear_shm(shm_s);
 
         waitpid(pid, NULL, 0);
         exit(0);
