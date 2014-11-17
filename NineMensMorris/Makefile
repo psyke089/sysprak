@@ -2,16 +2,14 @@ CFLAGS = -g -Wall -Werror -std=c99
 OUT = -o bin/client
 CC = gcc
 
-all: client performConnection clean
+all: client clean
 
 
-client:	src/main.c
+client: src/main.h src/main.c
 	$(CC) $(CFLAGS) $(OUT) src/main.c 
 
-performConnection: src/connector/performConnection.c
-	$(CC) $(CFLAGS) -o bin/performConnection src/connector/performConnection.c
-
-pc: performConnection
+connector: src/main.h src/connector/connector.h src/connector/connector.c src/connector/performConnection.c src/connector/parser.c
+	$(CC) $(CFLAGS) -o bin/connector src/connector/connector.c src/connector/performConnection.c src/connector/parser.c
 
 pcwlog:
 	$(CC) $(CFLAGS)  src/logger/logger.c src/connector/performConnection.c -o bin/performConnectionwLog
