@@ -68,9 +68,9 @@ void forkingAction(){
   int shm_id_parent;
   shm_struct* shm_s_parent;
  
-// int shm_id_child;
+ int shm_id_child;
  
- // shm_struct* shm_s_child;
+ shm_struct* shm_s_child;
 
 
   switch (pid){
@@ -81,6 +81,15 @@ void forkingAction(){
 
       case 0:  //child =^ sends 
         // start Connection here
+        shm_id_child = locate_shm();
+
+        shm_s_child = attach_shm(shm_id_child);
+
+        clear_shm(shm_s_child);
+
+        // do something
+
+
       break;
 
       default: // parent =^ recieves
@@ -92,6 +101,9 @@ void forkingAction(){
         shm_s_parent = attach_shm(shm_id_parent);
 
         clear_shm(shm_s_parent);
+
+        // do something
+
 
         waitpid(pid, NULL, 0);
         exit(0);

@@ -4,11 +4,6 @@ CC = gcc
 
 all: client clean
 
-
-client: src/main.h src/main.c
-	$(CC) $(CFLAGS) $(OUT) src/main.c 
-
-
 connector: 	src/main.h\
 						src/connector/connector.h\
 						src/connector/connector.c\
@@ -28,13 +23,13 @@ pcwlog: src/logger/logger.c\
 		src/logger/logger.c \
 		src/connector/performConnection.c
 
-shmmanager: src/shm/shmManager.c\
+client: src/shm/shmManager.c\
 				    src/shm/shmManager.h\
 						src/main.h\
 						src/main.c
 
-	$(CC) $(CFLAGS) -o bin/clientwSHM \
-		src/shm/shmManager.c \
+	$(CC) $(CFLAGS) $(OUT)\
+		src/shm/shmManager.c\
 		src/main.c
 
 clean:
