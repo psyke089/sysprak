@@ -83,41 +83,39 @@ void forkingAction(){
       case 0:  //child =^ sends 
         // start Connection here
 
-        printf("Child is here!\n");
         shm_id_child = locate_shm();
-
         shm_s_child = attach_shm(shm_id_child);
-        printf("Child attached shm!\n");
-     //   clear_shm(shm_s_child);
 
-        (*shm_s_child).playerCount = 2;
+        printf("Child attached shm with id = %i !\n", shm_id_child);
 
-        sleep(1);
-        printf("Child sleeping!\n");
+        clear_shm(shm_s_child);
+
+        (*shm_s_child).playerCount = 1;
+
+        detach_shm(shm_s_child);
 
         exit(0);
 
       break;
 
-      default: // parent =^ recieves
+      default: // parent =^ recieves data
         // start Thinker here
 
-        printf("Parent is here!\n");
         shm_id_parent = create_shm();
 
         shm_s_parent = attach_shm(shm_id_parent);
-        printf("Parent created shm!\n");
-//        clear_shm(shm_s_parent);
-        
-        printf("Your playerID is %i \n", (*shm_s_parent).playerCount);
-        // do something
 
-        printf("Parent sleeping!\n");
-        sleep(1);
+        printf("Parent created shm with id = %i !\n", shm_id_parent);
+        
+        clear_shm(shm_s_parent);
 
         waitpid(pid, NULL, 0);
 
-        delete_shm(shm_id_parent, shm_s_parent);
+        printf("Your playerCount is %i \n", (*shm_s_parent).playerCount);
+        
+        detach_shm(shm_s_parent);
+        delete_shm(shm_id_parent);
+
         exit(0);
       break;
 
@@ -129,7 +127,8 @@ void forkingAction(){
 int main(int argc, char *argv[]) { 
 
  // parseArgs(argc, argv);
- forkingAction();
+  forkingAction();
+  
   return 0;
 }
 

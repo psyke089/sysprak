@@ -5,6 +5,8 @@
 #include <stdbool.h>
 #include <string.h>
 
+#include <unistd.h>
+
 
 /**
  * Config
@@ -18,7 +20,6 @@
  * Player Struct
  *
  */
-
 typedef struct{
   int playerID;
   char playerName[NAMELENGTH];
@@ -31,7 +32,6 @@ typedef struct{
  * Shared Memory Struct
  *
  */
-
  typedef struct{
   char gameName[NAMELENGTH];
   char gameID[11];
@@ -43,13 +43,7 @@ typedef struct{
 
 
 /**
- * Methods
- * 
- */
-
-
-/**
- * Key is IPC_PRIVATE 
+ * Key is IPC_PRIVATE (currently magic number)
  * Size is SHMSZ
  * Permissions are 0666
  *
@@ -58,7 +52,7 @@ typedef struct{
 int create_shm();
 
 /**
- * Key is IPC_PRIVATE 
+ * Key is IPC_PRIVATE (currently magic number)
  * Size is SHMSZ
  * 
  * returns the shm_id
@@ -69,19 +63,20 @@ int locate_shm();
  * returns the attached struct
  *
  */
-
 shm_struct* attach_shm(int shm_id);
 
 /**
  * fills the struct with zeros
  */
-
 void clear_shm(shm_struct *shm_s);
 
 /**
  * detaches shared memory by id
+ */
+void detach_shm(shm_struct *shm_s);
+
+/**
  * sends IPC_RIMD by pointer - the segment it to delete 
  */
-
-void delete_shm(int shm_id,  shm_struct *shm_s);
+void delete_shm(int shm_id);
 
