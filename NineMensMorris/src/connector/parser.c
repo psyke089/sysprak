@@ -80,7 +80,15 @@ void parseMessages(int sock)
     switch (*words[0]) {
       case '+' :
         
-        if(strcmp(words[1], "MNM") == 0) {
+        if(strcmp(words[1], "WAIT\n") == 0 || 
+          strcmp(words[8], "WAIT\n") == 0){
+          
+          printf(YELLOW "waiting...\n" RESET);
+
+          sprintf(out_buf, "OKWAIT\n");
+          send_message(sock, out_buf);
+
+        }else if(strcmp(words[1], "MNM") == 0) {
 
           sprintf(out_buf, "VERSION %0.1f\n", CVERSION);
           send_message(sock, out_buf);
@@ -116,18 +124,30 @@ void parseMessages(int sock)
           printf(YELLOW "...thinking...\n" RESET);
           //logPrnt('y','s',"...thinking...\n");
 
+          sprintf(out_buf, "PLAY A0\n");
+          send_message(sock, out_buf);
           // here comes the forking action
 
-        }else if(strcmp(words[1], "WAIT\n") == 0){
+        }else if(strcmp(words[1], "MOVEOK\n") == 0){
           
-          sprintf(out_buf, "OKWAIT\n");
-          send_message(sock, out_buf);
+          printf(YELLOW "Move " GREEN "VALID...\n" RESET);
+
+        }if(strcmp(words[1], "GAMEOVER\n") == 0){
+          
+          printf(YELLOW "Game Over.\n" RESET);
+
+          bzero(in_buf, MSGL);
+          get_message(sock, in_buf);
+          parseSingleMessage(in_buf);
+
+        }else if(strcmp(words[1], "QUIT\n") == 0){
+          
+          printf(YELLOW "...connection closed.\n" RESET);
 
         }else{
 
           printf(YELLOW "...out of options.\n" RESET);
           //logPrnt('y','s',"...out of options.\n");
-          break;
 
         }
 
@@ -135,7 +155,21 @@ void parseMessages(int sock)
 
       case '-' :
         if(strcmp(words[2], "timeout") == 0){
+
           printf(YELLOW "...Socket timeout.\n" RESET);
+
+        }else if(strcmp(words[1], "computer") == 0){
+          
+          printf(YELLOW "...no free seat.\n" RESET);
+
+        }else if(strcmp(words[1], "Destination") == 0){
+          
+          printf(YELLOW "Move " RED "INVALID.\n" RESET);
+
+        }else{
+          
+          printf(YELLOW "Unexpected server error.\n" RESET);
+
         }
         cont = 0;
         break;
