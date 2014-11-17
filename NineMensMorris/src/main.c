@@ -55,6 +55,43 @@ void parseArgs(int argc, char *argv[]){
 }
 
 
+void read_shm_struct(shm_struct* shm_str){
+  printf (BLUE "\nRecieved =>> \n"
+               "gameName    = %s\n"
+               "gameID      = %s\n"
+               "playerCount = %i\n"
+               "childPID    = %i\n"
+               "parentPID   = %i\n" RESET,
+           shm_str -> gameName,
+           shm_str -> gameID,
+           shm_str -> playerCount,
+           shm_str -> c_pid,
+           shm_str -> p_pid);
+
+  printf (BLUE "\nPlayer 1 =>> \n"
+               "playerID    = %i\n"
+               "playerName  = %s\n"
+               "isReady     = %i\n"
+               "isLoggedIn  = %i\n" RESET,
+               shm_str -> p_structs[0].playerID,
+               shm_str -> p_structs[0].playerName,
+               shm_str -> p_structs[0].isReady,
+               shm_str -> p_structs[0].isLoggedIn);
+
+
+  printf (BLUE "\nPlayer 2 =>> \n"
+               "playerID    = %i\n"
+               "playerName  = %s\n"
+               "isReady     = %i\n"
+               "isLoggedIn  = %i\n" RESET,
+               shm_str -> p_structs[1].playerID,
+               shm_str -> p_structs[1].playerName,
+               shm_str -> p_structs[1].isReady,
+               shm_str -> p_structs[1].isLoggedIn);
+
+}
+
+
 
 /**
  * forks into two processes
@@ -64,14 +101,14 @@ void parseArgs(int argc, char *argv[]){
  */
 
 void forkingAction(){
-  int pid = fork();
-
+ 
+ int pid = fork();
 
  int shm_id_parent;
- shm_struct* shm_s_parent;
+ shm_struct* shm_str_parent;
 
  int shm_id_child;
- shm_struct* shm_s_child;
+ shm_struct* shm_str_child;
 
 
   switch (pid){
@@ -80,42 +117,55 @@ void forkingAction(){
         exit(0);
       break;
 
-      case 0:  //child =^ sends 
-        // start Connection here
+      case 0:  //child =^ sends || start Connection + Parser here
 
         shm_id_child = locate_shm();
-        shm_s_child = attach_shm(shm_id_child);
+        shm_str_child = attach_shm(shm_id_child);
+        printf(GREEN "Child attached shm with id = %i!\n" RESET, shm_id_child);
 
-        printf("Child attached shm with id = %i !\n", shm_id_child);
+        clear_shm(shm_str_child);
 
-        clear_shm(shm_s_child);
+        player_struct player1;
+        player1.playerID   = 15; 
+        strcpy(player1.playerName, "Dummy Nr.1");
+        player1.isReady    = true;
+        player1.isLoggedIn = true;
 
-        (*shm_s_child).playerCount = 1;
+        player_struct player2;
+        player2.playerID   = 20; 
+        strcpy(player2.playerName, "Dummy Nr.2");
+        player2.isReady    = false;
+        player2.isLoggedIn = true;
 
-        detach_shm(shm_s_child);
+        strcpy(shm_str_child -> gameName, "Testgame Nr.1");
+        strcpy(shm_str_child -> gameID, "E345Tg&a§dx");
+        shm_str_child -> playerCount  = 2;
+        shm_str_child -> p_structs[0] = player1; 
+        shm_str_child -> p_structs[1] = player2;
+        shm_str_child -> c_pid        = getpid();
+        shm_str_child -> p_pid        = getppid();
+        printf(GREEN "Child set filled the shm_struct!" RESET);
 
+        detach_shm(shm_str_child);
         exit(0);
 
       break;
 
-      default: // parent =^ recieves data
-        // start Thinker here
+      default: // parent =^ recieves data || start Thinker here
 
         shm_id_parent = create_shm();
+        shm_str_parent = attach_shm(shm_id_parent);
 
-        shm_s_parent = attach_shm(shm_id_parent);
-
-        printf("Parent created shm with id = %i !\n", shm_id_parent);
+        printf(BLUE "Parent created shm with id = %i!\n" RESET, shm_id_parent);
         
-        clear_shm(shm_s_parent);
+        clear_shm(shm_str_parent);
 
         waitpid(pid, NULL, 0);
-
-        printf("Your playerCount is %i \n", (*shm_s_parent).playerCount);
         
-        detach_shm(shm_s_parent);
+        read_shm_struct(shm_str_parent);
+        
+        detach_shm(shm_str_parent);
         delete_shm(shm_id_parent);
-
         exit(0);
       break;
 

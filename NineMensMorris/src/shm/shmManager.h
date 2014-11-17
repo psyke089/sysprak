@@ -71,12 +71,12 @@ shm_struct* attach_shm(int shm_id);
 void clear_shm(shm_struct *shm_s);
 
 /**
- * detaches shared memory by id
+ * detaches shared memory by pointer
  */
 void detach_shm(shm_struct *shm_s);
 
 /**
- * sends IPC_RIMD by pointer - the segment it to delete 
+ * sends IPC_RIMD by id - the segment it to delete 
  */
 void delete_shm(int shm_id);
 
