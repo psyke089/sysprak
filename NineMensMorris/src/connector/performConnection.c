@@ -114,7 +114,6 @@ void send_message(int sock, char* buf)
 
   int n;
   printf("<= : %s\n", buf);
-  //n = write(sock, buf, MSGL);
   int len = strlen(buf);
   n = send(sock, buf, len, 0);
   if (n < 0)

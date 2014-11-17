@@ -1,5 +1,5 @@
 #include "main.h"
-
+#include "thinker/thinker.h"
 
 char *idFlag = NULL, *configFlag = NULL;
 
