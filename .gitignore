@@ -6,3 +6,4 @@ NineMensMorris/bin/*
 *.o
 *.a
 *.exe
+.~lock.*
