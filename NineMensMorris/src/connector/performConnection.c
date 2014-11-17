@@ -1,22 +1,4 @@
-#include <string.h>
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <netinet/in.h>
-#include <strings.h>
-#include <arpa/inet.h>
-#include <netdb.h>
-#include <sys/ioctl.h>
-#include <sys/select.h>
-#include <errno.h>
-
-#include "../main.h"
-#include "../logger/logger.h"
-
-
-#define MSGL 4096
-
-
-char words[32][64];
+#include "connector.h"
 
 /**
  *  Löst HOSTNAME in eine Ip auf und
@@ -90,58 +72,6 @@ void connect_to_socket(int sock, struct sockaddr_in dest)
 }
 
 /**
- * parseServerMsg parsed die Nachricht die vom Server kommt
- * sie benutzt das Leerzeichen als delimiter und speichert dir Teile als Array
- *
- * aktuelle maximale Wortlänge sind 64 Zeichen
- *
- * buf: die zu parsende Nachricht
- */
-
-void parseServerMsg(char *buf){
-
-  //char words[32][64];
-  char word [64];
-  char buf2[MSGL];
-  int wordLength = 0;
-  int wordCount = 0;
-
-  for (int i = 0; i < 32; ++i)
-  {
-    bzero(words[i], 64);
-  }
-
-  sprintf(buf2, "%s", buf);
-
-  while ( sscanf(buf, "%63[^ ]%n", word, &wordLength) == 1 ){
-
-    sprintf(words[wordCount], "%s", word);
-    //printf("parsedMsg Nr.%i\t::  \"%s\"\n", wordCount, word);
-    ++wordCount;
-
-    buf += wordLength;
-    if ( *buf != ' ' ){
-      break;
-    }
-    ++buf;
-
-  }
-
-  switch (*words[0]) {
-    case '+' :
-      printf("=> : " GREEN);
-      break;
-    case '-' :
-      printf("=> : " RED);
-      break;
-    default: break;
-  }
-
-  printf("%s" RESET, buf2);
-
-}
-
-/**
  *  Liest von einem Socket.
  *
  *  sock: Socket filedescriptor
@@ -197,133 +127,26 @@ void send_message(int sock, char* buf)
 }
 
 /**
- *  Setzt einen Socket in nonblocking mode.
- *
- *  sock: S
+ * Stellt die Verbindung her und startet den parser.
  */
 
-int setNonblocking(int sock)
-{
-  int flags;
-  if (-1 == (flags = fcntl(sock, F_GETFL, 0)))
-    flags = 0;
-  return fcntl(sock, F_SETFL, flags | O_NONBLOCK);
-}
-
-
-/*
- * Ist für alle Fehlerbehandlungen verantwortlich
- * 
- * prüft words[1] und words[2]
- */
-
-void errMessageRoutine(){
-
-  if (strcmp(words[1],"Socket") == 0 && strcmp(words[2],"timeout") == 0){
-    printf(RED "This message is redundant (took too long to answer)\n" RESET);
-    // logPrnt('r','e',"This message is redundant (no free computer players).\n");
-
-  }
-
-  if (strcmp(words[1],"No") == 0 && strcmp(words[2], "free") == 0){
-    printf(RED "This message is redundant (no free computer players).\n" RESET);
-    // logPrnt('r','e',"This message is redundant (no free computer players).\n");
-  }  
-}
-
-int main(int argc, char const *argv[])
+int performConnection()
 {
 
   int le_socket;
   struct sockaddr_in server_addr;
 
-  char in_buf[MSGL];
-  char out_buf[MSGL];
-
-  bzero(in_buf, MSGL);
-  bzero(out_buf, MSGL);
-
-
 
   printf("\n");
 
   server_addr = init_server_addr();
-
   le_socket = create_socket();
-
   connect_to_socket(le_socket, server_addr);
 
-//  setNonblocking(le_socket);
 
-  printf("\n");
+  parseMessages(le_socket);
 
-
-  while(1)
-  {
-
-    bzero(in_buf, MSGL);
-    get_message(le_socket, in_buf);
-    parseServerMsg(in_buf);
-
-    if(strcmp(words[0], "-") == 0) {
-      errMessageRoutine();
-    //  printf(RED "negative response from server\n" RESET);
-      break;
-
-    }else if(strcmp(words[1], "MNM") == 0) {
-
-      sprintf(out_buf, "VERSION %0.1f\n", CVERSION);
-      send_message(le_socket, out_buf);
-
-    }else if(strcmp(words[1], "Client") == 0) {
-
-      sprintf(out_buf, "ID %s\n", argv[1]);
-      send_message(le_socket, out_buf);
-
-    }else if(strcmp(words[1], "PLAYING") == 0) {
-
-      bzero(in_buf, MSGL);
-      get_message(le_socket, in_buf);
-      parseServerMsg(in_buf);
-
-      sprintf(out_buf, "PLAYER\n");
-      send_message(le_socket, out_buf);
-
-    }else if(strcmp(words[1], "YOU") == 0) {
-
-      printf(YELLOW "!YOU!\n" RESET);
-      //logPrnt('y','s',"!YOU!\n");
-
-    }else if(strcmp(words[1], "TOTAL") == 0) {
-
-      printf(YELLOW "!TOTAL!\n" RESET);
-      //logPrnt('y','s',"!TOTAL!\n");
-
-      sprintf(out_buf, "THINKING\n");
-      send_message(le_socket, out_buf);
-
-    }else if(strcmp(words[1], "OKTHINK") == 0){
-      printf(YELLOW "!IM THINKING RIGHT NOW!");
-      //logPrnt('y','s',"IM THINKING RIGHT NOW!");
-
-      // here comes the forking action
-
-    }else if(strcmp(words[1], "WAIT") == 0){
-      
-      sprintf(out_buf, "OKWAIT\n");
-      send_message(le_socket, out_buf);
-
-    }else{
-
-      printf(YELLOW "!DONE!\n" RESET);
-      //logPrnt('y','s',"!DONE!\n");
-      break;
-
-    }
-
-  }
 
   close(le_socket);
-
   return 0;
 }
