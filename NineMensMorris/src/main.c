@@ -65,11 +65,12 @@ void parseArgs(int argc, char *argv[]){
 
 void forkingAction(){
   int pid = fork();
-  int shm_id_parent;
-  shm_struct* shm_s_parent;
- 
+
+
+ int shm_id_parent;
+ shm_struct* shm_s_parent;
+
  int shm_id_child;
- 
  shm_struct* shm_s_child;
 
 
@@ -81,31 +82,42 @@ void forkingAction(){
 
       case 0:  //child =^ sends 
         // start Connection here
+
+        printf("Child is here!\n");
         shm_id_child = locate_shm();
 
         shm_s_child = attach_shm(shm_id_child);
+        printf("Child attached shm!\n");
+     //   clear_shm(shm_s_child);
 
-        clear_shm(shm_s_child);
+        (*shm_s_child).playerCount = 2;
 
-        // do something
+        sleep(1);
+        printf("Child sleeping!\n");
 
+        exit(0);
 
       break;
 
       default: // parent =^ recieves
         // start Thinker here
 
-        
+        printf("Parent is here!\n");
         shm_id_parent = create_shm();
 
         shm_s_parent = attach_shm(shm_id_parent);
-
-        clear_shm(shm_s_parent);
-
+        printf("Parent created shm!\n");
+//        clear_shm(shm_s_parent);
+        
+        printf("Your playerID is %i \n", (*shm_s_parent).playerCount);
         // do something
 
+        printf("Parent sleeping!\n");
+        sleep(1);
 
         waitpid(pid, NULL, 0);
+
+        delete_shm(shm_id_parent, shm_s_parent);
         exit(0);
       break;
 
@@ -116,8 +128,8 @@ void forkingAction(){
 
 int main(int argc, char *argv[]) { 
 
-  parseArgs(argc, argv);
-
+ // parseArgs(argc, argv);
+ forkingAction();
   return 0;
 }
 
