@@ -14,6 +14,6 @@ typedef struct {
   int portnummer;
   char artdesspiels[MSGLEN];
   int loglevel;
-}conf;
+}configParams;
 
-conf readconfig(FILE * file);
+configParams readConfig(FILE * file);

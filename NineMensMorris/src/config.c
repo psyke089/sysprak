@@ -4,39 +4,38 @@ char delimiter[] = " \n";
 char *ptr;
 char line[MSGLEN];
 
-conf readconfig(FILE* file){
+configParams readConfig(FILE* file){
 
-  conf configtemp;
+  configParams configTemp;
 
   while (fgets(line, MSGLEN, file)) {
       ptr = strtok(line, delimiter);
       if(strcmp("hostname",ptr) == 0){
         ptr = strtok(NULL, delimiter);
         ptr = strtok(NULL, delimiter);
-        strcpy(configtemp.hostname,ptr);
+        strcpy(configTemp.hostname,ptr);
       }
 
       if(strcmp("portnummer",ptr) == 0){
         ptr = strtok(NULL, delimiter);
         ptr = strtok(NULL, delimiter);
-        configtemp.portnummer = atof(ptr);
+        configTemp.portnummer = atof(ptr);
       }
 
       if(strcmp("artdesspiels",ptr) == 0){
         ptr = strtok(NULL, delimiter);
         ptr = strtok(NULL, delimiter);  
-        strcpy(configtemp.artdesspiels,ptr);
+        strcpy(configTemp.artdesspiels,ptr);
       }
 
       if(strcmp("portnummer",ptr) == 0){
         ptr = strtok(NULL, delimiter);
         ptr = strtok(NULL, delimiter);  
-        configtemp.loglevel = atof(ptr);
+        configTemp.loglevel = atof(ptr);
       }
 
   }
 
-  return configtemp;
-	//exit(0);
+  return configTemp;
 }
 

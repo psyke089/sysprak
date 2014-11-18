@@ -2,7 +2,7 @@
 #include "shm/shmManager.h"
 #include "config.h"
 
-char *idFlag = NULL, *configFlag = NULL, path[100];
+char *idFlag = NULL, *configFlag = NULL;
 
 void printHowToUse (){
   printf("\n"
@@ -10,7 +10,7 @@ void printHowToUse (){
          "           client - Unser 'Nine Mens Morris' client\n"
          "OPTIONS:                                           \n"
          "          -i Game-ID (11 Zeichen lang)             \n"
-         "          -c Configdatei (optional)                \n"
+         "          -c Configdateipfad (optional)            \n"
          "\n");
   exit(0);
 }
@@ -20,17 +20,17 @@ void printHowToUse (){
  * ansonsten terminiert das Programm
  *
  * -i ist die Game-ID und muss genau 11 Zeichen lang sein (wird in idFlag abgespeichert)
- * -c ist ein Platzhalter                                 (wird in aFlag abgespeichert)
+ * -c ist ein Platzhalter                                 (wird in configFlag abgespeichert)
  */
-void parseArgs(int argc, char *argv[]){
+configParams parseArgs(int argc, char *argv[]){
 
 FILE* file;
-
-conf config;
+char path[100];
+configParams configTemp;
 
   if (argc <= 1){
     printf("\nZu wenig Argumente...\n");
-    exit(0);
+    printHowToUse();
   }
   else {
 
@@ -53,28 +53,26 @@ conf config;
   
       if (idFlag != NULL && strlen(idFlag) != 11){
           printf("Die Länge der Game-ID muss 11 Zeichen lang sein!\n");
-          //exit(0);
+          printHowToUse();
       }
       if (idFlag == NULL){
           printf("\nDie ID wurde nicht erfolgreich gesetzt!\n");
-          //printHowToUse();
-          //exit(0);
-      }
-
-      config = readconfig(file);
-
-      //printf("%s %d %s",config.hostname,config.portnummer,config.artdesspiels);
-
-      if (config.hostname == NULL || config.portnummer == 0|| config.artdesspiels == NULL ){
-          printf("\nDie Parameter in der .conf Datei sind nicht alle angegeben!\n");
-      }
-
-
-      if (idFlag == NULL || config.hostname == NULL || config.portnummer == 0|| config.artdesspiels == NULL ){
           printHowToUse();
       }
 
+      configTemp = readConfig(file);
+
+      if (configTemp.hostname == NULL || configTemp.portnummer == 0|| configTemp.artdesspiels == NULL ){
+          printf("\nDie Parameter in der .conf Datei sind nicht alle angegeben!\n");
+          exit(0);
+      }
+
+      if (idFlag == NULL || configTemp.hostname == NULL || configTemp.portnummer == 0|| configTemp.artdesspiels == NULL ){
+          printHowToUse();
+      }
+      
   }
+  return configTemp;
 }
 
 /**
@@ -194,10 +192,11 @@ void forkingAction(){
 
 int main(int argc, char *argv[]) { 
 
-
+  //configParams config;
 
   parseArgs(argc, argv);
-  //forkingAction();
+
+  forkingAction();
 
   return 0;
 }
