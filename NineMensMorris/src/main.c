@@ -1,8 +1,23 @@
 #include "main.h"
 #include "shm/shmManager.h"
+#include "config.h"
+
+char *idFlag = NULL, *configFlag = NULL, path[100];;
+FILE* file;
+char delimiter[] = " \n";
+char *ptr;
+size_t len = 0;
+char * line = NULL;
 
 
-char *idFlag = NULL, *configFlag = NULL;
+typedef struct {
+  char hostname[100];
+  int portnummer;
+  char artdesspiels[100];
+  int loglevel;
+}conf;
+
+conf config[1];
 
 void printHowToUse (){
   printf("\n"
@@ -20,7 +35,7 @@ void printHowToUse (){
  * ansonsten terminiert das Programm
  *
  * -i ist die Game-ID und muss genau 11 Zeichen lang sein (wird in idFlag abgespeichert)
- * -c ist für die optionale Config Datei              (wird in configFlag abgespeichert)
+ * -a ist ein Platzhalter                                 (wird in aFlag abgespeichert)
  */
 void parseArgs(int argc, char *argv[]){
 
@@ -34,11 +49,16 @@ void parseArgs(int argc, char *argv[]){
      while ((pArg=getopt(argc, argv, "i:c:")) != -1) {
          switch (pArg) {
              case 'i':
-                idFlag = optarg; break;
+                idFlag = optarg;
+                break;
              case 'c':
-                configFlag = optarg; break;
+                strcpy(path , "../");
+                strcat(path,optarg);
+                file = fopen(path, "r"); 
+                break;
              default:
-                printHowToUse(); break;
+                file = fopen("../client.conf", "r");
+                break;
           }
      }  
   
@@ -51,6 +71,32 @@ void parseArgs(int argc, char *argv[]){
           printHowToUse();
           exit(0);
       }
+
+      ssize_t read;
+      while ((read = getline(&line, &len, file)) != -1) {   
+          ptr = strtok(line, delimiter);
+          if(strcmp("hostname",ptr) == 0){
+            ptr = strtok(NULL, delimiter);
+            ptr = strtok(NULL, delimiter);  
+            strcpy(config[0].hostname,ptr);
+          }
+
+          if(strcmp("portnummer",ptr) == 0){
+            ptr = strtok(NULL, delimiter);
+            ptr = strtok(NULL, delimiter);  
+            config[0].portnummer = atof(ptr);
+          }
+
+          if(strcmp("artdesspiels",ptr) == 0){
+            ptr = strtok(NULL, delimiter);
+            ptr = strtok(NULL, delimiter);  
+            strcpy(config[0].artdesspiels,ptr);
+          }
+      }
+
+      printf("%s %d %s",config[0].hostname,config[0].portnummer,config[0].artdesspiels);
+      testi();
+
   }
 }
 
