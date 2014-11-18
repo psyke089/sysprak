@@ -72,8 +72,8 @@ void parseArgs(int argc, char *argv[]){
           exit(0);
       }
 
-      ssize_t read;
-      while ((read = getline(&line, &len, file)) != -1) {   
+
+      while ( fgets(line, len, file) != NULL) {   
           ptr = strtok(line, delimiter);
           if(strcmp("hostname",ptr) == 0){
             ptr = strtok(NULL, delimiter);
@@ -95,7 +95,7 @@ void parseArgs(int argc, char *argv[]){
       }
 
       printf("%s %d %s",config[0].hostname,config[0].portnummer,config[0].artdesspiels);
-      testi();
+      //testi();
 
   }
 }
