@@ -34,7 +34,9 @@ configParams configTemp;
   }
   else {
 
-     int pArg; 
+     int pArg;
+     file = fopen("../client.conf", "r");
+     
      while ((pArg=getopt(argc, argv, "i:c:")) != -1) {
          switch (pArg) {
              case 'i':
@@ -46,7 +48,7 @@ configParams configTemp;
                 file = fopen(path, "r"); 
                 break;
              default:
-                file = fopen("../client.conf", "r");
+
                 break;
           }
      }  
