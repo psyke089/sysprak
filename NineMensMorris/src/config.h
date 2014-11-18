@@ -7,6 +7,4 @@
 #include <getopt.h>
 #include <string.h>
 
-
-
 void testi();

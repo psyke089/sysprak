@@ -2,7 +2,7 @@
 #include "shm/shmManager.h"
 #include "config.h"
 
-char *idFlag = NULL, *configFlag = NULL, path[100];;
+char *idFlag = NULL, *configFlag = NULL, path[100];
 FILE* file;
 char delimiter[] = " \n";
 char *ptr;
@@ -71,12 +71,13 @@ void parseArgs(int argc, char *argv[]){
           //exit(0);
       }
 
+      testi();
 
       while (fgets(line, len, file)) {
           ptr = strtok(line, delimiter);
           if(strcmp("hostname",ptr) == 0){
             ptr = strtok(NULL, delimiter);
-            ptr = strtok(NULL, delimiter);  
+            ptr = strtok(NULL, delimiter);
             strcpy(config[0].hostname,ptr);
           }
 
@@ -91,10 +92,25 @@ void parseArgs(int argc, char *argv[]){
             ptr = strtok(NULL, delimiter);  
             strcpy(config[0].artdesspiels,ptr);
           }
+
+          if(strcmp("portnummer",ptr) == 0){
+            ptr = strtok(NULL, delimiter);
+            ptr = strtok(NULL, delimiter);  
+            config[0].loglevel = atof(ptr);
+          }
+
       }
 
       printf("%s %d %s",config[0].hostname,config[0].portnummer,config[0].artdesspiels);
-      //testi();
+
+      if (config[0].hostname == NULL || config[0].portnummer == 0|| config[0].artdesspiels == NULL ){
+          printf("\nDie Parameter in der .conf Datei sind nicht alle angegeben!\n");
+      }
+
+
+      if (idFlag == NULL || config[0].hostname == NULL || config[0].portnummer == 0|| config[0].artdesspiels == NULL ){
+          printHowToUse();
+      }
 
   }
 }
@@ -216,9 +232,11 @@ void forkingAction(){
 
 int main(int argc, char *argv[]) { 
 
+
+
   parseArgs(argc, argv);
   //forkingAction();
-  
+
   return 0;
 }
 

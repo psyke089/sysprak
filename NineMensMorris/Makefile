@@ -25,11 +25,14 @@ pcwlog: src/logger/logger.c\
 
 client: src/shm/shmManager.c\
 				    src/shm/shmManager.h\
+						src/config.h\
+						src/config.c\
 						src/main.h\
 						src/main.c
-
+						
 	$(CC) $(CFLAGS) $(OUT)\
 		src/shm/shmManager.c\
+		src/config.c\
 		src/main.c
 
 clean:
