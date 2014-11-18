@@ -3,20 +3,6 @@
 #include "config.h"
 
 char *idFlag = NULL, *configFlag = NULL, path[100];
-FILE* file;
-char delimiter[] = " \n";
-char *ptr;
-char line[100];
-int len = 100;
-
-typedef struct {
-  char hostname[100];
-  int portnummer;
-  char artdesspiels[100];
-  int loglevel;
-}conf;
-
-conf config[1];
 
 void printHowToUse (){
   printf("\n"
@@ -37,6 +23,10 @@ void printHowToUse (){
  * -c ist ein Platzhalter                                 (wird in aFlag abgespeichert)
  */
 void parseArgs(int argc, char *argv[]){
+
+FILE* file;
+
+conf config;
 
   if (argc <= 1){
     printf("\nZu wenig Argumente...\n");
@@ -71,44 +61,17 @@ void parseArgs(int argc, char *argv[]){
           //exit(0);
       }
 
-      testi();
+      config = readconfig(file);
 
-      while (fgets(line, len, file)) {
-          ptr = strtok(line, delimiter);
-          if(strcmp("hostname",ptr) == 0){
-            ptr = strtok(NULL, delimiter);
-            ptr = strtok(NULL, delimiter);
-            strcpy(config[0].hostname,ptr);
-          }
 
-          if(strcmp("portnummer",ptr) == 0){
-            ptr = strtok(NULL, delimiter);
-            ptr = strtok(NULL, delimiter);  
-            config[0].portnummer = atof(ptr);
-          }
+      printf("%s %d %s",config.hostname,config.portnummer,config.artdesspiels);
 
-          if(strcmp("artdesspiels",ptr) == 0){
-            ptr = strtok(NULL, delimiter);
-            ptr = strtok(NULL, delimiter);  
-            strcpy(config[0].artdesspiels,ptr);
-          }
-
-          if(strcmp("portnummer",ptr) == 0){
-            ptr = strtok(NULL, delimiter);
-            ptr = strtok(NULL, delimiter);  
-            config[0].loglevel = atof(ptr);
-          }
-
-      }
-
-      printf("%s %d %s",config[0].hostname,config[0].portnummer,config[0].artdesspiels);
-
-      if (config[0].hostname == NULL || config[0].portnummer == 0|| config[0].artdesspiels == NULL ){
+      if (config.hostname == NULL || config.portnummer == 0|| config.artdesspiels == NULL ){
           printf("\nDie Parameter in der .conf Datei sind nicht alle angegeben!\n");
       }
 
 
-      if (idFlag == NULL || config[0].hostname == NULL || config[0].portnummer == 0|| config[0].artdesspiels == NULL ){
+      if (idFlag == NULL || config.hostname == NULL || config.portnummer == 0|| config.artdesspiels == NULL ){
           printHowToUse();
       }
 

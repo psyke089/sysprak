@@ -7,4 +7,13 @@
 #include <getopt.h>
 #include <string.h>
 
-void testi();
+#define MSGLEN 100
+
+typedef struct {
+  char hostname[MSGLEN];
+  int portnummer;
+  char artdesspiels[MSGLEN];
+  int loglevel;
+}conf;
+
+conf readconfig(FILE * file);
