@@ -6,9 +6,8 @@ char *idFlag = NULL, *configFlag = NULL, path[100];;
 FILE* file;
 char delimiter[] = " \n";
 char *ptr;
-size_t len = 0;
-char * line = NULL;
-
+char line[100];
+int len = 100;
 
 typedef struct {
   char hostname[100];
@@ -35,7 +34,7 @@ void printHowToUse (){
  * ansonsten terminiert das Programm
  *
  * -i ist die Game-ID und muss genau 11 Zeichen lang sein (wird in idFlag abgespeichert)
- * -a ist ein Platzhalter                                 (wird in aFlag abgespeichert)
+ * -c ist ein Platzhalter                                 (wird in aFlag abgespeichert)
  */
 void parseArgs(int argc, char *argv[]){
 
@@ -64,16 +63,16 @@ void parseArgs(int argc, char *argv[]){
   
       if (idFlag != NULL && strlen(idFlag) != 11){
           printf("Die Länge der Game-ID muss 11 Zeichen lang sein!\n");
-          exit(0);
+          //exit(0);
       }
       if (idFlag == NULL){
           printf("\nDie ID wurde nicht erfolgreich gesetzt!\n");
-          printHowToUse();
-          exit(0);
+          //printHowToUse();
+          //exit(0);
       }
 
 
-      while ( fgets(line, len, file) != NULL) {   
+      while (fgets(line, len, file)) {
           ptr = strtok(line, delimiter);
           if(strcmp("hostname",ptr) == 0){
             ptr = strtok(NULL, delimiter);
@@ -217,8 +216,8 @@ void forkingAction(){
 
 int main(int argc, char *argv[]) { 
 
- // parseArgs(argc, argv);
-  forkingAction();
+  parseArgs(argc, argv);
+  //forkingAction();
   
   return 0;
 }
