@@ -63,8 +63,7 @@ conf config;
 
       config = readconfig(file);
 
-
-      printf("%s %d %s",config.hostname,config.portnummer,config.artdesspiels);
+      //printf("%s %d %s",config.hostname,config.portnummer,config.artdesspiels);
 
       if (config.hostname == NULL || config.portnummer == 0|| config.artdesspiels == NULL ){
           printf("\nDie Parameter in der .conf Datei sind nicht alle angegeben!\n");
