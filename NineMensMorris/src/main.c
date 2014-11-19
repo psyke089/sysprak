@@ -25,6 +25,8 @@ configData parseArgs(int argc, char *argv[]){
 
 char *idFlag = NULL;
 FILE* file = NULL;
+//filemodconf für anderere Konfigurationsdateien
+FILE* filemodconf = NULL;
 char path[PATHLEN];
 configData configInc;
 int pArg;
@@ -35,6 +37,16 @@ int pArg;
   }
   else {
      
+      if ((file = fopen("client.conf", "r")) == NULL){
+          if ((file = fopen("../client.conf", "r")) == NULL){
+            perror ("Couldn't open client.conf");
+            exit(0);
+          }
+          else{
+          strcpy(path,"../");
+        }
+      }
+
      while ((pArg=getopt(argc, argv, "i:c:")) != -1) {
          switch (pArg) {
              case 'i':
@@ -42,31 +54,27 @@ int pArg;
                 break;
              case 'c':
 
-                  if (strcpy(path,optarg) == NULL){
-                     printf (RED "Couldn't copy the c-Flag to path\n" RESET);
+                  if (strcat(path,optarg) == NULL){
+                     printf (RED "\nCouldn't add the c-Flag to path\n" RESET);
                   }
 
-                  if ((file = fopen(path, "r")) == NULL){
-                     printf (RED "Couldn't open %s\n" RESET, path);
+                  if ((filemodconf = fopen(path, "r")) == NULL){
+                     printf (RED "\nCouldn't open %s\n" RESET, path);
                   }
                   else {
-                     printf (GREEN "Using %s!\n" RESET, path);
+                     printf (GREEN "\nUsing %s!\n" RESET, path);
+                     file = filemodconf;
                   }
-
                 break;
           }
      }
 
-       if (file == NULL){ 
-         printf(GREEN "Using common client.conf\n" RESET);
-         if ((file = fopen("client.conf", "r")) == NULL){
-          perror ("Couldn't open client.conf");
-          exit(0);
-         }
+       if (filemodconf == NULL){ 
+         printf(GREEN "\nUsing common client.conf\n" RESET);
        }
 
       if (idFlag != NULL && strlen(idFlag) != 11){
-          printf(RED "Die Länge der Game-ID muss 11 Zeichen lang sein!\n" RESET);
+          printf(RED "\nDie Länge der Game-ID muss 11 Zeichen lang sein!\n" RESET);
           printHowToUse();
       }
       if (idFlag == NULL){
