@@ -41,7 +41,7 @@ int pArg;
                 idFlag = optarg;
                 break;
              case 'c':
-                
+
                   if (strcpy(path,optarg) == NULL){
                      printf (RED "Couldn't copy the c-Flag to path\n" RESET);
                   }
