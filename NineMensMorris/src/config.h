@@ -8,12 +8,13 @@
 #include <string.h>
 
 #define MSGLEN 100
+#define PATHLEN 100
 
 typedef struct {
   char hostname[MSGLEN];
   int portnummer;
   char artdesspiels[MSGLEN];
   int loglevel;
-}configParams;
+}configData;
 
-configParams readConfig(FILE * file);
+configData readConfig(FILE* file);

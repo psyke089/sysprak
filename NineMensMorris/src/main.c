@@ -2,8 +2,6 @@
 #include "shm/shmManager.h"
 #include "config.h"
 
-char *idFlag = NULL, *configFlag = NULL;
-
 void printHowToUse (){
   printf("\n"
          "NAME:                                              \n"
@@ -20,13 +18,15 @@ void printHowToUse (){
  * ansonsten terminiert das Programm
  *
  * -i ist die Game-ID und muss genau 11 Zeichen lang sein (wird in idFlag abgespeichert)
- * -c ist ein Platzhalter                                 (wird in configFlag abgespeichert)
+ * -c ist für die optionale Configdatei                     (wird in path abgespeichert)
  */
-configParams parseArgs(int argc, char *argv[]){
+configData parseArgs(int argc, char *argv[]){
 
+
+char *idFlag = NULL;
 FILE* file;
-char path[100];
-configParams configTemp;
+char path[PATHLEN];
+configData configInc;
 
   if (argc <= 1){
     printf("\nZu wenig Argumente...\n");
@@ -47,9 +47,6 @@ configParams configTemp;
                 strcat(path,optarg);
                 file = fopen(path, "r"); 
                 break;
-             default:
-
-                break;
           }
      }  
   
@@ -62,19 +59,19 @@ configParams configTemp;
           printHowToUse();
       }
 
-      configTemp = readConfig(file);
+      configInc = readConfig(file);
 
-      if (configTemp.hostname == NULL || configTemp.portnummer == 0|| configTemp.artdesspiels == NULL ){
+      if (configInc.hostname == NULL || configInc.portnummer == 0 || configInc.artdesspiels == NULL || configInc.loglevel < 0 || configInc.loglevel > 3){
           printf("\nDie Parameter in der .conf Datei sind nicht alle angegeben!\n");
           exit(0);
       }
 
-      if (idFlag == NULL || configTemp.hostname == NULL || configTemp.portnummer == 0|| configTemp.artdesspiels == NULL ){
+      if (idFlag == NULL || configInc.hostname == NULL || configInc.portnummer == 0 || configInc.artdesspiels == NULL ){
           printHowToUse();
       }
       
   }
-  return configTemp;
+  return configInc;
 }
 
 
@@ -137,6 +134,7 @@ void forkingAction(){
         delete_shm(shm_id_parent);
 
         exit(0);
+
       break;
 
   } 
@@ -146,11 +144,11 @@ void forkingAction(){
 
 int main(int argc, char *argv[]) { 
 
-  //configParams config;
+  //configData config;
 
- // parseArgs(argc, argv);
+  parseArgs(argc, argv);
 
-  forkingAction();
+ // forkingAction();
 
   return 0;
 }

@@ -4,11 +4,11 @@ char delimiter[] = " \n";
 char *ptr;
 char line[MSGLEN];
 
-configParams readConfig(FILE* file){
+configData readConfig(FILE *file){
 
-  configParams configTemp;
+  configData configTemp;
 
-  while (fgets(line, MSGLEN, file)) {
+  while (fgets(line, MSGLEN, file) != NULL) {
       ptr = strtok(line, delimiter);
       if(strcmp("hostname",ptr) == 0){
         ptr = strtok(NULL, delimiter);

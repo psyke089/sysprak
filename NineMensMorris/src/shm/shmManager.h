@@ -87,8 +87,6 @@ void delete_shm(int shm_id);
  **/
 void read_shm_struct(shm_struct* shm_str);
 
-
-
 /**
  * füllt die struct mit Beispieldateien
  *

@@ -64,19 +64,24 @@ void delete_shm(int shm_id){
 
 void read_shm_struct(shm_struct* shm_str){
 
-  printf (BLUE "\nRecieved =>> \n"
-               "gameName    = %s\n"
-               "gameID      = %s\n"
-               "playerCount = %i\n"
-               "childPID    = %i\n"
-               "parentPID   = %i\n" RESET,
-                shm_str -> gameName,
-                shm_str -> gameID,
-                shm_str -> playerCount,
-                shm_str -> c_pid,
-                shm_str -> p_pid);
+   if (shm_str -> p_pid == 0 || shm_str -> c_pid == 0 || (strcmp(shm_str -> gameID, "") == 0)){
+      perror("\nCouldn't read from shm_str pointer because the data corrupted (pids are 0 / gameID is empty) @ shmManager.c");
+      exit(0);
+   } 
 
-  for (int i = 0; i < shm_str -> playerCount; i++){
+   printf (BLUE "\nRecieved =>> \n"
+                "gameName    = %s\n"
+                "gameID      = %s\n"
+                "playerCount = %i\n"
+                "childPID    = %i\n"
+                "parentPID   = %i\n" RESET,
+                 shm_str -> gameName,
+                 shm_str -> gameID,
+                 shm_str -> playerCount,
+                 shm_str -> c_pid,
+                 shm_str -> p_pid);
+
+   for (int i = 0; i < shm_str -> playerCount; i++){
 
    printf (BLUE "\nPlayer %i =>> \n"
                 "playerID    = %i\n"
@@ -88,7 +93,7 @@ void read_shm_struct(shm_struct* shm_str){
                 shm_str -> p_structs[i].playerName,
                 shm_str -> p_structs[i].isReady,
                 shm_str -> p_structs[i].isLoggedIn);
- }
+   }
 }
 
 
@@ -96,18 +101,30 @@ void fill_shm_struct(shm_struct* shm_str){
 
         player_struct player1;
         player1.playerID   = 15; 
-        strcpy(player1.playerName, "Dummy Nr.1");
+        if(strcpy(player1.playerName, "Dummy Nr.1") == NULL){
+          perror("Couldn't copy playerName 1 in fill_shm_struct @ shmManager");
+          exit(0);
+        }
         player1.isReady    = true;
         player1.isLoggedIn = true;
 
         player_struct player2;
         player2.playerID   = 20; 
-        strcpy(player2.playerName, "Dummy Nr.2");
+        if(strcpy(player2.playerName, "Dummy Nr.2") == NULL){
+          perror("Couldn't copy playerName 2 in fill_shm_struct @ shmManager");
+          exit(0);
+        }
         player2.isReady    = false;
         player2.isLoggedIn = true;
 
-        strcpy(shm_str -> gameName, "Testgame Nr.1");
-        strcpy(shm_str -> gameID, "E345Tg&afsd");
+        if(strcpy(shm_str -> gameName, "Testgame Nr.1") == NULL){
+          perror("Couldn't copy gameName in fill_shm_struct @ shmManager");
+          exit(0);
+        }
+        if(strcpy(shm_str -> gameID, "E345Tg&afsd") == NULL){
+          perror("Couldn't copy gameID in fill_shm_struct @ shmManager");
+          exit(0);
+        }
         shm_str -> playerCount  = 2;
         shm_str -> p_structs[0] = player1; 
         shm_str -> p_structs[1] = player2;
