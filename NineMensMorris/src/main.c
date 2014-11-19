@@ -53,7 +53,6 @@ int pArg;
                 idFlag = optarg;
                 break;
              case 'c':
-
                   if (strcat(path,optarg) == NULL){
                      printf (RED "\nCouldn't add the c-Flag to path\n" RESET);
                   }
@@ -62,7 +61,7 @@ int pArg;
                      printf (RED "\nCouldn't open %s\n" RESET, path);
                   }
                   else {
-                     printf (GREEN "\nUsing %s!\n" RESET, path);
+                     printf (GREEN "\nUsing %s\n" RESET, path);
                      file = filemodconf;
                   }
                 break;
