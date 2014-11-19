@@ -4,9 +4,8 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
-
 #include <unistd.h>
-
+#include "../main.h"
 
 /**
  * Config
@@ -43,40 +42,57 @@ typedef struct{
 
 
 /**
- * Key is IPC_PRIVATE (currently magic number)
- * Size is SHMSZ
- * Permissions are 0666
+ * Key ist IPC_PRIVATE (gerade eine magic number)
+ * Size ist SHMSZ
+ * permissions sind 0666
  *
- * returns the shm_id
+ * gibt die shm_id zurück
  */
 int create_shm();
 
 /**
- * Key is IPC_PRIVATE (currently magic number)
- * Size is SHMSZ
+ * Key ist IPC_PRIVATE (gerade eine magic number)
+ * Size ist SHMSZ
  * 
- * returns the shm_id
+ * gibt die shm_id zurück
  */
 int locate_shm();
 
 /**
- * returns the attached struct
- *
+ * "befestigt" die Struktur an der shm_id 
+ * gibt die befestigte Struktur zurück
  */
 shm_struct* attach_shm(int shm_id);
 
 /**
- * fills the struct with zeros
+ * füllt die Sturktur mit Nullen (0)
  */
 void clear_shm(shm_struct *shm_s);
 
 /**
- * detaches shared memory by pointer
+ * "entfernt" die Struktur
  */
 void detach_shm(shm_struct *shm_s);
 
 /**
- * sends IPC_RIMD by id - the segment it to delete 
+ * sendet IPC_RIMD nach der id
+ * => das Segment wird zur Zerstörung freigegeben
  */
 void delete_shm(int shm_id);
 
+/**
+ * printet die Daten von der shm_struct
+ * auf die Konsole aus
+ *
+ **/
+void read_shm_struct(shm_struct* shm_str);
+
+
+
+/**
+ * füllt die struct mit Beispieldateien
+ *
+ * nur für Testzwecke
+ *
+ */
+void fill_shm_struct(shm_struct* shm_str);

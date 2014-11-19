@@ -77,47 +77,13 @@ configParams configTemp;
   return configTemp;
 }
 
-/**
- * prettyPrint for shm_struct
- *
- **/
-void read_shm_struct(shm_struct* shm_str){
-  printf (BLUE "\nRecieved =>> \n"
-               "gameName    = %s\n"
-               "gameID      = %s\n"
-               "playerCount = %i\n"
-               "childPID    = %i\n"
-               "parentPID   = %i\n" RESET,
-           shm_str -> gameName,
-           shm_str -> gameID,
-           shm_str -> playerCount,
-           shm_str -> c_pid,
-           shm_str -> p_pid);
-
-  for (int i = 0; i < shm_str -> playerCount; i++){
-
-       printf (BLUE "\nPlayer %i =>> \n"
-                    "playerID    = %i\n"
-                    "playerName  = %s\n"
-                    "isReady     = %i\n"
-                    "isLoggedIn  = %i\n" RESET,
-                     (i+1),
-                     shm_str -> p_structs[i].playerID,
-                     shm_str -> p_structs[i].playerName,
-                     shm_str -> p_structs[i].isReady,
-                     shm_str -> p_structs[i].isLoggedIn);
- }
-}
-
-
 
 /**
- * forks into two processes
+ * Teilt den laufenden Prozess in 
  *
- * child = Connector
- * parent = Thinker
+ * den Kindprozess   = Connector
+ * und Elternprozess = Thinker
  */
-
 void forkingAction(){
  
  int pid = fork();
@@ -135,41 +101,26 @@ void forkingAction(){
         exit(0);
       break;
 
-      case 0:  //child =^ sends || start Connection + Parser here
+      case 0:  //Kind =^ sendet || starte Connection + Parser hier
 
         shm_id_child = locate_shm();
         shm_str_child = attach_shm(shm_id_child);
+
         printf(GREEN "Child attached shm with id = %i!\n" RESET, shm_id_child);
 
         clear_shm(shm_str_child);
 
-        player_struct player1;
-        player1.playerID   = 15; 
-        strcpy(player1.playerName, "Dummy Nr.1");
-        player1.isReady    = true;
-        player1.isLoggedIn = true;
+        fill_shm_struct(shm_str_child);
 
-        player_struct player2;
-        player2.playerID   = 20; 
-        strcpy(player2.playerName, "Dummy Nr.2");
-        player2.isReady    = false;
-        player2.isLoggedIn = true;
-
-        strcpy(shm_str_child -> gameName, "Testgame Nr.1");
-        strcpy(shm_str_child -> gameID, "E345Tg&a§dx");
-        shm_str_child -> playerCount  = 2;
-        shm_str_child -> p_structs[0] = player1; 
-        shm_str_child -> p_structs[1] = player2;
-        shm_str_child -> c_pid        = getpid();
-        shm_str_child -> p_pid        = getppid();
         printf(GREEN "Child filled the shm_struct!" RESET);
 
         detach_shm(shm_str_child);
+
         exit(0);
 
       break;
 
-      default: // parent =^ recieves data || start Thinker here
+      default: // Eltern =^ empfängt Daten || starte Thinker hier
 
         shm_id_parent = create_shm();
         shm_str_parent = attach_shm(shm_id_parent);
@@ -184,6 +135,7 @@ void forkingAction(){
         
         detach_shm(shm_str_parent);
         delete_shm(shm_id_parent);
+
         exit(0);
       break;
 
@@ -196,7 +148,7 @@ int main(int argc, char *argv[]) {
 
   //configParams config;
 
-  parseArgs(argc, argv);
+ // parseArgs(argc, argv);
 
   forkingAction();
 
