@@ -24,18 +24,16 @@ configData parseArgs(int argc, char *argv[]){
 
 
 char *idFlag = NULL;
-FILE* file;
+FILE* file = NULL;
 char path[PATHLEN];
 configData configInc;
+int pArg;
 
   if (argc <= 1){
     printf("\nZu wenig Argumente...\n");
     printHowToUse();
   }
   else {
-
-     int pArg;
-     file = fopen("../client.conf", "r");
      
      while ((pArg=getopt(argc, argv, "i:c:")) != -1) {
          switch (pArg) {
@@ -43,26 +41,55 @@ configData configInc;
                 idFlag = optarg;
                 break;
              case 'c':
-                strcpy(path , "../");
-                strcat(path,optarg);
-                file = fopen(path, "r"); 
+                
+                  if (strcpy(path,optarg) == NULL){
+                     printf (RED "Couldn't copy the c-Flag to path\n" RESET);
+                  }
+
+                  if ((file = fopen(path, "r")) == NULL){
+                     printf (RED "Couldn't open %s\n" RESET, path);
+                  }
+                  else {
+                     printf (GREEN "Using %s!\n" RESET, path);
+                  }
+
                 break;
           }
-     }  
-  
+     }
+
+       if (file == NULL){ 
+         printf(GREEN "Using common client.conf\n" RESET);
+         if ((file = fopen("client.conf", "r")) == NULL){
+          perror ("Couldn't open client.conf");
+          exit(0);
+         }
+       }
+
       if (idFlag != NULL && strlen(idFlag) != 11){
-          printf("Die Länge der Game-ID muss 11 Zeichen lang sein!\n");
+          printf(RED "Die Länge der Game-ID muss 11 Zeichen lang sein!\n" RESET);
           printHowToUse();
       }
       if (idFlag == NULL){
-          printf("\nDie ID wurde nicht erfolgreich gesetzt!\n");
+          printf(RED "\nDie ID wurde nicht erfolgreich gesetzt!\n" RESET);
           printHowToUse();
       }
 
       configInc = readConfig(file);
 
+// ############# Testing output ##############
+      printf ("host = %s \n"
+              "port = %i \n"
+              "artds= %s  \n"
+              "loglvl = %i", 
+              configInc.hostname,
+              configInc.portnummer,
+              configInc.artdesspiels,
+              configInc.loglevel);
+// ################# END ####################
+
+
       if (configInc.hostname == NULL || configInc.portnummer == 0 || configInc.artdesspiels == NULL || configInc.loglevel < 0 || configInc.loglevel > 3){
-          printf("\nDie Parameter in der .conf Datei sind nicht alle angegeben!\n");
+          printf(RED "\nDie Parameter in der .conf Datei sind nicht alle richtig angegeben!\n" RESET);
           exit(0);
       }
 

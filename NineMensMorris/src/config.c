@@ -33,7 +33,6 @@ configData readConfig(FILE *file){
         ptr = strtok(NULL, delimiter);  
         configTemp.loglevel = atof(ptr);
       }
-
   }
 
   return configTemp;
