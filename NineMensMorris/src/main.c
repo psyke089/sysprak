@@ -44,14 +44,19 @@ configData configInc;
                 break;
              case 'c':
                 strcpy(path , "../");
-                strcat(path,optarg);
+                if(strstr(optarg, ".conf")) {
+                  strcat(path,optarg);
+                } 
+                else{
+                  printf("\nDateiname enthält nicht .conf!\n");
+                }
                 file = fopen(path, "r"); 
                 break;
           }
      }  
   
       if (idFlag != NULL && strlen(idFlag) != 11){
-          printf("Die Länge der Game-ID muss 11 Zeichen lang sein!\n");
+          printf("\nDie Länge der Game-ID muss 11 Zeichen lang sein!\n");
           printHowToUse();
       }
       if (idFlag == NULL){
