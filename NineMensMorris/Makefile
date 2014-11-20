@@ -16,12 +16,16 @@ connector: 	src/main.h\
 		src/connector/parser.c
 
 
+# funktioniert nicht mehr, @todo mit parser etc compilen
 pcwlog: src/logger/logger.c\
 				src/connector/performConnection.c
 
 	$(CC) $(CFLAGS) -o bin/performConnectionwLog \
 		src/logger/logger.c \
 		src/connector/performConnection.c
+
+loggertest:
+	$(CC) $(CFLAGS)  src/logger/logger.c  src/logger/logger_test_main.c -o bin/loggerTest
 
 client: src/shm/shmManager.c\
 				    src/shm/shmManager.h\

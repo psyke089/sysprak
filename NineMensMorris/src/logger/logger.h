@@ -8,8 +8,7 @@
 #include <time.h>
 #include <unistd.h>
 
-#include "../main.h"
-
+#include "../main.h"  
 
 
 void logPrnt (char c, char t, char* input);
@@ -18,5 +17,5 @@ void initLog();
 
 char* getTimeAsString (char p);
 
-void prntColor(char c, char* input );
+void prntColor(char color, char isError, char* input );
 
