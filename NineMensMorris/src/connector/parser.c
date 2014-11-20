@@ -116,7 +116,12 @@ void parseMessages(int sock)
       
         case '+':
 
-          if(strcmp(msg_queue[linenum], "+ MNM Gameserver v1.0 accepting connections") == 0) {
+          if(strcmp(msg_queue[linenum], "+ WAIT") == 0) {
+            
+            sprintf(out_buf, "OKWAIT\n");
+            send_message(sock, out_buf);
+
+          }else if(strcmp(msg_queue[linenum], "+ MNM Gameserver v1.0 accepting connections") == 0) {
             
             sprintf(out_buf, "VERSION %0.1f\n", CVERSION);
             send_message(sock, out_buf);
@@ -162,15 +167,15 @@ void parseMessages(int sock)
           }else if(sscanf(msg_queue[linenum], "+ MOVE %d", &max_move_time) == 1) {
 
             printf("Maximum move time: %d\n\n", max_move_time);
-
                       
           }else if(strstr(msg_queue[linenum], "+ CAPTURE") != NULL) {
 
             printf("!!!CAPTURE!!!\n");            
                       
           }else{
+        
             printf("Unexpected message: %s\n", msg_queue[linenum]);
-            breaker = 0;  
+        
           }
           
           break;
@@ -186,8 +191,12 @@ void parseMessages(int sock)
 
             printf("Socket timeout.\n");
 
+          }else if(strcmp(msg_queue[linenum], "- Protocol mismatch - you probably didn't want to talk to the fabulous gameserver") == 0){
+
+            printf("Wrong input format.\n");
+
           }else{
-            printf("Unerwarteter Fehler.\n");
+            printf("Unexpected server error.\n");
           }
 
           breaker = 0;
