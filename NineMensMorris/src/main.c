@@ -77,6 +77,8 @@ int pArg;
 
       configInc = readConfig(file);
 
+      fclose(file);
+
 // ############# Testing output ##############
       printf ("host = %s \n"
               "port = %i \n"

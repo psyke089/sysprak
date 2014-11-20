@@ -24,13 +24,9 @@ int create_socket();
 
 void connect_to_socket(int sock, struct sockaddr_in dest);
 
-int get_message(int sock, char* buf);
+void get_message(int sock, char* buf);
 
 void send_message(int sock, char* buf);
-
-int setNonblocking(int sock);
-
-void errMessageRoutine();
 
 int performConnection();
 
@@ -40,4 +36,7 @@ int performConnection();
 
 void parseMessages(int sock);
 
-void parseSingleMessage(char *buf);
+void processMessage(char *buf);
+
+void tokenizeLine(char *line);
+
