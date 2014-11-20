@@ -169,9 +169,9 @@ void prntColor_legacy(char c, char* input ){
 }
 
 
-void prntColor(char c, char* input ){
+void prntColor(char color, char isError, char* input ){
     //char colorString[9]
-    switch(c){
+    switch(color){
 
         case 'r':
             printf(RED);
@@ -193,8 +193,13 @@ void prntColor(char c, char* input ){
             break;
         default:
             break;
+            
+    }if (isError == 'e') {
+        perror(input);
+    }else {
+        printf("%s" ,input);
     }
-    printf("%s" ,input);
+    
     printf(RESET);
 }
 
@@ -215,18 +220,18 @@ void logPrnt (char c, char t, char* input){
     
     if       (loglevel == 0) {
     // alles auf console, keine logdatei
-        prntColor(c, input);
+        prntColor(c,'0', input);
         
     }else if (loglevel == 1){
     // alles auf console, log v. alles in logdatei
-        prntColor(c, input);
+        prntColor(c,'0',input);
         writeLog(input);
         
     }
     else if (loglevel == 2){
     // error in konsole,  log v. allem in logdatei
         if (t == 'e') {
-            prntColor(c, input);
+            prntColor(c,'e', input);
             writeLog(input);
         }
         else {
@@ -239,13 +244,13 @@ void logPrnt (char c, char t, char* input){
             writeLog(input);
         }
         else {
-            prntColor(c, input);
+            prntColor(c,'0', input);
             writeLog(input);
         }
     }
     else{
         fprintf(stderr, "WARNING: Kein Loglevel angegeben!\n");
-        prntColor(c, input);
+        prntColor('r', 'e',input);
         writeLog(input);
     }
 
