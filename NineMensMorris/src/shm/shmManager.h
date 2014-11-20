@@ -39,6 +39,7 @@ typedef struct{
   player_struct p_structs[MAXPLAYERS];
   int p_pid;
   int c_pid;
+  bool think;
 } shm_struct;
 
 
@@ -109,6 +110,12 @@ void detach_plist(plist_struct *plist_s);
  * => das Segment wird zur Zerstörung freigegeben
  */
 void delete_by_shmid(int shm_id);
+
+/**
+ * shm_str -> think = true
+ */
+
+void set_think_flag(shm_struct* shm_str);
 
 /**
  * printet die Daten von der shm_struct

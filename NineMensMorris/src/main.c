@@ -115,7 +115,8 @@ void forkingAction(){
 // pipes
 int fd[1];
 pipe(fd);
-char *sampleTurn = "A04"; 
+char *sampleTurn = "A1";
+
 
 // shm
 int shm_id = create_shm(SHMSZ);
@@ -143,12 +144,13 @@ int pid = fork();
        
         close(fd[WRITE]);
 
-        read_from_pipe(fd);
-
         fill_shm_struct(shm_str);
+        set_think_flag(shm_str);
 
         start_thinking();
 
+        read_from_pipe(fd);
+        
         detach_shm(shm_str);
         detach_plist(plist_str);
 
@@ -159,12 +161,17 @@ int pid = fork();
       case 1 ... INT_MAX: // Eltern =^ empfängt Daten || starte Thinker hier
 
         close(fd[READ]);
-        write_to_pipe(fd, sampleTurn);
        
         while (!get_signal()){}
 
         read_shm_struct(shm_str);
 
+        write_to_pipe(fd, sampleTurn);
+        
+
+        // Fehler bei der Übergabe von hier definierten strings
+      //  write_to_pipe(fd, "He");
+          
         detach_shm(shm_str);
         detach_plist(plist_str);
 

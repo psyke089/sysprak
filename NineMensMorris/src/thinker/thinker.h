@@ -1,6 +1,7 @@
 #include <signal.h>
 #include "../main.h"
 
+
 /**
  * Config
  */
@@ -27,7 +28,6 @@ void start_thinking();
  */
 void init_sig_action();
 
-
 /**
  * returns the signal status
  *
@@ -46,4 +46,9 @@ char* read_from_pipe(int *fd);
  */
 void write_to_pipe(int *fd, char *str);
 
+/**
+ * die main KI methode
+ *
+ */
+char* think();
 

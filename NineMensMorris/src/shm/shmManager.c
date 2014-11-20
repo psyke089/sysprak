@@ -85,6 +85,12 @@ void delete_by_shmid(int shm_id){
    }
 }
 
+void set_think_flag(shm_struct* shm_str){
+  
+  shm_str -> think = true;
+
+}
+
 void read_shm_struct(shm_struct* shm_str){
 
    if (shm_str -> p_pid == 0 || shm_str -> c_pid == 0 || (strcmp(shm_str -> gameID, "") == 0)){
@@ -93,31 +99,40 @@ void read_shm_struct(shm_struct* shm_str){
       exit(EXIT_FAILURE);
    } 
 
-   printf (BLUE "\nParent recieved =>> \n"
-                "gameName    = %s\n"
-                "gameID      = %s\n"
-                "playerCount = %i\n"
-                "childPID    = %i\n"
-                "parentPID   = %i\n" RESET,
-                 shm_str -> gameName,
-                 shm_str -> gameID,
-                 shm_str -> playerCount,
-                 shm_str -> c_pid,
-                 shm_str -> p_pid);
+   if (shm_str -> think){
+        printf (BLUE "\nParent recieved =>> \n"
+                     "gameName    = %s\n"
+                     "gameID      = %s\n"
+                     "playerCount = %i\n"
+                     "childPID    = %i\n"
+                     "parentPID   = %i\n"
+                     "think       = %i\n",
+                      shm_str -> gameName,
+                      shm_str -> gameID,
+                      shm_str -> playerCount,
+                      shm_str -> c_pid,
+                      shm_str -> p_pid,
+                      shm_str -> think);
 
-   for (int i = 0; i < shm_str -> playerCount; i++){
+       for (int i = 0; i < shm_str -> playerCount; i++){
+   
+        printf (BLUE "\nPlayer %i =>> \n"
+                BLUE "playerID    = %i\n"
+                BLUE "playerName  = %s\n"
+                BLUE "isReady     = %i\n"
+                BLUE "isLoggedIn  = %i\n",
+                    (i+1),
+                    shm_str -> p_structs[i].playerID,
+                    shm_str -> p_structs[i].playerName,
+                    shm_str -> p_structs[i].isReady,
+                    shm_str -> p_structs[i].isLoggedIn);
+        }
+    }
+    else {
+      perror (RED "Sorry, think-flag is not set!" RESET);
+      exit(EXIT_FAILURE);
+    }
 
-   printf (BLUE "\nPlayer %i =>> \n"
-                "playerID    = %i\n"
-                "playerName  = %s\n"
-                "isReady     = %i\n"
-                "isLoggedIn  = %i\n" RESET,
-                (i+1),
-                shm_str -> p_structs[i].playerID,
-                shm_str -> p_structs[i].playerName,
-                shm_str -> p_structs[i].isReady,
-                shm_str -> p_structs[i].isLoggedIn);
-   }
 }
 
 
@@ -154,6 +169,7 @@ void fill_shm_struct(shm_struct* shm_str){
         shm_str -> p_structs[1] = player2;
         shm_str -> c_pid        = getpid();
         shm_str -> p_pid        = getppid();
+        shm_str -> think        = false;
 
         printf(GREEN "\nChild filled the shm_struct!\n" RESET);
 

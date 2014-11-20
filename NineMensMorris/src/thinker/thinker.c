@@ -7,17 +7,21 @@ void synch_signal (int sig){
   signal_set = 1;
 }
 
+
 void reset_signal (){
   signal_set = 0;
 }
+
 
 sig_atomic_t get_signal(){
     return signal_set;
 }
 
+
 void start_thinking(){
     kill (getppid (), SIGUSR1);
 }
+
 
 void init_sig_action(){
     struct sigaction sig_str;
@@ -37,7 +41,7 @@ char* read_from_pipe(int *fd){
         memset(buffer, 0, ANSWERLENGTH);
    }
    else {
-        printf (GREEN "Read %i bytes from the pipe: %s\n" RESET, bytes, buffer);
+        printf (GREEN "\nRead %i bytes from the pipe: %s\n" RESET, bytes, buffer);
    }
 
    return buffer;
@@ -47,13 +51,25 @@ char* read_from_pipe(int *fd){
 
 void write_to_pipe(int *fd, char *str){
  
-   if (str != NULL && write(fd[WRITE], str, strlen(str)) <= 0) {
+   if (str == NULL || write(fd[WRITE], str, strlen(str)) <= 0) {
         perror (RED "Couldn't write to pipe!" RESET);
         exit(EXIT_FAILURE);
    }
    reset_signal();
+   //reset think flag()
 
 }
+
+
+// Hier würde ich gerne die plist_struct aus dem shmManager als Argument übergeben
+// es geht leider mit den gegenseitigen imports nicht, da er methoden und structs doppelt liest
+// und ich würde nur sehr ungerne thinker und shmManager zusammenschmeißen, da sie jeweils schon sehr groß werden
+char* think(){
+
+    char *sampleTurn = "A1";
+    return sampleTurn;
+}
+
 
 
 
