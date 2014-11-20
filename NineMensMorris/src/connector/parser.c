@@ -2,6 +2,7 @@
 
 char id[11];
 char msg_queue[32][128];
+char tokens[32][32];
 
 /**
  * Teilt eine Nachricht vom Server in einzelne Zeilen
@@ -43,6 +44,41 @@ void processMessage(char *buf)
 }
 
 /**
+ * Splitet eine line an leerzeichen und schreibt das Ergebniss in tokens.
+ *
+ * line: Zu splitende line.
+ */
+
+void tokenizeLine(char *line)
+{
+
+  int tokenCount = 0;
+
+  char tmp[strlen(line)];
+
+  for (int i = 0; i < 32; ++i)
+  {
+    bzero(tokens[i], 32);
+  }
+
+  sprintf(tmp, "%s", line);
+
+  char *token = strtok(tmp, " ");
+  while (token) {
+    sprintf(tokens[tokenCount], "%s", token);
+    tokenCount++;
+    token = strtok(0, " ");
+  }
+
+  int i = 0;
+  while( (strcmp(tokens[i], "") != 0) && i < 32){
+    printf("token:: %s\n", tokens[i]);
+    i++;
+  }
+
+}
+
+/**
  * Liest von einem Socket und verarbeitet die erhaltene Nachricht.
  *
  * sock: Der Socket, von dem gelesen werden soll.
@@ -59,6 +95,11 @@ void parseMessages(int sock)
   bzero(in_buf, MSGL);
   bzero(out_buf, MSGL);
 
+  int my_pos;
+  char my_name[20];
+  int total_players;
+  int max_move_time;
+
   printf("\n");
 
   while(breaker)
@@ -69,7 +110,7 @@ void parseMessages(int sock)
 
     int linenum = 0;
     
-    while(strcmp(msg_queue[linenum], "") != 0)
+    while( (strcmp(msg_queue[linenum], "") != 0) && linenum < 32)
     {
       switch (msg_queue[linenum][0]) {
       
@@ -89,21 +130,43 @@ void parseMessages(int sock)
 
             if(strcmp(msg_queue[linenum + 1], "") != 0){
               linenum++;
-              printf("Spielname: %s\n", msg_queue[linenum]);
+              char gameid[20];
+              sscanf(msg_queue[linenum], "+ %[^\t\n]", gameid);
+              printf("Spielname: %s\n\n",gameid);
             }else{
               get_message(sock, in_buf);
               processMessage(in_buf);
+              printf("Spielname: %s\n\n",msg_queue[0]);
             }
             sprintf(out_buf, "PLAYER\n");
             send_message(sock, out_buf);
             
-          }else if(strstr(msg_queue[linenum], "+ YOU") != NULL) {
+          }else if(sscanf(msg_queue[linenum], "+ YOU %d %[^\t\n]", &my_pos, my_name) == 2) {
 
-            printf("!!!YOU!!!\n");
+            printf("My position: %d\n", my_pos);
+            printf("My ID: %s\n\n", my_name);
+
+          }else if(sscanf(msg_queue[linenum], "+ TOTAL %d", &total_players) == 1) {
+
+            printf("Total Players: %d\n\n", total_players);
+
+            int opponent_pos;
+            char opponent_name[20];
+            int opponent_ready;
+            int ret = sscanf(msg_queue[linenum+1], "+ %d %[A-Za-z0-9 ] %d", &opponent_pos, opponent_name, &opponent_ready);
+            printf("Opponent position: %d\n", opponent_pos);
+            printf("Opponent ID: %s\n", opponent_name);
+            printf("Opponent ready?: %d\n", opponent_ready);
+            printf("sscanf ret: %d\n\n", ret);
                       
-          }else if(strstr(msg_queue[linenum], "+ TOTAL") != NULL) {
+          }else if(sscanf(msg_queue[linenum], "+ MOVE %d", &max_move_time) == 1) {
 
-            printf("!!!TOTAL!!!\n");
+            printf("Maximum move time: %d\n\n", max_move_time);
+
+                      
+          }else if(strstr(msg_queue[linenum], "+ CAPTURE") != NULL) {
+
+            printf("!!!CAPTURE!!!\n");            
                       
           }else{
             printf("Unexpected message: %s\n", msg_queue[linenum]);
@@ -125,9 +188,9 @@ void parseMessages(int sock)
 
           }else{
             printf("Unerwarteter Fehler.\n");
-            breaker = 0;
           }
 
+          breaker = 0;
           break;
         
         default:

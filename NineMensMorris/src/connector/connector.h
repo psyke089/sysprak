@@ -38,5 +38,5 @@ void parseMessages(int sock);
 
 void processMessage(char *buf);
 
-void parseSingleMessage(char *buf);
+void tokenizeLine(char *line);
 
