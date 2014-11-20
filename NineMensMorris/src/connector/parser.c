@@ -70,11 +70,13 @@ void tokenizeLine(char *line)
     token = strtok(0, " ");
   }
 
+  /*
   int i = 0;
   while( (strcmp(tokens[i], "") != 0) && i < 32){
     printf("token:: %s\n", tokens[i]);
     i++;
   }
+  */
 
 }
 
@@ -95,10 +97,23 @@ void parseMessages(int sock)
   bzero(in_buf, MSGL);
   bzero(out_buf, MSGL);
 
-  int my_pos;
-  char my_name[20];
   int total_players;
   int max_move_time;
+  int captured_pieces;
+
+  int pl_players;
+  int pl_pieces;
+
+  int my_pos;
+  char my_name[20];
+
+  int opponent_pos;
+  char opponent_name[20];
+  int opponent_ready;
+
+  int piece_player;
+  int piece_id;
+  char piece_pos[2];
 
   printf("\n");
 
@@ -113,7 +128,11 @@ void parseMessages(int sock)
     while( (strcmp(msg_queue[linenum], "") != 0) && linenum < 32)
     {
       switch (msg_queue[linenum][0]) {
-      
+        
+        /**
+         *  G A M E   L O G I C
+         */
+
         case '+':
 
           if(strcmp(msg_queue[linenum], "+ WAIT") == 0) {
@@ -155,31 +174,73 @@ void parseMessages(int sock)
 
             printf("Total Players: %d\n\n", total_players);
 
-            int opponent_pos;
-            char opponent_name[20];
-            int opponent_ready;
-            int ret = sscanf(msg_queue[linenum+1], "+ %d %[A-Za-z0-9 ] %d", &opponent_pos, opponent_name, &opponent_ready);
-            printf("Opponent position: %d\n", opponent_pos);
-            printf("Opponent ID: %s\n", opponent_name);
-            printf("Opponent ready?: %d\n", opponent_ready);
-            printf("sscanf ret: %d\n\n", ret);
+            if(strcmp(msg_queue[linenum + 1], "") != 0){
+              linenum++;
+              tokenizeLine(msg_queue[linenum]);
+              
+              sscanf(tokens[1], "%d", &opponent_pos);
+
+              bzero(opponent_name, 20);
+              int i = 2;            
+              while( strcmp(tokens[i+1], "") != 0){
+                strcat(tokens[i], " ");
+                strcat(opponent_name, tokens[i]);
+                i++;
+              }
+                
+              opponent_ready = atoi(tokens[i]);
+
+              printf("Opponent position: %d\n", opponent_pos);
+              printf("Opponent ID: %s\n", opponent_name);
+              if(opponent_ready == 1){
+                printf("Opponent ready?: YES\n\n");
+              }else{
+                printf("Opponent ready?: NO\n\n");
+              }
+
+            }
                       
+          }else if(strcmp(msg_queue[linenum], "+ ENDPLAYERS") == 0) {
+
+            //nothing to do...
+
           }else if(sscanf(msg_queue[linenum], "+ MOVE %d", &max_move_time) == 1) {
 
             printf("Maximum move time: %d\n\n", max_move_time);
                       
-          }else if(strstr(msg_queue[linenum], "+ CAPTURE") != NULL) {
+          }else if(sscanf(msg_queue[linenum], "+ CAPTURE %d", &captured_pieces) == 1) {
 
-            printf("!!!CAPTURE!!!\n");            
+            printf("Captured pieces: %d\n\n", captured_pieces);
                       
+          }else if(sscanf(msg_queue[linenum], "+ PIECELIST %d,%d", &pl_players, &pl_pieces) == 2) {
+
+            printf("Piecelist for %d players and %d pieces per player:\n\n", pl_players, pl_pieces);
+
+          }else if(sscanf(msg_queue[linenum], "+ PIECE%d.%d %[A-C0-7]", &piece_player, &piece_id, piece_pos) == 3) {
+            
+            printf("Player %d, piece %d at position %s\n", piece_player, piece_id, piece_pos);
+
+          }else if(strcmp(msg_queue[linenum], "+ ENDPIECELIST") == 0) {
+
+            sprintf(out_buf, "THINKING \n");
+            send_message(sock, out_buf);
+
+          }else if(strcmp(msg_queue[linenum], "+ OKTHINK") == 0) {
+
+            printf("thinking...\n");
+
           }else{
         
-            printf("Unexpected message: %s\n", msg_queue[linenum]);
+            printf(YELLOW "Unexpected message: %s\n" RESET, msg_queue[linenum]);
         
           }
           
           break;
         
+        /**
+         *  E R R O R   H A N D L I N G
+         */
+
         case '-':
           printf(RED);
 
@@ -194,6 +255,10 @@ void parseMessages(int sock)
           }else if(strcmp(msg_queue[linenum], "- Protocol mismatch - you probably didn't want to talk to the fabulous gameserver") == 0){
 
             printf("Wrong input format.\n");
+
+          }else if(strcmp(msg_queue[linenum], "- We expected you to THINK!") == 0){
+
+            printf("Server expects client to think.\n");
 
           }else{
             printf("Unexpected server error.\n");
