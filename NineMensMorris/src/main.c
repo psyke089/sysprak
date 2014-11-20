@@ -1,5 +1,6 @@
 #include "main.h"
 #include "shm/shmManager.h"
+#include "thinker/thinker.h"
 #include "config.h"
 
 void printHowToUse (){
@@ -62,7 +63,7 @@ int pArg;
         } else {printf(GREEN "\nUsing common client.conf\n" RESET);}
       } else {printf(GREEN "\nUsing common client.conf\n" RESET);}
     }
-    
+  
   }
 
       if (idFlag != NULL && strlen(idFlag) != 11){
@@ -102,8 +103,6 @@ int pArg;
  }
 
 
-
-
 /**
  * Teilt den laufenden Prozess in 
  *
@@ -112,10 +111,20 @@ int pArg;
  */
 void forkingAction(){
 
-int shm_id = create_shm();
+int fd[1];
+pipe(fd);
+char *sampleTurn = "A04"; 
+
+int shm_id = create_shm(SHMSZ);
 shm_struct* shm_str = attach_shm(shm_id);;
 
+int plist_id = create_shm(PLISTSZ);
+plist_struct* plist_str = attach_plist(plist_id);
+
 clear_shm(shm_str);
+clear_plist(plist_str);
+
+
 
 int pid = fork();
 
@@ -126,12 +135,15 @@ int pid = fork();
       break;
 
       case 0:  //Kind =^ sendet || starte Connection + Parser hier
+        
+        close(fd[WRITE]);
 
-        fill_shm_struct(shm_str);
+        read_from_pipe(fd);
 
-        printf(GREEN "\nChild filled the shm_struct!\n" RESET);
+       // fill_shm_struct(shm_str);
 
         detach_shm(shm_str);
+        detach_plist(plist_str);
 
         exit(EXIT_SUCCESS);
 
@@ -139,12 +151,19 @@ int pid = fork();
 
       case 1 ... INT_MAX: // Eltern =^ empfängt Daten || starte Thinker hier
 
+        close(fd[READ]);
+       
+        write_to_pipe(fd, sampleTurn);
+
         waitpid(pid, NULL, 0);
 
-        read_shm_struct(shm_str);
-        
+       // read_shm_struct(shm_str);
+
         detach_shm(shm_str);
-        delete_shm(shm_id);
+        detach_plist(plist_str);
+
+        delete_by_shmid(shm_id);
+        delete_by_shmid(plist_id);
 
         exit(EXIT_SUCCESS);
 

@@ -9,7 +9,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <limits.h>
-
+#include <signal.h>
 
 
 /**
@@ -20,6 +20,11 @@
 #define HOSTNAME "sysprak.priv.lab.nm.ifi.lmu.de"
 #define CVERSION 1.0
 
+/**
+ * Pipehelper
+ */
+#define READ 0
+#define WRITE 1
 
 /**
  * Farben
@@ -31,3 +36,4 @@
 #define MAGENTA "\x1b[35m"
 #define CYAN    "\x1b[36m"
 #define RESET   "\x1b[0m"
+
