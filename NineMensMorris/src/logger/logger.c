@@ -1,17 +1,6 @@
 //  Created by Tim K. on 12.11.14.
 
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/types.h>
-#include <strings.h>
-#include <errno.h>
-
-#include <time.h>
-#include <unistd.h>
-
-#include "../main.h"
-
+#include "./logger.h"
 
 
 //einb. char words[32][64]; // @todo remove wenn eingebunden mit pc
