@@ -42,7 +42,7 @@ typedef struct{
 
 
 /**
- * Key ist IPC_PRIVATE (gerade eine magic number)
+ * Key ist IPC_PRIVATE
  * Size ist SHMSZ
  * permissions sind 0666
  *
@@ -51,7 +51,8 @@ typedef struct{
 int create_shm();
 
 /**
- * Key ist IPC_PRIVATE (gerade eine magic number)
+ * Nur für Prozesse die nicht durch fork() entstanden sind
+ * Magic number muss gesetzt werden
  * Size ist SHMSZ
  * 
  * gibt die shm_id zurück

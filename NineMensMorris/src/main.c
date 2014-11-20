@@ -8,9 +8,9 @@ void printHowToUse (){
          "           client - Unser 'Nine Mens Morris' client\n"
          "OPTIONS:                                           \n"
          "          -i Game-ID (11 Zeichen lang)             \n"
-         "          -c Configdateipfad (optional)            \n"
+         "          -c Relativer configdateipfad (optional)  \n"
          "\n");
-  exit(0);
+  exit(EXIT_FAILURE);
 }
 
 
@@ -25,69 +25,62 @@ configData parseArgs(int argc, char *argv[]){
 
 char *idFlag = NULL;
 FILE* file = NULL;
-//filemodconf für anderere Konfigurationsdateien
-FILE* filemodconf = NULL;
 char path[PATHLEN];
 configData configInc;
 int pArg;
 
   if (argc <= 1){
-    printf("\nZu wenig Argumente...\n");
+    perror("\nZu wenig Argumente...\n");
     printHowToUse();
   }
   else {
-     
-      if ((file = fopen("client.conf", "r")) == NULL){
-          if ((file = fopen("../client.conf", "r")) == NULL){
-            perror ("Couldn't open client.conf");
-            exit(0);
-          }
-          else{
-          strcpy(path,"../");
-        }
+
+    while ((pArg=getopt(argc, argv, "i:c:")) != -1) {
+      switch (pArg) {
+          case 'i':
+             idFlag = optarg;
+          break;
+    
+          case 'c':
+             if (strcpy(path,optarg) == NULL){
+               perror (RED "\nCouldn't copy the c-Flag to path\n" RESET);
+             }
+             if ((path[strlen(path) - 1] != 'f') || ((file = fopen(path, "r")) == NULL) ){
+                   printf (RED "\nPath: %s\n", path);
+                   perror ("Couldn't open" RESET);
+               } 
+               else{printf (GREEN "\nUsing %s\n" RESET, path);}
+           break;
       }
+    }
 
-     while ((pArg=getopt(argc, argv, "i:c:")) != -1) {
-         switch (pArg) {
-             case 'i':
-                idFlag = optarg;
-                break;
-             case 'c':
-                  if (strcat(path,optarg) == NULL){
-                     printf (RED "\nCouldn't add the c-Flag to path\n" RESET);
-                  }
-
-                  if ((filemodconf = fopen(path, "r")) == NULL){
-                     printf (RED "\nCouldn't open %s\n" RESET, path);
-                  }
-                  else {
-                     printf (GREEN "\nUsing %s\n" RESET, path);
-                     file = filemodconf;
-                  }
-                break;
-          }
-     }
-
-       if (filemodconf == NULL){ 
-         printf(GREEN "\nUsing common client.conf\n" RESET);
-       }
+    if (file == NULL){ 
+      if ((file = fopen("client.conf", "r")) == NULL){
+        if ((file = fopen("../client.conf", "r")) == NULL){
+            perror ("Couldn't open client.conf");
+            exit(EXIT_FAILURE);
+        } else {printf(GREEN "\nUsing common client.conf\n" RESET);}
+      } else {printf(GREEN "\nUsing common client.conf\n" RESET);}
+    }
+    
+  }
 
       if (idFlag != NULL && strlen(idFlag) != 11){
-          printf(RED "\nDie Länge der Game-ID muss 11 Zeichen lang sein!\n" RESET);
+          perror(RED "\nDie Länge der Game-ID muss 11 Zeichen lang sein!\n" RESET);
           printHowToUse();
       }
       if (idFlag == NULL){
-          printf(RED "\nDie ID wurde nicht erfolgreich gesetzt!\n" RESET);
+          perror(RED "\nDie ID wurde nicht erfolgreich gesetzt!\n" RESET);
           printHowToUse();
       }
 
       configInc = readConfig(file);
 
 // ############# Testing output ##############
-      printf ("host = %s \n"
+      printf ("host = %s"
               "port = %i \n"
-              "artds= %s  \n"
-              "loglvl = %i", 
+              "artds= %s"
+              "loglvl = %i \n", 
               configInc.hostname,
               configInc.portnummer,
               configInc.artdesspiels,
@@ -96,17 +89,19 @@ int pArg;
 
 
       if (configInc.hostname == NULL || configInc.portnummer == 0 || configInc.artdesspiels == NULL || configInc.loglevel < 0 || configInc.loglevel > 3){
-          printf(RED "\nDie Parameter in der .conf Datei sind nicht alle richtig angegeben!\n" RESET);
-          exit(0);
+          perror(RED "\nDie Parameter in der .conf Datei sind nicht alle richtig angegeben!\n" RESET);
+          exit(EXIT_FAILURE);
       }
 
       if (idFlag == NULL || configInc.hostname == NULL || configInc.portnummer == 0 || configInc.artdesspiels == NULL ){
           printHowToUse();
       }
-      
-  }
-  return configInc;
-}
+   
+  return configInc;   
+ 
+ }
+
+
 
 
 /**
@@ -116,59 +111,48 @@ int pArg;
  * und Elternprozess = Thinker
  */
 void forkingAction(){
- 
- int pid = fork();
 
- int shm_id_parent;
- shm_struct* shm_str_parent;
+int shm_id = create_shm();
+shm_struct* shm_str = attach_shm(shm_id);;
 
- int shm_id_child;
- shm_struct* shm_str_child;
+clear_shm(shm_str);
 
+int pid = fork();
 
   switch (pid){
       case -1:
-        perror(RED "Failed to fork in main.c @ forkingAction: " RESET);
-        exit(0);
+        perror(RED "Failed to fork in main.c: " RESET);
+        exit(EXIT_FAILURE);
       break;
 
       case 0:  //Kind =^ sendet || starte Connection + Parser hier
 
-        shm_id_child = locate_shm();
-        shm_str_child = attach_shm(shm_id_child);
+        fill_shm_struct(shm_str);
 
-        printf(GREEN "Child attached shm with id = %i!\n" RESET, shm_id_child);
+        printf(GREEN "\nChild filled the shm_struct!\n" RESET);
 
-        clear_shm(shm_str_child);
+        detach_shm(shm_str);
 
-        fill_shm_struct(shm_str_child);
-
-        printf(GREEN "Child filled the shm_struct!" RESET);
-
-        detach_shm(shm_str_child);
-
-        exit(0);
+        exit(EXIT_SUCCESS);
 
       break;
 
-      default: // Eltern =^ empfängt Daten || starte Thinker hier
-
-        shm_id_parent = create_shm();
-        shm_str_parent = attach_shm(shm_id_parent);
-
-        printf(BLUE "Parent created shm with id = %i!\n" RESET, shm_id_parent);
-        
-        clear_shm(shm_str_parent);
+      case 1 ... INT_MAX: // Eltern =^ empfängt Daten || starte Thinker hier
 
         waitpid(pid, NULL, 0);
 
-        read_shm_struct(shm_str_parent);
+        read_shm_struct(shm_str);
         
-        detach_shm(shm_str_parent);
-        delete_shm(shm_id_parent);
+        detach_shm(shm_str);
+        delete_shm(shm_id);
 
-        exit(0);
+        exit(EXIT_SUCCESS);
 
+      break;
+
+      default :
+        perror (RED "pid lower than -1 : This case should never happen!\n" RESET);
+        exit(EXIT_FAILURE);
       break;
 
   } 
@@ -178,11 +162,9 @@ void forkingAction(){
 
 int main(int argc, char *argv[]) { 
 
-  //configData config;
-
   parseArgs(argc, argv);
 
- // forkingAction();
+  forkingAction();
 
   return 0;
 }
