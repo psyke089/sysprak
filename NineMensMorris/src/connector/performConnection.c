@@ -72,34 +72,60 @@ void connect_to_socket(int sock, struct sockaddr_in dest)
 }
 
 /**
- *  Liest von einem Socket.
+ *  Liest eine Zeile (bis '\n') von einem Socket.
  *
  *  sock: Socket filedescriptor
  *  buf:  Pointer auf buffer,
  *        in den die erhaltene Nachricht geschrieben werden soll
  */
 
-int get_message(int sock, char* buf)
+void get_message(int sock, char* buf)
 {
+  
+  char msg[MSGL];
+  size_t bytes_received = 0;
+  size_t n;
 
-  int n;
-  n = recv(sock, buf, MSGL, 0);
-  //n = read(sock, buf, MSGL);
-  if (n < 0)
-  {
-    if ((errno == EAGAIN) || (errno == EWOULDBLOCK)){
-      printf("non-blocking operation returned EAGAIN or EWOULDBLOCK\n");
-    }else{
-      printf("recv returned unrecoverable error(errno=%d)\n", errno);
+  bzero(buf, MSGL);
+  int notbremse = 128;
+
+  do{
+    
+    bzero(msg, MSGL);
+    n = recv(sock, msg, MSGL, 0);
+    
+    if (n < 0)
+    {
+      perror(RED "ERROR reading from socket" RESET);
+      //logPrnt('r','q',"ERROR reading from socket");
+      exit(1);
     }
-    perror(RED "ERROR reading from socket" RESET);
-    //logPrnt('r','q',"ERROR reading from socket");
-    exit(1);
-  }
-  printf("\nreceived %i bytes:\n", n);
-  ///@todo in logfile integrieren @tim
-  return n;
 
+    bytes_received += n;
+    strcat(buf,msg);
+
+    //printf(CYAN "|" RESET "%s", msg);
+
+    notbremse--;
+
+  }while( (msg[n-1] != '\n') && notbremse > 0);
+
+  printf("\nreceived %zu bytes:\n", bytes_received);
+
+  switch(buf[0]){
+    case '+': 
+      printf(GREEN);
+      break;
+    case '-':
+      printf(RED);
+      break;
+    default:
+      break;
+  }
+
+  printf("%s\n" RESET, buf);
+  ///@todo in logfile integrieren @tim
+  
 }
 
 /**

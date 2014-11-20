@@ -1,65 +1,57 @@
 #include "connector.h"
 
-char words[32][64];
 char id[11];
+char msg_queue[32][128];
 
 /**
- * parseSingleMessage parsed die Nachricht die vom Server kommt
- * sie benutzt das Leerzeichen als delimiter und speichert dir Teile als Array
- *
- * aktuelle maximale Wortlänge sind 64 Zeichen
+ * Teilt eine Nachricht vom Server in einzelne Zeilen
+ * und schreibt sie in die msg_queue.
  *
  * buf: die zu parsende Nachricht
  */
 
-void parseSingleMessage(char *buf)
+void processMessage(char *buf)
 {
+  
+  int lineCount = 0;
 
-  //char words[32][64];
-  char word [64];
-  char buf2[MSGL];
-  int wordLength = 0;
-  int wordCount = 0;
+  char tmp[MSGL];
+  bzero(tmp, MSGL);
 
+  sprintf(tmp, "%s", buf);
+  
   for (int i = 0; i < 32; ++i)
   {
-    bzero(words[i], 64);
+    bzero(msg_queue[i], 128);
+  }
+  
+  char *line = strtok(tmp, "\n");
+  while (line) {
+    sprintf(msg_queue[lineCount], "%s", line);
+    lineCount++;
+    line = strtok(0, "\n");
   }
 
-  sprintf(buf2, "%s", buf);
-
-  while ( sscanf(buf, "%63[^ ]%n", word, &wordLength) == 1 ){
-
-    sprintf(words[wordCount], "%s", word);
-    //printf("parsedMsg Nr.%i\t::  \"%s\"\n", wordCount, word);
-    ++wordCount;
-
-    buf += wordLength;
-    if ( *buf != ' ' ){
-      break;
-    }
-    ++buf;
-
+  /*
+  int i = 0;
+  while ( (strcmp(msg_queue[i], "") != 0) && (i<32) ){
+    printf("line %i :: %s\n", i, msg_queue[i]); 
+    i++;   
   }
-
-  switch (*words[0]) {
-    case '+' :
-      printf("=> : " GREEN);
-      break;
-    case '-' :
-      printf("=> : " RED);
-      break;
-    default: break;
-  }
-
-  printf("%s\n" RESET, buf2);
+  */
 
 }
+
+/**
+ * Liest von einem Socket und verarbeitet die erhaltene Nachricht.
+ *
+ * sock: Der Socket, von dem gelesen werden soll.
+ */
 
 void parseMessages(int sock)
 {
 
-  int cont = 1;
+  int breaker = 1;
 
   char in_buf[MSGL];
   char out_buf[MSGL];
@@ -67,126 +59,89 @@ void parseMessages(int sock)
   bzero(in_buf, MSGL);
   bzero(out_buf, MSGL);
 
-  
   printf("\n");
 
-  while(cont)
+  while(breaker)
   {
 
-    bzero(in_buf, MSGL);
     get_message(sock, in_buf);
-    parseSingleMessage(in_buf);
+    processMessage(in_buf);
 
-    switch (*words[0]) {
+    int linenum = 0;
+    
+    while(strcmp(msg_queue[linenum], "") != 0)
+    {
+      switch (msg_queue[linenum][0]) {
       
-      /**
-       * G A M E   L O G I C
-       */
-      case '+' :
+        case '+':
+
+          if(strcmp(msg_queue[linenum], "+ MNM Gameserver v1.0 accepting connections") == 0) {
+            
+            sprintf(out_buf, "VERSION %0.1f\n", CVERSION);
+            send_message(sock, out_buf);
+
+          }else if(strcmp(msg_queue[linenum], "+ Client version accepted - please send Game-ID to join") == 0) {
+
+            sprintf(out_buf, "ID %s\n", id);
+            send_message(sock, out_buf);
+
+          }else if(strcmp(msg_queue[linenum], "+ PLAYING NMMorris") == 0) {
+
+            if(strcmp(msg_queue[linenum + 1], "") != 0){
+              linenum++;
+              printf("Spielname: %s\n", msg_queue[linenum]);
+            }else{
+              get_message(sock, in_buf);
+              processMessage(in_buf);
+            }
+            sprintf(out_buf, "PLAYER\n");
+            send_message(sock, out_buf);
+            
+          }else if(strstr(msg_queue[linenum], "+ YOU") != NULL) {
+
+            printf("!!!YOU!!!\n");
+                      
+          }else if(strstr(msg_queue[linenum], "+ TOTAL") != NULL) {
+
+            printf("!!!TOTAL!!!\n");
+                      
+          }else{
+            printf("Unexpected message: %s\n", msg_queue[linenum]);
+            breaker = 0;  
+          }
+          
+          break;
         
-        if(strcmp(words[1], "WAIT\n") == 0 || 
-          strcmp(words[8], "WAIT\n") == 0){
-          
-          printf(YELLOW "waiting...\n" RESET);
+        case '-':
+          printf(RED);
 
-          sprintf(out_buf, "OKWAIT\n");
-          send_message(sock, out_buf);
+          if(strcmp(msg_queue[linenum], "- No free computer player found for that game - exiting") == 0) {
 
-        }else if(strcmp(words[1], "MNM") == 0) {
+            printf("Kein freier platz.\n");
+                       
+          }else if(strcmp(msg_queue[linenum], "- Socket timeout - please be quicker next time") == 0){
 
-          sprintf(out_buf, "VERSION %0.1f\n", CVERSION);
-          send_message(sock, out_buf);
+            printf("Socket timeout.\n");
 
-        }else if(strcmp(words[1], "Client") == 0) {
+          }else{
+            printf("Unerwarteter Fehler.\n");
+            breaker = 0;
+          }
 
-          sprintf(out_buf, "ID %s\n", id);
-          send_message(sock, out_buf);
+          break;
+        
+        default:
+          printf("WAT\n");
+          breaker = 0;
+          break;
+      }    
 
-        }else if(strcmp(words[1], "PLAYING") == 0) {
+      linenum++;
 
-          bzero(in_buf, MSGL);
-          get_message(sock, in_buf);
-          parseSingleMessage(in_buf);
-
-          sprintf(out_buf, "PLAYER\n");
-          send_message(sock, out_buf);
-
-        }else if(strcmp(words[1], "YOU") == 0) {
-
-          printf(YELLOW "!YOU!\n" RESET);
-          //logPrnt('y','s',"!YOU!\n");
-
-        }else if(strcmp(words[1], "TOTAL") == 0) {
-
-          printf(YELLOW "!TOTAL!\n" RESET);
-          //logPrnt('y','s',"!TOTAL!\n");
-
-          sprintf(out_buf, "THINKING\n");
-          send_message(sock, out_buf);
-
-        }else if(strcmp(words[1], "OKTHINK\n") == 0){
-          printf(YELLOW "...thinking...\n" RESET);
-          //logPrnt('y','s',"...thinking...\n");
-
-          sprintf(out_buf, "PLAY A0\n");
-          send_message(sock, out_buf);
-          // here comes the forking action
-
-        }else if(strcmp(words[1], "MOVEOK\n") == 0){
-          
-          printf(YELLOW "Move " GREEN "VALID...\n" RESET);
-
-        }if(strcmp(words[1], "GAMEOVER\n") == 0){
-          
-          printf(YELLOW "Game Over.\n" RESET);
-
-          bzero(in_buf, MSGL);
-          get_message(sock, in_buf);
-          parseSingleMessage(in_buf);
-
-        }else if(strcmp(words[1], "QUIT\n") == 0){
-          
-          printf(YELLOW "...connection closed.\n" RESET);
-
-        }else{
-
-          printf(YELLOW "...out of options.\n" RESET);
-          //logPrnt('y','s',"...out of options.\n");
-
-        }
-        break;
-
-      /**
-       * E R R O R   H A N D L I N G
-       */
-      case '-' :
-        if(strcmp(words[2], "timeout") == 0){
-
-          printf(YELLOW "...Socket timeout.\n" RESET);
-
-        }else if(strcmp(words[1], "computer") == 0){
-          
-          printf(YELLOW "...no free seat.\n" RESET);
-
-        }else if(strcmp(words[1], "Destination") == 0){
-          
-          printf(YELLOW "Move " RED "INVALID.\n" RESET);
-
-        }else{
-          
-          printf(YELLOW "Unexpected server error.\n" RESET);
-
-        }
-        cont = 0;
-        break;
-
-      default: 
-        printf(YELLOW "Unexpected message from server.\n" RESET);
-        cont = 0;
-        break;
     }
 
-    
+    printf(RESET);
 
   }
+
 }
