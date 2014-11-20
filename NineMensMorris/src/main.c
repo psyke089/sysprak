@@ -77,9 +77,9 @@ int pArg;
       configInc = readConfig(file);
 
 // ############# Testing output ##############
-      printf ("host = %s"
+      printf ("host = %s \n"
               "port = %i \n"
-              "artds= %s"
+              "artds= %s \n"
               "loglvl = %i \n", 
               configInc.hostname,
               configInc.portnummer,

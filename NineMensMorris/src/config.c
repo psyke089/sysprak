@@ -17,6 +17,7 @@ configData readConfig(FILE *file){
         ptr = strtok(NULL, delimiter);
         ptr = strtok(NULL, delimiter);
         strcpy(configTemp.hostname,ptr);
+        configTemp.hostname[strlen(configTemp.hostname)-1] = 0;
       }
 
       if(strcmp("portnummer",ptr) == 0){
@@ -29,6 +30,7 @@ configData readConfig(FILE *file){
         ptr = strtok(NULL, delimiter);
         ptr = strtok(NULL, delimiter);  
         strcpy(configTemp.artdesspiels,ptr);
+        configTemp.artdesspiels[strlen(configTemp.artdesspiels)-1] = 0;
       }
 
       if(strcmp("loglevel",ptr) == 0){
