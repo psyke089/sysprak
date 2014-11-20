@@ -100,6 +100,7 @@ void parseMessages(int sock)
   int total_players;
   int max_move_time;
   int captured_pieces;
+  char gameid[20];
 
   int pl_players;
   int pl_pieces;
@@ -154,13 +155,12 @@ void parseMessages(int sock)
 
             if(strcmp(msg_queue[linenum + 1], "") != 0){
               linenum++;
-              char gameid[20];
               sscanf(msg_queue[linenum], "+ %[^\t\n]", gameid);
-              printf("Spielname: %s\n\n",gameid);
+              printf("Game ID: %s\n\n",gameid);
             }else{
               get_message(sock, in_buf);
               processMessage(in_buf);
-              printf("Spielname: %s\n\n",msg_queue[0]);
+              printf("Game ID: %s\n\n",msg_queue[0]);
             }
             sprintf(out_buf, "PLAYER\n");
             send_message(sock, out_buf);
@@ -246,7 +246,7 @@ void parseMessages(int sock)
 
           if(strcmp(msg_queue[linenum], "- No free computer player found for that game - exiting") == 0) {
 
-            printf("Kein freier platz.\n");
+            printf("No free seat.\n");
                        
           }else if(strcmp(msg_queue[linenum], "- Socket timeout - please be quicker next time") == 0){
 
