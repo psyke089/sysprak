@@ -104,7 +104,6 @@ int pArg;
  
  }
 
-
 /**
  * Teilt den laufenden Prozess in 
  *
@@ -113,10 +112,12 @@ int pArg;
  */
 void forkingAction(){
 
+// pipes
 int fd[1];
 pipe(fd);
 char *sampleTurn = "A04"; 
 
+// shm
 int shm_id = create_shm(SHMSZ);
 shm_struct* shm_str = attach_shm(shm_id);;
 
@@ -126,7 +127,8 @@ plist_struct* plist_str = attach_plist(plist_id);
 clear_shm(shm_str);
 clear_plist(plist_str);
 
-
+// signals
+init_sig_action();
 
 int pid = fork();
 
@@ -138,11 +140,14 @@ int pid = fork();
 
       case 0:  //Kind =^ sendet || starte Connection + Parser hier
         
+       
         close(fd[WRITE]);
 
         read_from_pipe(fd);
 
-       // fill_shm_struct(shm_str);
+        fill_shm_struct(shm_str);
+
+        start_thinking();
 
         detach_shm(shm_str);
         detach_plist(plist_str);
@@ -154,12 +159,11 @@ int pid = fork();
       case 1 ... INT_MAX: // Eltern =^ empfängt Daten || starte Thinker hier
 
         close(fd[READ]);
-       
         write_to_pipe(fd, sampleTurn);
+       
+        while (!get_signal()){}
 
-        waitpid(pid, NULL, 0);
-
-       // read_shm_struct(shm_str);
+        read_shm_struct(shm_str);
 
         detach_shm(shm_str);
         detach_plist(plist_str);
