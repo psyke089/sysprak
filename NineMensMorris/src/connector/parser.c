@@ -261,7 +261,7 @@ void parseMessages(int sock)
             printf("Server expects client to think.\n");
 
           }else{
-            printf("Unexpected server error.\n");
+            printf("Unexpected server error: %s\n", msg_queue[linenum]);
           }
 
           breaker = 0;
