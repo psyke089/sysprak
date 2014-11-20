@@ -1,10 +1,10 @@
 #include "shmManager.h"
 
-int create_shm(){
+int create_shm(size_t size){
 
   int shm_id;
 
-  if ((shm_id = shmget(IPC_PRIVATE, SHMSZ, IPC_CREAT | 0666)) < 0) {
+  if ((shm_id = shmget(IPC_PRIVATE, size, IPC_CREAT | 0666)) < 0) {
     perror(RED "Could not create a shared memory @ shmManager.c" RESET);
     exit(EXIT_FAILURE);
   }
@@ -39,33 +39,57 @@ shm_struct* attach_shm(int shm_id){
    return shm_s;
 }
 
+
+plist_struct* attach_plist(int plist_id){
+
+   plist_struct *plist_s; 
+
+   if ((plist_s = shmat(plist_id, NULL, 0)) == (plist_struct *) -1) {
+    perror(RED "Attaching the piecelist shared memory segment failed" RESET); 
+    exit(EXIT_FAILURE);
+   }
+
+   return plist_s;
+
+}
+
+
 void clear_shm(shm_struct *shm_s){
     memset(shm_s, 0, SHMSZ);
 }
 
 
+void clear_plist(plist_struct *plist_s){
+    memset(plist_s, 0, PLISTSZ);
+}
+
 void detach_shm (shm_struct *shm_s){   
    if(shmdt(shm_s) != 0){
-     perror (RED "Could not detach memory segment @ shmManager\n" RESET);
-     exit(EXIT_FAILURE);
-   }
-}   
-
-
-void delete_shm(int shm_id){
-
-   if(shmctl(shm_id, IPC_RMID, NULL) == -1) {
-     perror(RED "Could not destroy memory segment @ shmManager.c \n" RESET);
+     perror (RED "Could not detach memory segment\n" RESET);
      exit(EXIT_FAILURE);
    }
 }
 
+void detach_plist (plist_struct *plist_s){   
+   if(shmdt(plist_s) != 0){
+     perror (RED "Could not detach plist memory segment\n" RESET);
+     exit(EXIT_FAILURE);
+   }
+}   
+
+void delete_by_shmid(int shm_id){
+
+   if(shmctl(shm_id, IPC_RMID, NULL) == -1) {
+     perror(RED "Could not destroy memory segment\n" RESET);
+     exit(EXIT_FAILURE);
+   }
+}
 
 void read_shm_struct(shm_struct* shm_str){
 
    if (shm_str -> p_pid == 0 || shm_str -> c_pid == 0 || (strcmp(shm_str -> gameID, "") == 0)){
       perror(RED "\nCouldn't read from shm_str pointer because the data is \n"
-                 " corrupted (pids are 0 / gameID is empty) @ shmManager.c" RESET);
+                 " corrupted (pids are 0 / gameID is empty)\n" RESET);
       exit(EXIT_FAILURE);
    } 
 
@@ -131,4 +155,7 @@ void fill_shm_struct(shm_struct* shm_str){
         shm_str -> c_pid        = getpid();
         shm_str -> p_pid        = getppid();
 
+        printf(GREEN "\nChild filled the shm_struct!\n" RESET);
+
 }
+

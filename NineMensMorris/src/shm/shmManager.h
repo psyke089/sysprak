@@ -14,6 +14,7 @@
 #define NAMELENGTH 100
 #define MAXPLAYERS 8
 #define SHMSZ (sizeof(shm_struct))
+#define PLISTSZ (sizeof(plist_struct))
 
 /**
  * Player Struct
@@ -42,13 +43,25 @@ typedef struct{
 
 
 /**
+ * Field Struct
+ * 
+ * die Größe muss noch festgelegt werden
+ * wahrscheinlich wieder hinreichend groß wählen
+ * und eine Abfrage machen wie viel belegt wurde
+ */
+ typedef struct{
+    char piece_list[2];
+    int count;
+ } plist_struct;
+
+
+/**
  * Key ist IPC_PRIVATE
- * Size ist SHMSZ
  * permissions sind 0666
- *
+ * 
  * gibt die shm_id zurück
  */
-int create_shm();
+int create_shm(size_t size);
 
 /**
  * Nur für Prozesse die nicht durch fork() entstanden sind
@@ -66,9 +79,20 @@ int locate_shm();
 shm_struct* attach_shm(int shm_id);
 
 /**
+ * "befestigt" die Struktur an der shm_id
+ * gibt die befestigte Struktur zurück
+ */
+plist_struct* attach_plist(int plist_id);
+
+/**
  * füllt die Sturktur mit Nullen (0)
  */
 void clear_shm(shm_struct *shm_s);
+
+/**
+ * füllt die Struktur mit Nullen (0)
+ */
+void clear_plist(plist_struct *plist_s);
 
 /**
  * "entfernt" die Struktur
@@ -76,16 +100,20 @@ void clear_shm(shm_struct *shm_s);
 void detach_shm(shm_struct *shm_s);
 
 /**
+ * "entfernt" die Struktur
+ */
+void detach_plist(plist_struct *plist_s);
+
+/**
  * sendet IPC_RIMD nach der id
  * => das Segment wird zur Zerstörung freigegeben
  */
-void delete_shm(int shm_id);
+void delete_by_shmid(int shm_id);
 
 /**
  * printet die Daten von der shm_struct
  * auf die Konsole aus
- *
- **/
+ */
 void read_shm_struct(shm_struct* shm_str);
 
 /**
@@ -95,3 +123,5 @@ void read_shm_struct(shm_struct* shm_str);
  *
  */
 void fill_shm_struct(shm_struct* shm_str);
+
+

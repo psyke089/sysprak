@@ -28,14 +28,17 @@ loggertest:
 	$(CC) $(CFLAGS)  src/logger/logger.c  src/logger/logger_test_main.c -o bin/loggerTest
 
 client: src/shm/shmManager.c\
-				    src/shm/shmManager.h\
-						src/config.h\
-						src/config.c\
-						src/main.h\
-						src/main.c
+				src/shm/shmManager.h\
+				src/thinker/thinker.c\
+				src/thinker/thinker.h\
+				src/config.h\
+				src/config.c\
+				src/main.h\
+				src/main.c
 						
 	$(CC) $(CFLAGS) $(OUT)\
 		src/shm/shmManager.c\
+		src/thinker/thinker.c\
 		src/config.c\
 		src/main.c
 
