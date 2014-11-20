@@ -23,10 +23,11 @@ int loglevel = 1;   // @todo aus struct von config datei auslesen
  * @param p
  *              s für short         Bsp: 14-11-13+03:02:11
  *              l für längeres      Bsp: Wed Nov 12 22:18:23 2014\n
+ *              o für               Bsp               
  *              n für kA            Bsp: @todo
  *              m für short w/ ms   Bsp: 14-11-13+03:02:11:124 //! @todo ms funkioniert noch nicht richtig
  *              d 
- *              m nur Uhrzeit       Bsp: 03:02:11
+ *              ? nur Uhrzeit       Bsp: 03:02:11
  * @endparblock
  */
 // malloc sizeof(char) //   brauch ich doch nicht??
@@ -37,17 +38,19 @@ char* getTimeAsString (char p){
     struct tm *timeinfo;  //pointer auf time-struct
     time_t rawtime;
     //char* timeString;   // pointer auf strng der returnt wird
-    static char timeString[100];
+    static char  timeString[100];
     time ( &rawtime );
     timeinfo = localtime ( &rawtime );
     
-    if(p == 'l'){
+    if      (p == 'l'){
         strcpy (timeString,  asctime(timeinfo));
     }else if(p == 's'){
         strftime (timeString,100,"%y-%m-%d+%H:%M:%S",timeinfo);
     // printf ( "Current local time and date: %s", asctime (timeinfo) );
     }else if(p == 'n'){
-       strftime (timeString,100," %I:%M%p.",timeinfo);
+       strftime (timeString,100," ",timeinfo);
+    }else if(p == 'o'){
+       strftime (timeString,100,"%F - %T",timeinfo);
     }else if(p == 'd'){
         strftime (timeString,100,"%c",timeinfo);
     }else if(p == 't'){
@@ -75,7 +78,7 @@ char* getTimeAsString (char p){
 void writeLog(char* input){
     FILE *logfile = fopen("./logfile.txt", "a");
     //fputs("test: schreibe in das ins logfile mit fputs\n", logfile);
-    fprintf(logfile, "test: schreibe in das ins logfile mit fprintf %s\n", getTimeAsString('s'));
+    //fprintf(logfile, "test: schreibe in das ins logfile mit fprintf %s\n", getTimeAsString('s'));
     fprintf(logfile, "%s %s\n", getTimeAsString('t'), input);
     fclose(logfile);
 }
@@ -86,7 +89,7 @@ void writeLog(char* input){
 void initLogSession(){
     FILE *logfile = fopen("./logfile.txt", "a");
     
-    fprintf(logfile,"---------------------- %s ----------------------\n", getTimeAsString('d') );
+    fprintf(logfile,"---------------------- %s ----------------------\n", getTimeAsString('o') );
     
     fclose(logfile);
 }
@@ -107,7 +110,8 @@ void createLog(){
   * prüft ob logfile vorhanden, wenn nicht wird ein neues erstellt
   *
   */
-void checkFile() {
+void initLog() {
+    //  printf ("hier in initLog() \n"); //@todo remove
     FILE *logfile = fopen("./logfile.txt", "r");
     if(logfile == NULL) {
         /* datei nicht vorhanden, erstelle logdatei log.txt */
@@ -115,10 +119,12 @@ void checkFile() {
         //hier datei erstellen [STEHEN GEbLieben]
         fclose(logfile);
         createLog();
+        initLogSession();
     } else {
         fclose(logfile);
         /* logfile vorhanden */
         printf ("logfile vorhanden, gehe weiter \n"); //@todo remove
+        initLogSession();
     }
 }
 
@@ -132,7 +138,7 @@ void checkFile() {
  * @endparamblock
  *prntColor
  */
-void prntColor(char c, char* input ){
+void prntColor_legacy(char c, char* input ){
     if (c == 'r') {
         printf(RED);
         printf("%s" ,input);
@@ -163,6 +169,35 @@ void prntColor(char c, char* input ){
 }
 
 
+void prntColor(char c, char* input ){
+    //char colorString[9]
+    switch(c){
+
+        case 'r':
+            printf(RED);
+            break;
+        case 'g':
+            printf(GREEN);
+            break;
+        case 'y':
+            printf(YELLOW);
+            break;
+        case 'b':
+            printf(BLUE);
+            break;
+        case 'm':
+            printf(MAGENTA);
+            break;
+        case 'c':
+            printf(CYAN);
+            break;
+        default:
+            break;
+    }
+    printf("%s" ,input);
+    printf(RESET);
+}
+
 
 /**
  * Anfang wo alles hineinfällt 
@@ -171,6 +206,7 @@ void prntColor(char c, char* input ){
  * \param[in] t typ des inputs
  * \parblock
  *          e : error(-..) / s : sonstiges / p : nachrichten des prologs
+ *  @todo q: perror
  * \endparblock
  * bei loglevel außerhalb des definierten wird beides gemacht
  */
