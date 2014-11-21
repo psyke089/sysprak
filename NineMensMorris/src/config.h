@@ -28,7 +28,7 @@ typedef struct {
  *
  * Terminiert bei Fehlversuch
  */
-FILE* open_common_config(FILE *file);
+FILE* openCommonConfig(FILE *file);
 
 
 /**
@@ -36,7 +36,7 @@ FILE* open_common_config(FILE *file);
  *
  * gibt bei Fehlversuch NULL zurück  
  */
-FILE* open_path_config(char *optarg);
+FILE* openPathConfig(char *optarg);
 
 
 /**
@@ -45,22 +45,14 @@ FILE* open_path_config(char *optarg);
  *
  * Terminiert bei Fehlversuch
  */
-void config_valid(configData conf_str);
-
-/**
- * Überprüft die Validität von der ID
- *
- * Terminiert bei Fehlversuch
- */
-void id_valid(char *idFlag);
-
+void configParamValid(configData conf_str);
 
 /**
  * Zum Testen
  * 
  */
 
-void print_config_str(configData conf_str);
+void printConfigString(configData conf_str);
 
 /**
  * Parser für den .conf-File 

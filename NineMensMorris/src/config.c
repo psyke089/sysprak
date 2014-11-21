@@ -16,7 +16,7 @@ char line[MSGLEN];
 
 
 
-FILE* open_common_config(FILE* file){
+FILE* openCommonConfig(FILE* file){
 
   if(file == NULL){
      if ((file = fopen("client.conf", "r")) == NULL){
@@ -30,7 +30,7 @@ FILE* open_common_config(FILE* file){
 }
 
 
-FILE* open_path_config(char *optarg){
+FILE* openPathConfig(char *optarg){
 
   FILE* file = NULL;
   char path[PATHLEN];
@@ -50,20 +50,7 @@ FILE* open_path_config(char *optarg){
 }
 
 
-void id_valid(char *idFlag){
-
-      if (idFlag != NULL && strlen(idFlag) != 11){
-          perror(RED "\nDie Länge der Game-ID muss 11 Zeichen lang sein!\n" RESET);
-          printHowToUse();
-      }
-      if (idFlag == NULL){
-          perror(RED "\nDie ID wurde nicht erfolgreich gesetzt!\n" RESET);
-          printHowToUse();
-      }
-
-}
-
-void config_valid(configData conf_str){
+void configParamValid(configData conf_str){
 
       if (conf_str.hostname == NULL || conf_str.portnummer == 0 || conf_str.artdesspiels == NULL || conf_str.loglevel < 0 || conf_str.loglevel > 3){
           perror(RED "\nDie Parameter in der .conf Datei sind nicht alle richtig angegeben!\n" RESET);
@@ -76,7 +63,7 @@ void config_valid(configData conf_str){
    
 }
 
-void print_config_str(configData conf_str){
+void printConfigString(configData conf_str){
 
       printf ("host = %s \n"
               "port = %i \n"

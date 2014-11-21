@@ -28,20 +28,34 @@ int pArg;
                        break;
 
                        case 'c':
-                        file = open_path_config(optarg);
+                        file = openPathConfig(optarg);
                        break;
                    }
               }
-            file = open_common_config(file);
+            file = openCommonConfig(file);
           }
 
-  id_valid(idFlag);
+  
+  /**
+   * Überprüft die Validität von der ID
+   *
+   * Terminiert bei Fehlversuch
+   */
+
+  if (idFlag != NULL && strlen(idFlag) != 11){
+      perror(RED "\nDie Länge der Game-ID muss 11 Zeichen lang sein!\n" RESET);
+      printHowToUse();
+  }
+  if (idFlag == NULL){
+      perror(RED "\nDie ID wurde nicht erfolgreich gesetzt!\n" RESET);
+      printHowToUse();
+  }
 
   configInc = readConfig(file);
 
-  config_valid(configInc);
+  configParamValid(configInc);
 
-  print_config_str(configInc);
+  printConfigString(configInc);
 
   return configInc;
 }
@@ -55,7 +69,7 @@ int pArg;
 void forkingAction(){
 
 // pipes
-int fd[1];
+int fd[2];
 pipe(fd);
 char *sampleTurn = "A1";
 
