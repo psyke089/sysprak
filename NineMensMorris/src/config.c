@@ -1,6 +1,14 @@
 #include "config.h"
 #include "main.h"
 
+/*
+Aufgabenstellung gelesen?
+
+Achten Sie der Übersichtlichkeit halber darauf die für das Interpretieren (!!!!!)
+der Konigurationsdatei erforderlichen Methoden in einer separaten Datei (z. B. config.c) auszulagern
+*/
+
+
 //Delimiter für die Trennbedinung pro Zeile
 char *delimiter = " ";
 char *ptr;
@@ -15,7 +23,7 @@ FILE* open_common_config(FILE* file){
         if ((file = fopen("../client.conf", "r")) == NULL){
             perror ("Couldn't open client.conf");
             exit(EXIT_FAILURE);
-        } else {printf(GREEN "\nUsing common client.conf\n" RESET);}
+        } else {printf(GREEN "\nUsing common ../client.conf\n" RESET);}
       } else {printf(GREEN "\nUsing common client.conf\n" RESET);}
    } 
   return file;
