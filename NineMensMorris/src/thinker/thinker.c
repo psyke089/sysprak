@@ -36,7 +36,6 @@ char* read_from_pipe(int *fd){
    int bytes;
 
    if ((bytes = read(fd[READ], buffer, ANSWERLENGTH)) <= 0) {
-//        buf[n] = 0; /* terminate the string */
         perror (RED "Couldn't read from pipe!" RESET);
         memset(buffer, 0, ANSWERLENGTH);
    }
@@ -49,25 +48,23 @@ char* read_from_pipe(int *fd){
 }
 
 
-void write_to_pipe(int *fd, char *str){
+void write_to_pipe(int *fd, char *str, shm_struct *shm_str){
  
    if (str == NULL || write(fd[WRITE], str, strlen(str)) <= 0) {
         perror (RED "Couldn't write to pipe!" RESET);
-        exit(EXIT_FAILURE);
+        fail_routine();
    }
+
    reset_signal();
-   //reset think flag()
+   set_think_flag(false, shm_str);
 
 }
 
 
-// Hier würde ich gerne die plist_struct aus dem shmManager als Argument übergeben
-// es geht leider mit den gegenseitigen imports nicht, da er methoden und structs doppelt liest
-// und ich würde nur sehr ungerne thinker und shmManager zusammenschmeißen, da sie jeweils schon sehr groß werden
-char* think(){
-
-    char *sampleTurn = "A1";
-    return sampleTurn;
+char* think(plist_struct *plist_str){
+        plist_str -> piece_list[0][0] = 'A';
+        plist_str -> piece_list[0][1] = '1';
+    return plist_str -> piece_list[0];
 }
 
 

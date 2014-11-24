@@ -1,5 +1,5 @@
 #include "main.h"
-#include "shm/shmManager.h"
+//#include "shm/shmManager.h"
 #include "thinker/thinker.h"
 #include "config.h"
 
@@ -7,7 +7,7 @@
  * ansonsten terminiert das Programm
  *
  * -i ist die Game-ID und muss genau 11 Zeichen lang sein (wird in idFlag abgespeichert)
- * -c ist für die optionale Configdatei                     (wird in path abgespeichert)
+ * -c ist für die optionale Configdatei                     (wird in file abgespeichert)
  */
 
 configData parseArgs(int argc, char *argv[]){
@@ -93,8 +93,11 @@ int pid = fork();
         close(fd[WRITE]);
 
         fill_shm_struct(shm_str);
-        set_think_flag(shm_str);
+        set_think_flag(true, shm_str);
 
+
+
+        sleep(1);
         start_thinking();
 
         read_from_pipe(fd);
@@ -114,21 +117,15 @@ int pid = fork();
 
         read_shm_struct(shm_str);
 
-        write_to_pipe(fd, think());
+        write_to_pipe(fd, think(plist_str), shm_str);
         
-        detach_shm(shm_str);
-        detach_plist(plist_str);
-
-        delete_by_shmid(shm_id);
-        delete_by_shmid(plist_id);
-
-        exit(EXIT_SUCCESS);
+        fail_routine();
 
       break;
 
       default :
         perror (RED "pid lower than -1 : This case should never happen!\n" RESET);
-        exit(EXIT_FAILURE);
+        fail_routine();
       break;
 
   } 

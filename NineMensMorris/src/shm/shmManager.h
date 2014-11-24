@@ -5,7 +5,6 @@
 #include <stdbool.h>
 #include <string.h>
 #include <unistd.h>
-#include "../main.h"
 
 /**
  * Config
@@ -15,6 +14,19 @@
 #define MAXPLAYERS 8
 #define SHMSZ (sizeof(shm_struct))
 #define PLISTSZ (sizeof(plist_struct))
+
+/**
+ * Farben
+ */
+#define RED     "\x1b[31m"
+#define GREEN   "\x1b[32m"
+#define YELLOW  "\x1b[33m"
+#define BLUE    "\x1b[34m"
+#define MAGENTA "\x1b[35m"
+#define CYAN    "\x1b[36m"
+#define RESET   "\x1b[0m"
+
+
 
 /**
  * Player Struct
@@ -51,10 +63,16 @@ typedef struct{
  * und eine Abfrage machen wie viel belegt wurde
  */
  typedef struct{
-    char piece_list[2];
+    char piece_list[1][2];
     int count;
  } plist_struct;
 
+
+/**
+ * detaches, deletes plist - / shm - structs
+ * und TERMINIERT
+ */
+void fail_routine();
 
 /**
  * Key ist IPC_PRIVATE
@@ -112,16 +130,16 @@ void detach_plist(plist_struct *plist_s);
 void delete_by_shmid(int shm_id);
 
 /**
- * shm_str -> think = true
+ * shm_str -> think = to_set
  */
+void set_think_flag(bool to_set, shm_struct* shm_str);
 
-void set_think_flag(shm_struct* shm_str);
 
 /**
  * printet die Daten von der shm_struct
  * auf die Konsole aus
  */
-void read_shm_struct(shm_struct* shm_str);
+void read_shm_struct(shm_struct *shm_str);
 
 /**
  * füllt die struct mit Beispieldateien
@@ -129,6 +147,6 @@ void read_shm_struct(shm_struct* shm_str);
  * nur für Testzwecke
  *
  */
-void fill_shm_struct(shm_struct* shm_str);
+void fill_shm_struct(shm_struct *shm_str);
 
 

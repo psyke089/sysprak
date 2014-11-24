@@ -1,6 +1,5 @@
 #include <signal.h>
-#include "../main.h"
-
+#include "../shm/shmManager.h"
 
 /**
  * Config
@@ -16,20 +15,20 @@
 
 
 /**
- * sends SIGUSR1
+ * sendet SIGUSR1
  *
  */
 void start_thinking();
 
 
 /**
- * starts the signal handler
+ * startet den signal handler
  *
  */
 void init_sig_action();
 
 /**
- * returns the signal status
+ * returnt den signal status
  *
  */
 sig_atomic_t get_signal();
@@ -42,13 +41,15 @@ char* read_from_pipe(int *fd);
 
 /**
  * Safe write
- *
+ * setzt den think flag auf false
+ * resetted die globale signal variable
  */
-void write_to_pipe(int *fd, char *str);
+void write_to_pipe(int *fd, char *str, shm_struct* shm_str);
 
 /**
  * die main KI methode
  *
+ * gibt den zu Zug zurück
  */
-char* think();
+char* think(plist_struct *plist_str);
 
