@@ -9,6 +9,7 @@
  * -i ist die Game-ID und muss genau 11 Zeichen lang sein (wird in idFlag abgespeichert)
  * -c ist für die optionale Configdatei                     (wird in path abgespeichert)
  */
+
 configData parseArgs(int argc, char *argv[]){
 
 char *idFlag = NULL;
@@ -34,13 +35,6 @@ int pArg;
               }
             file = openCommonConfig(file);
           }
-
-  
-  /**
-   * Überprüft die Validität von der ID
-   *
-   * Terminiert bei Fehlversuch
-   */
 
   if (idFlag != NULL && strlen(idFlag) != 11){
       perror(RED "\nDie Länge der Game-ID muss 11 Zeichen lang sein!\n" RESET);
@@ -71,7 +65,6 @@ void forkingAction(){
 // pipes
 int fd[2];
 pipe(fd);
-char *sampleTurn = "A1";
 
 
 // shm
@@ -96,8 +89,7 @@ int pid = fork();
       break;
 
       case 0:  //Kind =^ sendet || starte Connection + Parser hier
-        
-       
+
         close(fd[WRITE]);
 
         fill_shm_struct(shm_str);
@@ -106,7 +98,7 @@ int pid = fork();
         start_thinking();
 
         read_from_pipe(fd);
-        
+
         detach_shm(shm_str);
         detach_plist(plist_str);
 
@@ -122,12 +114,8 @@ int pid = fork();
 
         read_shm_struct(shm_str);
 
-        write_to_pipe(fd, sampleTurn);
+        write_to_pipe(fd, think());
         
-
-        // Fehler bei der Übergabe von hier definierten strings
-      //  write_to_pipe(fd, "He");
-          
         detach_shm(shm_str);
         detach_plist(plist_str);
 
