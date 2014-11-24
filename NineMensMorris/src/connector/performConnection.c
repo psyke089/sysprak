@@ -81,7 +81,7 @@ void connect_to_socket(int sock, struct sockaddr_in dest)
 
 void get_message(int sock, char* buf)
 {
-  
+
   char msg[MSGL];
   size_t bytes_received = 0;
   size_t n;
@@ -90,10 +90,10 @@ void get_message(int sock, char* buf)
   int notbremse = 128;
 
   do{
-    
+
     bzero(msg, MSGL);
     n = recv(sock, msg, MSGL, 0);
-    
+
     if (n < 0)
     {
       perror(RED "ERROR reading from socket" RESET);
@@ -113,7 +113,7 @@ void get_message(int sock, char* buf)
   printf("\nreceived %zu bytes:\n", bytes_received);
 
   switch(buf[0]){
-    case '+': 
+    case '+':
       printf(GREEN);
       break;
     case '-':
@@ -125,7 +125,7 @@ void get_message(int sock, char* buf)
 
   printf("%s\n" RESET, buf);
   ///@todo in logfile integrieren @tim
-  
+
 }
 
 /**
