@@ -249,7 +249,7 @@ void logPrnt (char c, char t, char* input){
         }
     }
     else{
-        fprintf(stderr, "WARNING: Kein Loglevel angegeben!\n");
+        fprintf(stderr, "WARNING: Kein Loglevel angegeben!\n"); //@todo auch über logprnt lösen
         prntColor('r', 'e',input);
         writeLog(input);
     }
