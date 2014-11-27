@@ -1,5 +1,4 @@
 #include "main.h"
-//#include "shm/shmManager.h"
 #include "thinker/thinker.h"
 #include "config.h"
 
@@ -54,16 +53,27 @@ int pArg;
   return configInc;
 }
 
+
 /**
  * Teilt den laufenden Prozess in 
  *
  * den Kindprozess   = Connector
  * und Elternprozess = Thinker
+ *
+ * globale pipe mit getter, damit think()
+ * ohne Argumente aufgerufen werden kann
  */
+
+int fd[2];
+
+int* get_pipe(){
+   return fd;
+}
+
+
 void forkingAction(){
 
 // pipes
-int fd[2];
 pipe(fd);
 
 
@@ -77,7 +87,7 @@ plist_struct* plist_str = attach_plist(plist_id);
 clear_shm(shm_str);
 clear_plist(plist_str);
 
-// signals
+// signale
 init_sig_action();
 
 int pid = fork();
@@ -90,48 +100,44 @@ int pid = fork();
 
       case 0:  //Kind =^ sendet || starte Connection + Parser hier
 
+        // pipes
         close(fd[WRITE]);
 
+
+        // shm
         fill_shm_struct(shm_str);
+        // example fill
+        plist_str -> count = 2;
+
         set_think_flag(true, shm_str);
 
 
-
-        sleep(1);
+        //parser
         start_thinking();
+        read_from_pipe(get_pipe());
 
-        read_from_pipe(fd);
 
-        detach_shm(shm_str);
-        detach_plist(plist_str);
-
-        exit(EXIT_SUCCESS);
-
+        // end routine for child
+        kill(getppid(), SIGKILL);
+        end_routine();
+      
       break;
 
       case 1 ... INT_MAX: // Eltern =^ empfängt Daten || starte Thinker hier
 
         close(fd[READ]);
-       
-        while (!get_signal()){}
 
-        read_shm_struct(shm_str);
-
-        write_to_pipe(fd, think(plist_str), shm_str);
-        
-        fail_routine();
+        while(true){}
 
       break;
 
       default :
         perror (RED "pid lower than -1 : This case should never happen!\n" RESET);
-        fail_routine();
+        end_routine();
       break;
 
   } 
 }
-
-
 
 int main(int argc, char *argv[]) { 
 

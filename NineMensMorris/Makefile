@@ -37,10 +37,11 @@ client: src/shm/shmManager.c\
 				src/main.c
 						
 	$(CC) $(CFLAGS) $(OUT)\
+		src/main.c\
 		src/shm/shmManager.c\
 		src/thinker/thinker.c\
-		src/config.c\
-		src/main.c
+		src/config.c
+		
 
 clean:
 	rm -f src/*.o
