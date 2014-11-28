@@ -27,7 +27,9 @@ pcwlog: src/logger/logger.c\
 loggertest:
 	$(CC) $(CFLAGS)  src/logger/logger.c  src/logger/logger_test_main.c -o bin/loggerTest
 
-client: src/shm/shmManager.c\
+client: src/logger/logger.h\
+				src/logger/logger.c\
+				src/shm/shmManager.c\
 				src/shm/shmManager.h\
 				src/thinker/thinker.c\
 				src/thinker/thinker.h\
@@ -37,10 +39,12 @@ client: src/shm/shmManager.c\
 				src/main.c
 						
 	$(CC) $(CFLAGS) $(OUT)\
+		src/config.c\
 		src/main.c\
+		src/logger/logger.c\
 		src/shm/shmManager.c\
-		src/thinker/thinker.c\
-		src/config.c
+		src/thinker/thinker.c
+		
 		
 
 clean:

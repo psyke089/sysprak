@@ -1,6 +1,7 @@
 #include "main.h"
 #include "thinker/thinker.h"
-#include "config.h"
+//#include "config.h"
+#include "logger/logger.h"
 
 /* parseArgs schaut ob die übergeben Parameter in der Kommandozeile valide sind
  * ansonsten terminiert das Programm
@@ -17,7 +18,7 @@ configData configInc;
 int pArg;
 
           if (argc <= 1){
-              perror("\nZu wenig Argumente...\n");
+              logPrnt('r', 'e', "\nZu wenig Argumente...\n");
               printHowToUse();
           }
           else {
@@ -36,7 +37,7 @@ int pArg;
           }
 
   if (idFlag != NULL && strlen(idFlag) != 11){
-      perror(RED "\nDie Länge der Game-ID muss 11 Zeichen lang sein!\n" RESET);
+      logPrnt('r', 'e', "\nDie Länge der Game-ID muss 11 Zeichen lang sein!\n");
       printHowToUse();
   }
   if (idFlag == NULL){
@@ -140,9 +141,10 @@ int pid = fork();
 }
 
 int main(int argc, char *argv[]) { 
-
-  parseArgs(argc, argv);
-
+  
+  initLog();
+  setLogLevel(parseArgs(argc, argv));
+  
   forkingAction();
 
   return 0;

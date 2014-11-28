@@ -17,6 +17,11 @@ int loglevel = 1;   // @todo aus struct von config datei auslesen
 
 // FILE *logfile = fopen("./logfile.txt", "r");n //fehler, geht nur in main oder sonst fct.
 
+void setLogLevel(configData conf_str){
+
+    loglevel = conf_str.loglevel;
+   }
+
 /**
  * returnt die aktuelle Zeit als string
  * @parblock
@@ -89,7 +94,7 @@ void writeLog(char* input){
 void initLogSession(){
     FILE *logfile = fopen("./logfile.txt", "a");
     
-    fprintf(logfile,"---------------------- %s ----------------------\n", getTimeAsString('o') );
+    fprintf(logfile,"---------------------- %s ----------------------\n\n", getTimeAsString('o') );
     
     fclose(logfile);
 }

@@ -1,5 +1,5 @@
 #include "config.h"
-#include "main.h"
+//#include "main.h"
 
 /*
 Aufgabenstellung gelesen?
