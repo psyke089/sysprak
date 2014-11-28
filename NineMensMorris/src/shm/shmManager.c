@@ -1,22 +1,23 @@
 #include "shmManager.h"
 
-shm_struct *global_shm_str;
+shm_struct *global_shm_str = NULL;
 
-plist_struct *global_plist_str;
+plist_struct *global_plist_str = NULL;
 
-int global_shm_id;
+int global_shm_id = 0;
 
-int global_plist_id;
+int global_plist_id = 0;
 
 
+void end_routine(){
 
-void fail_routine(){
-  
   detach_shm(global_shm_str);
   detach_plist(global_plist_str);
 
   delete_by_shmid(global_shm_id);
   delete_by_shmid(global_plist_id);
+
+  printf(GREEN "Deleted everything!\n" RESET);
 
   exit(EXIT_FAILURE);
 }
@@ -28,7 +29,7 @@ int create_shm(size_t size){
 
   if ((shm_id = shmget(IPC_PRIVATE, size, IPC_CREAT | 0666)) < 0) {
     perror(RED "Could not create a shared memory" RESET);
-    fail_routine();
+    end_routine();
   }
 
 
@@ -47,19 +48,20 @@ int create_shm(size_t size){
   return shm_id;
 }
 
-int locate_shm(){
+// obsolete function
+/*int locate_shm(){
 
   int shm_id;
   key_t key = 0; 
   
   if ((shm_id = shmget(key, SHMSZ, 0666)) < 0) {
     perror(RED "Could not locate shared memory segment" RESET);
-    fail_routine();
+    end_routine();
   }
   
   return shm_id;
 
-}
+}*/
 
 
 shm_struct* attach_shm(int shm_id){
@@ -68,7 +70,7 @@ shm_struct* attach_shm(int shm_id){
 
    if ((shm_str = shmat(shm_id, NULL, 0)) == (shm_struct *) -1) {
     perror(RED "Attaching the shared memory segment failed" RESET); 
-    fail_routine();
+    end_routine();
   }
 
   global_shm_str = shm_str;
@@ -83,7 +85,7 @@ plist_struct* attach_plist(int plist_id){
 
    if ((plist_str = shmat(plist_id, NULL, 0)) == (plist_struct *) -1) {
     perror(RED "Attaching the piecelist shared memory segment failed" RESET); 
-    fail_routine();
+    end_routine();
    }
 
    global_plist_str = plist_str;
@@ -130,15 +132,61 @@ void set_think_flag(bool to_set, shm_struct* shm_str){
 
 }
 
+void check_think_flag(shm_struct* shm_str){
+    if (shm_str -> think){
+      set_think_flag(false, shm_str);
+    }
+    else {
+      perror(RED "Sorry, the think-flag has not been set");
+      end_routine();
+    }
+}
+
+shm_struct* get_shm_struct(){
+  if (global_shm_str == NULL){
+    perror(RED "Global shm struct is NULL");
+    end_routine();
+  }
+  return global_shm_str;
+}
+
+
+plist_struct* get_plist_struct(){
+  if (global_plist_str == NULL){
+    perror(RED "Global plist struct is NULL");
+    end_routine();
+  }
+  return global_plist_str;
+}
+
+
+
+int get_shm_id(){
+  if (global_shm_id == 0){
+    perror(RED "Global shm id is NULL" RESET);
+    end_routine();
+  }
+  return global_shm_id;
+}
+
+
+int get_plist_id(){
+  if (global_plist_id == 0){
+    perror(RED "Global plist id is NULL" RESET);
+    end_routine();
+  }
+  return global_plist_id;
+}
+
 void read_shm_struct(shm_struct* shm_str){
 
    if (shm_str -> p_pid == 0 || shm_str -> c_pid == 0 || (strcmp(shm_str -> gameID, "") == 0)){
       perror(RED "\nCouldn't read from shm_str pointer because the data is \n"
                  " corrupted (pids are 0 / gameID is empty)\n" RESET);
-      fail_routine();
+      end_routine();
    } 
 
-   if (shm_str -> think){
+  
         printf (BLUE "\nParent recieved =>> \n"
                      "gameName    = %s\n"
                      "gameID      = %s\n"
@@ -166,13 +214,9 @@ void read_shm_struct(shm_struct* shm_str){
                     shm_str -> p_structs[i].isReady,
                     shm_str -> p_structs[i].isLoggedIn);
         }
-    }
-    else {
-      perror (RED "Sorry, think-flag is not set!" RESET);
-      fail_routine();
-    }
-
 }
+
+
 
 
 void fill_shm_struct(shm_struct* shm_str){
@@ -181,7 +225,7 @@ void fill_shm_struct(shm_struct* shm_str){
         player1.playerID   = 15; 
         if(strcpy(player1.playerName, "Dummy Nr.1") == NULL){
           perror(RED "Couldn't copy playerName 1 in fill_shm_struct @ shmManager" RESET);
-          fail_routine();
+          end_routine();
         }
         player1.isReady    = true;
         player1.isLoggedIn = true;
@@ -190,18 +234,18 @@ void fill_shm_struct(shm_struct* shm_str){
         player2.playerID   = 20; 
         if(strcpy(player2.playerName, "Dummy Nr.2") == NULL){
           perror(RED "Couldn't copy playerName 2 in fill_shm_struct @ shmManager" RESET);
-          fail_routine();
+          end_routine();
         }
         player2.isReady    = false;
         player2.isLoggedIn = true;
 
         if(strcpy(shm_str -> gameName, "Testgame Nr.1") == NULL){
           perror(RED "Couldn't copy gameName in fill_shm_struct @ shmManager" RESET);
-          fail_routine();
+          end_routine();
         }
         if(strcpy(shm_str -> gameID, "E345Tg&afsd") == NULL){
           perror(RED "Couldn't copy gameID in fill_shm_struct @ shmManager" RESET);
-          fail_routine();
+          end_routine();
         }
         shm_str -> playerCount  = 2;
         shm_str -> p_structs[0] = player1; 

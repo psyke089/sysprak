@@ -61,9 +61,14 @@ typedef struct{
  * die Größe muss noch festgelegt werden
  * wahrscheinlich wieder hinreichend groß wählen
  * und eine Abfrage machen wie viel belegt wurde
+ * 
+ * Im Beispiel als 3 Level mit jeweils 8 Feldern
+ *
+ * TODO: Erweitern nach belieben
+ *
  */
  typedef struct{
-    char piece_list[1][2];
+    char piece_list[3][8];
     int count;
  } plist_struct;
 
@@ -72,7 +77,7 @@ typedef struct{
  * detaches, deletes plist - / shm - structs
  * und TERMINIERT
  */
-void fail_routine();
+void end_routine();
 
 /**
  * Key ist IPC_PRIVATE
@@ -88,8 +93,10 @@ int create_shm(size_t size);
  * Size ist SHMSZ
  * 
  * gibt die shm_id zurück
+ *
+ * depricated function
  */
-int locate_shm();
+//int locate_shm();
 
 /**
  * "befestigt" die Struktur an der shm_id 
@@ -134,10 +141,47 @@ void delete_by_shmid(int shm_id);
  */
 void set_think_flag(bool to_set, shm_struct* shm_str);
 
+/**
+ * überprüft ob der think-flag gesetzt wurde
+ *
+ * für true passiert nicht
+ *
+ * für false TERMINIERT das Programm 
+ */
+void check_think_flag(shm_struct* shm_str);
+
+/**
+ * "getter" für den shm struct pointer 
+ * lediglich damit die think() keine argumente hat
+ */
+shm_struct* get_shm_struct();
+
+
+/**
+ * "getter" für den plist struct pointer 
+ * lediglich damit die think() keine argumente hat
+ */
+plist_struct* get_plist_struct();
+
+
+/**
+ * "getter" für die shm id
+ * lediglich damit die think() keine argumente hat
+ */
+int get_shm_id();
+
+
+/**
+ * "getter" für die plist id
+ * lediglich damit die think() keine argumente hat
+ */
+int get_plist_id();
 
 /**
  * printet die Daten von der shm_struct
  * auf die Konsole aus
+ * 
+ * nur für Testzwecke
  */
 void read_shm_struct(shm_struct *shm_str);
 
