@@ -8,8 +8,6 @@
 #include <time.h>
 #include <unistd.h>
 
-#include "../config.h"
-
 /**
  * Farben
  */
@@ -22,7 +20,7 @@
 #define RESET   "\x1b[0m"
 
 
-void setLogLevel(configData conf_str);
+void setLogLevel(int loglevel);
 
 void logPrnt (char c, char t, char* input);
 

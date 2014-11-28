@@ -1,4 +1,5 @@
 #include "shmManager.h"
+#include "../logger/logger.h"
 
 shm_struct *global_shm_str = NULL;
 
@@ -17,7 +18,7 @@ void end_routine(){
   delete_by_shmid(global_shm_id);
   delete_by_shmid(global_plist_id);
 
-  printf(GREEN "Deleted everything!\n" RESET);
+  logPrnt('g', 'p', "\nDelete routine was executed!\n");
 
   exit(EXIT_FAILURE);
 }
@@ -28,7 +29,7 @@ int create_shm(size_t size){
   int shm_id;
 
   if ((shm_id = shmget(IPC_PRIVATE, size, IPC_CREAT | 0666)) < 0) {
-    perror(RED "Could not create a shared memory" RESET);
+    logPrnt('r', 'e', "Could not create a shared memory");
     end_routine();
   }
 
@@ -42,7 +43,7 @@ int create_shm(size_t size){
             global_plist_id = shm_id;
       break;
 
-      default: perror (RED "Could not assign global shm_ids! \n" RESET);
+      default: logPrnt('r', 'e', "Could not assign global shm_ids! \n");
   }
 
   return shm_id;
@@ -69,7 +70,7 @@ shm_struct* attach_shm(int shm_id){
    shm_struct *shm_str; 
 
    if ((shm_str = shmat(shm_id, NULL, 0)) == (shm_struct *) -1) {
-    perror(RED "Attaching the shared memory segment failed" RESET); 
+    logPrnt('r', 'e', "Attaching the shared memory segment failed"); 
     end_routine();
   }
 
@@ -84,7 +85,7 @@ plist_struct* attach_plist(int plist_id){
    plist_struct *plist_str; 
 
    if ((plist_str = shmat(plist_id, NULL, 0)) == (plist_struct *) -1) {
-    perror(RED "Attaching the piecelist shared memory segment failed" RESET); 
+    logPrnt('r', 'e', "Attaching the piecelist shared memory segment failed"); 
     end_routine();
    }
 
@@ -106,14 +107,14 @@ void clear_plist(plist_struct *plist_s){
 
 void detach_shm (shm_struct *shm_s){   
    if(shmdt(shm_s) != 0){
-     perror (RED "Could not detach memory segment\n" RESET);
+     logPrnt('r', 'e', "Could not detach memory segment\n");
      exit(EXIT_FAILURE);
    }
 }
 
 void detach_plist (plist_struct *plist_s){   
    if(shmdt(plist_s) != 0){
-     perror (RED "Could not detach plist memory segment\n" RESET);
+     logPrnt('r', 'e', "Could not detach plist memory segment\n");
      exit(EXIT_FAILURE);
    }
 }   
@@ -121,7 +122,7 @@ void detach_plist (plist_struct *plist_s){
 void delete_by_shmid(int shm_id){
 
    if(shmctl(shm_id, IPC_RMID, NULL) == -1) {
-     perror(RED "Could not destroy memory segment\n" RESET);
+     logPrnt('r', 'e', "Could not destroy memory segment\n");
      exit(EXIT_FAILURE);
    }
 }
@@ -137,14 +138,14 @@ void check_think_flag(shm_struct* shm_str){
       set_think_flag(false, shm_str);
     }
     else {
-      perror(RED "Sorry, the think-flag has not been set");
+      logPrnt('r', 'e', "Sorry, the think-flag has not been set");
       end_routine();
     }
 }
 
 shm_struct* get_shm_struct(){
   if (global_shm_str == NULL){
-    perror(RED "Global shm struct is NULL");
+    logPrnt('r', 'e', "Global shm struct is NULL");
     end_routine();
   }
   return global_shm_str;
@@ -153,7 +154,7 @@ shm_struct* get_shm_struct(){
 
 plist_struct* get_plist_struct(){
   if (global_plist_str == NULL){
-    perror(RED "Global plist struct is NULL");
+    logPrnt('r', 'e', "Global plist struct is NULL");
     end_routine();
   }
   return global_plist_str;
@@ -163,7 +164,7 @@ plist_struct* get_plist_struct(){
 
 int get_shm_id(){
   if (global_shm_id == 0){
-    perror(RED "Global shm id is NULL" RESET);
+    logPrnt('r', 'e', "Global shm id is NULL" RESET);
     end_routine();
   }
   return global_shm_id;
@@ -172,7 +173,7 @@ int get_shm_id(){
 
 int get_plist_id(){
   if (global_plist_id == 0){
-    perror(RED "Global plist id is NULL" RESET);
+    logPrnt('r', 'e', "Global plist id is NULL" RESET);
     end_routine();
   }
   return global_plist_id;
@@ -181,8 +182,8 @@ int get_plist_id(){
 void read_shm_struct(shm_struct* shm_str){
 
    if (shm_str -> p_pid == 0 || shm_str -> c_pid == 0 || (strcmp(shm_str -> gameID, "") == 0)){
-      perror(RED "\nCouldn't read from shm_str pointer because the data is \n"
-                 " corrupted (pids are 0 / gameID is empty)\n" RESET);
+      logPrnt('r', 'e', "\nCouldn't read from shm_str pointer because the data is \n"
+                        " corrupted (pids are 0 / gameID is empty)\n");
       end_routine();
    } 
 
@@ -224,7 +225,7 @@ void fill_shm_struct(shm_struct* shm_str){
         player_struct player1;
         player1.playerID   = 15; 
         if(strcpy(player1.playerName, "Dummy Nr.1") == NULL){
-          perror(RED "Couldn't copy playerName 1 in fill_shm_struct @ shmManager" RESET);
+         logPrnt('r', 'e', "Couldn't copy playerName 1 in fill_shm_struct @ shmManager");
           end_routine();
         }
         player1.isReady    = true;
@@ -233,18 +234,18 @@ void fill_shm_struct(shm_struct* shm_str){
         player_struct player2;
         player2.playerID   = 20; 
         if(strcpy(player2.playerName, "Dummy Nr.2") == NULL){
-          perror(RED "Couldn't copy playerName 2 in fill_shm_struct @ shmManager" RESET);
+          logPrnt('r', 'e', "Couldn't copy playerName 2 in fill_shm_struct @ shmManager");
           end_routine();
         }
         player2.isReady    = false;
         player2.isLoggedIn = true;
 
         if(strcpy(shm_str -> gameName, "Testgame Nr.1") == NULL){
-          perror(RED "Couldn't copy gameName in fill_shm_struct @ shmManager" RESET);
+          logPrnt('r', 'e', "Couldn't copy gameName in fill_shm_struct @ shmManager");
           end_routine();
         }
         if(strcpy(shm_str -> gameID, "E345Tg&afsd") == NULL){
-          perror(RED "Couldn't copy gameID in fill_shm_struct @ shmManager" RESET);
+          logPrnt('r', 'e', "Couldn't copy gameID in fill_shm_struct @ shmManager");
           end_routine();
         }
         shm_str -> playerCount  = 2;
@@ -254,6 +255,6 @@ void fill_shm_struct(shm_struct* shm_str){
         shm_str -> p_pid        = getppid();
         shm_str -> think        = false;
 
-        printf(GREEN "\nChild filled the shm_struct!\n" RESET);
+        logPrnt('g', 'p', "\nChild filled the shm_struct!\n");
 
 }
