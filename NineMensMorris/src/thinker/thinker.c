@@ -16,7 +16,7 @@ void init_sig_action(){
 
 char* read_from_pipe(int *fd){
    
-   //char *log_msg = 0;
+   //char *log_msg = 0;  //auskommtiert weil sonst implicit decl. wegen asprintf @todo
    static char buffer[ANSWERLENGTH];
    int bytes;
 
@@ -26,10 +26,13 @@ char* read_from_pipe(int *fd){
         end_routine();
    }
    else {
+    
     //  asprintf auskommentiert weil invalid in C99
     //  @todo alternative mit sprintf und buffer der groß genug ist
+    //  
     //  asprintf(&log_msg, "\nRead %i bytes from the pipe: %s\n", bytes, buffer);
     
+    // alternative für asprintf, geht aber auch nicht
     //strcpy(log_msg, "\nRead some bytes from pipe!\n");
     //logPrnt('g', 'p', log_msg);
     //free(log_msg);
