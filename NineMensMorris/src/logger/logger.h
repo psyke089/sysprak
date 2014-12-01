@@ -22,8 +22,29 @@
 #define RESET   "\x1b[0m"
 
 
+
+
+
 void setLogLevel(configData conf_str);
 
+
+/**
+ * Anfang wo alles hineinfällt 
+ * \param[in] c farbe für konsole
+ *
+ * \param[in] t typ des inputs
+ * \parblock
+ *          e : error(-..) / 
+ *			s : sonstiges / 
+ *			p : nachrichten des prologs
+ *			t : testoutput : funtioniert wie p
+ *  		q: perror
+ * \endparblock
+ * bei loglevel außerhalb des definierten wird beides gemacht
+ * @todo 4: fehler/alles ins log
+ *  rest in console
+ *
+ */
 void logPrnt (char c, char t, char* input);
 
 void initLog();

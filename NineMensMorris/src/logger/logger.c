@@ -120,7 +120,7 @@ void initLog() {
     FILE *logfile = fopen("./logfile.txt", "r");
     if(logfile == NULL) {
         /* datei nicht vorhanden, erstelle logdatei log.txt */
-        printf ("Logfile nicht vorhanden, gehe zu createLog() \n"); //@todo remove
+        printf ("Logfile nicht vorhanden, createLog() \n"); //@todo remove
         //hier datei erstellen [STEHEN GEbLieben]
         fclose(logfile);
         createLog();
@@ -128,7 +128,7 @@ void initLog() {
     } else {
         fclose(logfile);
         /* logfile vorhanden */
-        printf ("logfile vorhanden, gehe weiter \n"); //@todo remove
+        printf ("Logfile vorhanden, gehe weiter \n"); //@todo remove
         initLogSession();
     }
 }
@@ -219,6 +219,9 @@ void prntColor(char color, char isError, char* input ){
  *  @todo q: perror
  * \endparblock
  * bei loglevel außerhalb des definierten wird beides gemacht
+ * @todo 4: fehler/alles ins log
+ *  rest in console
+ *
  */
 void logPrnt (char c, char t, char* input){
     ///@todo upddate loglevel hier?
@@ -248,11 +251,22 @@ void logPrnt (char c, char t, char* input){
         if (t == 'p') {
             writeLog(input);
         }
+        else if (t == 't') {
+            writeLog(input);
+        }
+        else if (t == 'e') {
+            prntColor(c,'e', input);
+            writeLog(input);
+        }
         else {
             prntColor(c,'0', input);
             writeLog(input);
         }
+        
+
+
     }
+
     else{
         fprintf(stderr, "WARNING: Kein Loglevel angegeben!\n"); //@todo auch über logprnt lösen
         prntColor('r', 'e',input);
