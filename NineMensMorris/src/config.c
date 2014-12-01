@@ -23,7 +23,7 @@ FILE* openCommonConfig(FILE* file){
 
 
 FILE* openPathConfig(char *optarg){
-  char* log_msg = 0;
+  //char* log_msg = 0;
   FILE* file = NULL;
   char path[PATHLEN];
 
@@ -32,15 +32,15 @@ FILE* openPathConfig(char *optarg){
    }
    if ((path[strlen(path) - 1] != 'f') || ((file = fopen(path, "r")) == NULL) ){
     //vasprintf(&log_msg, "\nCouldn't open path = ' %s '!\n", path);
-    strcpy(log_msg, "\nCouldn't open path!\n");
-    logPrnt('r', 'e', log_msg);
-    free(log_msg);
+    //strcpy(log_msg, "\nCouldn't open path!\n");
+    //logPrnt('r', 'e', log_msg);
+    //free(log_msg);
    } 
    else {
     //vasprintf(&log_msg, "\nUsing = ' %s '!\n", path);
-    strcpy(log_msg, "\nUsing new path!\n");
-    logPrnt('g', 'p', log_msg);
-    free(log_msg);
+    //strcpy(log_msg, "\nUsing new path!\n");
+    //logPrnt('g', 'p', log_msg);
+    //free(log_msg);
    }
 
    return file;

@@ -140,7 +140,7 @@ int pid = fork();
 
 int main(int argc, char *argv[]) { 
   
-  initLog();
+  //initLog();
   
   configData conf_str = parseArgs(argc, argv);
   

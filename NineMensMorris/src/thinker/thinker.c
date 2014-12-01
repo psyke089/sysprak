@@ -16,7 +16,7 @@ void init_sig_action(){
 
 char* read_from_pipe(int *fd){
    
-   char *log_msg = 0;
+   //char *log_msg = 0;
    static char buffer[ANSWERLENGTH];
    int bytes;
 
@@ -28,9 +28,9 @@ char* read_from_pipe(int *fd){
    else {
     
     //asprintf(&log_msg, "\nRead %i bytes from the pipe: %s\n", bytes, buffer);
-    strcpy(log_msg, "\nRead some bytes from pipe!\n");
-    logPrnt('g', 'p', log_msg);
-    free(log_msg);
+    //strcpy(log_msg, "\nRead some bytes from pipe!\n");
+    //logPrnt('g', 'p', log_msg);
+    //free(log_msg);
    }
 
    return buffer;
