@@ -26,8 +26,10 @@ char* read_from_pipe(int *fd){
         end_routine();
    }
    else {
+    //  asprintf auskommentiert weil invalid in C99
+    //  @todo alternative mit sprintf und buffer der groß genug ist
+    //  asprintf(&log_msg, "\nRead %i bytes from the pipe: %s\n", bytes, buffer);
     
-    //asprintf(&log_msg, "\nRead %i bytes from the pipe: %s\n", bytes, buffer);
     //strcpy(log_msg, "\nRead some bytes from pipe!\n");
     //logPrnt('g', 'p', log_msg);
     //free(log_msg);
