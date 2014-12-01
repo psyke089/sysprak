@@ -15,12 +15,15 @@ int loglevel = 1;   // @todo aus struct von config datei auslesen
 
 
 
+
+void setLogLevel(int loglvl){
+
+    loglevel = loglvl;
+
+}
+
 // FILE *logfile = fopen("./logfile.txt", "r");n //fehler, geht nur in main oder sonst fct.
 
-void setLogLevel(configData conf_str){
-
-    loglevel = conf_str.loglevel;
-   }
 
 /**
  * returnt die aktuelle Zeit als string
@@ -104,8 +107,8 @@ void initLogSession(){
 void createLog(){
     FILE *logfile = fopen("./logfile.txt", "w");
     
-    fprintf(logfile,"## Logdatei für NMM, erstellt am %s\n ", getTimeAsString('l'));
-    printf ("logfile erstellt \n"); //@todo remove
+    fprintf(logfile,"## Logdatei für NMM, erstellt am %s\n", getTimeAsString('l'));
+    printf (GREEN "\nLogfile erstellt! \n" RESET); //@todo remove
 
     fclose(logfile);
 }
@@ -120,15 +123,15 @@ void initLog() {
     FILE *logfile = fopen("./logfile.txt", "r");
     if(logfile == NULL) {
         /* datei nicht vorhanden, erstelle logdatei log.txt */
-        printf ("Logfile nicht vorhanden, createLog() \n"); //@todo remove
+        printf (RED "\nLogfile nicht vorhanden, gehe zu createLog() \n" RESET); //@todo remove
         //hier datei erstellen [STEHEN GEbLieben]
-        fclose(logfile);
+       // fclose(logfile);
         createLog();
         initLogSession();
     } else {
         fclose(logfile);
         /* logfile vorhanden */
-        printf ("Logfile vorhanden, gehe weiter \n"); //@todo remove
+        printf (GREEN "\nLogfile vorhanden, gehe weiter! \n" RESET); //@todo remove
         initLogSession();
     }
 }

@@ -1,7 +1,7 @@
 #include "main.h"
-#include "thinker/thinker.h"
-//#include "config.h"
-#include "logger/logger.h"
+#include "thinker/thinker.h"   
+#include "config.h"
+#include "logger/logger.h"     //#include "shm/shmManager.h"
 
 /* parseArgs schaut ob die übergeben Parameter in der Kommandozeile valide sind
  * ansonsten terminiert das Programm
@@ -9,7 +9,6 @@
  * -i ist die Game-ID und muss genau 11 Zeichen lang sein (wird in idFlag abgespeichert)
  * -c ist für die optionale Configdatei                     (wird in file abgespeichert)
  */
-
 configData parseArgs(int argc, char *argv[]){
 
 char *idFlag = NULL;
@@ -41,15 +40,13 @@ int pArg;
       printHowToUse();
   }
   if (idFlag == NULL){
-      perror(RED "\nDie ID wurde nicht erfolgreich gesetzt!\n" RESET);
+      logPrnt('r', 'e', "\nDie ID wurde nicht erfolgreich gesetzt!\n");
       printHowToUse();
   }
 
   configInc = readConfig(file);
 
   configParamValid(configInc);
-
-  printConfigString(configInc);
 
   return configInc;
 }
@@ -95,7 +92,7 @@ int pid = fork();
 
   switch (pid){
       case -1:
-        perror(RED "Failed to fork in main.c: " RESET);
+        logPrnt('r', 'e', "Failed to fork in main.c: ");
         exit(EXIT_FAILURE);
       break;
 
@@ -107,13 +104,14 @@ int pid = fork();
 
         // shm
         fill_shm_struct(shm_str);
+
         // example fill
         plist_str -> count = 2;
 
-        set_think_flag(true, shm_str);
 
 
         //parser
+        set_think_flag(true, shm_str);
         start_thinking();
         read_from_pipe(get_pipe());
 
@@ -133,7 +131,7 @@ int pid = fork();
       break;
 
       default :
-        perror (RED "pid lower than -1 : This case should never happen!\n" RESET);
+        logPrnt('r', 'e', "pid lower than -1 : This case should never happen!\n");
         end_routine();
       break;
 
@@ -143,7 +141,10 @@ int pid = fork();
 int main(int argc, char *argv[]) { 
   
   initLog();
-  setLogLevel(parseArgs(argc, argv));
+  
+  configData conf_str = parseArgs(argc, argv);
+  
+  setLogLevel(conf_str.loglevel);
   
   forkingAction();
 

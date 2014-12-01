@@ -1,13 +1,5 @@
 #include "config.h"
-//#include "main.h"
-
-/*
-Aufgabenstellung gelesen?
-
-Achten Sie der Übersichtlichkeit halber darauf die für das Interpretieren (!!!!!)
-der Konigurationsdatei erforderlichen Methoden in einer separaten Datei (z. B. config.c) auszulagern
-*/
-
+#include "logger/logger.h"
 
 //Delimiter für die Trennbedinung pro Zeile
 char *delimiter = " ";
@@ -21,29 +13,34 @@ FILE* openCommonConfig(FILE* file){
   if(file == NULL){
      if ((file = fopen("client.conf", "r")) == NULL){
         if ((file = fopen("../client.conf", "r")) == NULL){
-            perror ("Couldn't open client.conf");
+            logPrnt('r', 'e', "Couldn't open client.conf\n");
             exit(EXIT_FAILURE);
-        } else {printf(GREEN "\nUsing common ../client.conf\n" RESET);}
-      } else {printf(GREEN "\nUsing common client.conf\n" RESET);}
+        } else {logPrnt('g', 'p', "\nUsing common ../client.conf\n");}
+      } else {logPrnt('g', 'p', "\nUsing common client.conf\n");}
    } 
   return file;
 }
 
 
 FILE* openPathConfig(char *optarg){
-
+  char* log_msg = 0;
   FILE* file = NULL;
   char path[PATHLEN];
 
    if (strcpy(path,optarg) == NULL){
-               perror (RED "\nCouldn't copy the c-Flag to path\n" RESET);
+               logPrnt('r', 'e', "\nCouldn't copy the c-Flag to path\n");
    }
    if ((path[strlen(path) - 1] != 'f') || ((file = fopen(path, "r")) == NULL) ){
-        printf (RED "\nPath: %s\n", path);
-        perror ("Couldn't open" RESET);
+    //vasprintf(&log_msg, "\nCouldn't open path = ' %s '!\n", path);
+    strcpy(log_msg, "\nCouldn't open path!\n");
+    logPrnt('r', 'e', log_msg);
+    free(log_msg);
    } 
    else {
-    printf (GREEN "\nUsing %s\n" RESET, path);
+    //vasprintf(&log_msg, "\nUsing = ' %s '!\n", path);
+    strcpy(log_msg, "\nUsing new path!\n");
+    logPrnt('g', 'p', log_msg);
+    free(log_msg);
    }
 
    return file;
@@ -53,7 +50,7 @@ FILE* openPathConfig(char *optarg){
 void configParamValid(configData conf_str){
 
       if (conf_str.hostname == NULL || conf_str.portnummer == 0 || conf_str.artdesspiels == NULL || conf_str.loglevel < 0 || conf_str.loglevel > 3){
-          perror(RED "\nDie Parameter in der .conf Datei sind nicht alle richtig angegeben!\n" RESET);
+          logPrnt('r', 'e', "\nDie Parameter in der .conf Datei sind nicht alle richtig angegeben!\n");
           exit(EXIT_FAILURE);
       }
 

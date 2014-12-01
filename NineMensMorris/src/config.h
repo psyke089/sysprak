@@ -1,3 +1,5 @@
+#define _GNU_SOURCE
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -6,7 +8,6 @@
 #include <unistd.h>
 #include <getopt.h>
 #include <string.h>
-/*#include "main.h"*/
 
 #define MSGLEN 100
 #define PATHLEN 100
