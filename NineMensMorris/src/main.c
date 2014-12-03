@@ -1,5 +1,5 @@
 #include "main.h"
-#include "thinker/thinker.h"   
+#include "thinker/thinker.h"
 #include "config.h"
 #include "logger/logger.h"     //#include "shm/shmManager.h"
 
@@ -53,7 +53,7 @@ int pArg;
 
 
 /**
- * Teilt den laufenden Prozess in 
+ * Teilt den laufenden Prozess in
  *
  * den Kindprozess   = Connector
  * und Elternprozess = Thinker
@@ -71,81 +71,81 @@ int* get_pipe(){
 
 void forkingAction(){
 
-// pipes
-pipe(fd);
+  // pipes
+  pipe(fd);
 
 
-// shm
-int shm_id = create_shm(SHMSZ);
-shm_struct* shm_str = attach_shm(shm_id);;
+  // shm
+  int shm_id = create_shm(SHMSZ);
+  shm_struct* shm_str = attach_shm(shm_id);;
 
-int plist_id = create_shm(PLISTSZ);
-plist_struct* plist_str = attach_plist(plist_id);
+  int plist_id = create_shm(PLISTSZ);
+  plist_struct* plist_str = attach_plist(plist_id);
 
-clear_shm(shm_str);
-clear_plist(plist_str);
+  clear_shm(shm_str);
+  clear_plist(plist_str);
 
-// signale
-init_sig_action();
+  // signale
+  init_sig_action();
 
-int pid = fork();
+  int pid = fork();
 
   switch (pid){
-      case -1:
-        logPrnt('r', 'e', "Failed to fork in main.c: ");
-        exit(EXIT_FAILURE);
-      break;
+    case -1:
+      logPrnt('r', 'e', "Failed to fork in main.c: ");
+      exit(EXIT_FAILURE);
+    break;
 
-      case 0:  //Kind =^ sendet || starte Connection + Parser hier
+    case 0:  //Kind =^ sendet || starte Connection + Parser hier
 
-        // pipes
-        close(fd[WRITE]);
-
-
-        // shm
-        fill_shm_struct(shm_str);
-
-        // example fill
-        plist_str -> count = 2;
+      // pipes
+      close(fd[WRITE]);
 
 
+      // shm
+      fill_shm_struct(shm_str);
 
-        //parser
-        set_think_flag(true, shm_str);
-        start_thinking();
-        read_from_pipe(get_pipe());
+      // example fill
+      plist_str -> count = 2;
 
 
-        // end routine for child
-        kill(getppid(), SIGKILL);
-        end_routine();
-      
-      break;
 
-      case 1 ... INT_MAX: // Eltern =^ empfängt Daten || starte Thinker hier
+      //parser
+      set_think_flag(true, shm_str);
+      start_thinking();
+      read_from_pipe(get_pipe());
 
-        close(fd[READ]);
 
-        while(true){}
+      // end routine for child
+      kill(getppid(), SIGKILL);
+      end_routine();
 
-      break;
+    break;
 
-      default :
-        logPrnt('r', 'e', "pid lower than -1 : This case should never happen!\n");
-        end_routine();
-      break;
+    case 1 ... INT_MAX: // Eltern =^ empfängt Daten || starte Thinker hier
 
-  } 
+      close(fd[READ]);
+
+      while(true){}
+
+    break;
+
+    default :
+      logPrnt('r', 'e', "pid lower than -1 : This case should never happen!\n");
+      end_routine();
+    break;
+
+  }
 }
 
-int main(int argc, char *argv[]) { 
-  
+int main(int argc, char *argv[]) {
+
   initLog();
-  
+
   configData conf_str = parseArgs(argc, argv);
-  
+
   setLogLevel(conf_str.loglevel);
-  
+
   forkingAction();
 
   return 0;
