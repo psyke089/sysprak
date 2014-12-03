@@ -54,13 +54,43 @@ void write_to_pipe(int *fd, char *str){
 }
 
 
+/* 
+* falls man einen check auf auf mehrer seiten anwenden will
+*/
+int selectSide (plist_struct *paramStruct, int side, int circle, int stone){
+    return (-1); // not implemented yet
+}
+
+
+// test für slctP
+//plist_struct *test_plist; //@todo remove 
+
+/* 
+* returned das entsprechene piece an der Arraypostition
+* piece_list[circle][num]
+* zB: slctP(1,3)
+*/
+int slctP(int circle, int num) {
+    if ( ( (circle < 0) || (circle > 3) ) || ( (num < 0) || (num > 7) ) ){
+        perror("Piece coordinates out of bounds");
+        return -1;
+    }
+    else{
+    //return (*plist_struct).piece_list[circle][num]; //@todo anpassen 
+    return -1; // noch auf passendes struct anpassen
+    }
+}
+
+
+
+
 void think(){
   
     // think-flag muss überprüft werden
     check_think_flag(get_shm_struct());
 
     // hole die pieces liste
-    plist_struct* plist_str = get_plist_struct();
+    plist_struct* plist_str = get_plist_struct(); // Name wie plist_Thinker waere verständlicher
 
     // testoutput
     printf("Der Beispielfill von plist_str -> count ist = %i\n", plist_str -> count);
