@@ -87,7 +87,7 @@ void get_message(int sock, char* buf)
   size_t n;
 
   bzero(buf, MSGL);
-  int notbremse = 128;
+  int notbremse = 32;
 
   do{
 
@@ -109,6 +109,8 @@ void get_message(int sock, char* buf)
     notbremse--;
 
   }while( (msg[n-1] != '\n') && notbremse > 0);
+
+  printf("notbremse: %d\n", notbremse);
 
   printf("\nreceived %zu bytes:\n", bytes_received);
 

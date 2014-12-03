@@ -100,16 +100,16 @@ void parseMessages(int sock)
   int total_players;
   int max_move_time;
   int captured_pieces;
-  char gameid[20];
+  char game_name[60];
 
   int pl_players;
   int pl_pieces;
 
   int my_pos;
-  char my_name[20];
+  char my_name[30];
 
   int opponent_pos;
-  char opponent_name[20];
+  char opponent_name[30];
   int opponent_ready;
 
   int piece_player;
@@ -155,8 +155,8 @@ void parseMessages(int sock)
 
             if(strcmp(msg_queue[linenum + 1], "") != 0){
               linenum++;
-              sscanf(msg_queue[linenum], "+ %[^\t\n]", gameid);
-              printf("Game ID: %s\n\n",gameid);
+              sscanf(msg_queue[linenum], "+ %[^\t\n]", game_name);
+              printf("Game ID: %s\n\n",game_name);
             }else{
               get_message(sock, in_buf);
               processMessage(in_buf);
