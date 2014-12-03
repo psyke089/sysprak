@@ -6,9 +6,10 @@
 //einb. char words[32][64]; // @todo remove wenn eingebunden mit pc
 
 
-int loglevel = 1;   // @todo aus struct von config datei auslesen
+int loglevel = 1;   // wird mit setLogLevel nun gesetzt.
+// nicht aktuell@todo aus struct von config datei auslesen
 //  loglevel = conf.loglevel;        // ""
-//  ll = 0 : alles auf console, keine logdatei
+//  ll = 0 : alles auf console, keine logdatei // evtl sinnvoller/logischer wenn dann kein loglevel
 //  ll = 1 : alles auf console, log v. allem in logdatei
 //  ll = 2 : error in konsole,  log v. allem in logdatei
 //  ll = 3 : console nur nach prolog, alles in logfile
