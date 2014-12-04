@@ -29,7 +29,8 @@ char* read_from_pipe(int *fd){
     
     //  asprintf auskommentiert weil invalid in C99
     //  @todo alternative mit sprintf und buffer der groß genug ist
-    //  
+    //  funktioniert nach c99 entfernenen immer noch nicht
+    //      Lösung könnte sein mit gcc -D_GNU_SOURCE zu kompilieren
     //  asprintf(&log_msg, "\nRead %i bytes from the pipe: %s\n", bytes, buffer);
     
     // alternative für asprintf, geht aber auch nicht
