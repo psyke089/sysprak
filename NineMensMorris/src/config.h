@@ -33,8 +33,7 @@ typedef struct {
 
 
 /**
- * wenn file == NULL 
- * öffne common_config
+ * Wenn der path ungültig ist, öffne common_config
  *
  * ist gespeichert in "NineMansMorris/"
  * oder               "NineMansMorris/bin" 

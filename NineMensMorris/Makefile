@@ -1,5 +1,5 @@
-CFLAGS = -g -Wall -Werror -D_XOPEN_SOURCE=600
-MACFLAGS = -g -Wall -Werror -std=c99 -D_XOPEN_SOURCE=600 -D_GNU_SOURCE
+CFLAGS = -g -Wall -Werror -std=c99 -D_XOPEN_SOURCE=600 
+MACFAGS = -g -Wall -Werror -std=c99 -D_XOPEN_SOURCE=600 -D_GNU_SOURCE
 OUT = -o bin/client
 CC = gcc
 
@@ -40,7 +40,7 @@ client: src/logger/logger.h\
 				src/main.h\
 				src/main.c
 						
-	$(CC) $(CFLAGS) $(OUT)\
+	$(CC) $(CFLAGS) $(OUT) \
 		src/config.c\
 		src/main.c\
 		src/logger/logger.c\

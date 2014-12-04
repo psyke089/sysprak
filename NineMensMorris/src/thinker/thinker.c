@@ -6,37 +6,22 @@ void start_thinking(){
     kill (getppid(), SIGUSR1);
 }
 
-
-void init_sig_action(){
-    struct sigaction sig_str;
-    sig_str.sa_handler = think;
-    sigaction (SIGUSR1, &sig_str, NULL);
-}
-
-
 char* read_from_pipe(int *fd){
-   
-   //char *log_msg = 0;  //auskommtiert weil sonst implicit decl. wegen asprintf @todo
+
    static char buffer[ANSWERLENGTH];
    int bytes;
 
    if ((bytes = read(fd[READ], buffer, ANSWERLENGTH)) <= 0) {
         logPrnt('r', 'e', "\nCouldn't read from pipe!\n");
         memset(buffer, 0, ANSWERLENGTH);
-        end_routine();
    }
    else {
     
-    //  asprintf auskommentiert weil invalid in C99
-    //  @todo alternative mit sprintf und buffer der groß genug ist
-    //  funktioniert nach c99 entfernenen immer noch nicht
-    //      Lösung könnte sein mit gcc -D_GNU_SOURCE zu kompilieren
+    //  asprintf invalid in C99 für mac
     //  asprintf(&log_msg, "\nRead %i bytes from the pipe: %s\n", bytes, buffer);
-    
-    // alternative für asprintf, geht aber auch nicht
-    //strcpy(log_msg, "\nRead some bytes from pipe!\n");
-    //logPrnt('g', 'p', log_msg);
-    //free(log_msg);
+    char log_msg[50];
+    sprintf(log_msg, "\nRead %i bytes from pipe!\n", bytes);
+    logPrnt('g', 'p', log_msg); 
    }
 
    return buffer;
@@ -44,14 +29,13 @@ char* read_from_pipe(int *fd){
 }
 
 
-void write_to_pipe(int *fd, char *str){
+int write_to_pipe(int *fd, char *str){
  
    if (str == NULL || write(fd[WRITE], str, strlen(str)) <= 0) {
         logPrnt('r', 'e', "\nCouldn't write to pipe!\n");
-        end_routine();
+        return 0;
    }
-
-   set_think_flag(false,get_shm_struct());
+   return 1;
 }
 
 
@@ -83,18 +67,13 @@ int slctP(int circle, int num) {
 }
 
 
-
-
-void think(){
+void calc_turn(shm_struct *shm_str, plist_struct *plist_str, int shm_id, int plist_id, int *fd){
   
     // think-flag muss überprüft werden
-    check_think_flag(get_shm_struct());
-
-    // hole die pieces liste
-    plist_struct* plist_str = get_plist_struct(); // Name wie plist_Thinker waere verständlicher
+    if (!check_think_flag(shm_str)){end_routine(shm_str, plist_str, shm_id, plist_id);}
 
     // testoutput
-    printf("Der Beispielfill von plist_str -> count ist = %i\n", plist_str -> count);
+    printf(GREEN "\nDer Beispielfill von plist_str -> count ist = %i\n" RESET, plist_str -> count);
 
 
     // TODO
@@ -116,10 +95,8 @@ void think(){
 
     char answer[ANSWERLENGTH] = "A1";
 
-    write_to_pipe(get_pipe(), answer);
+    set_think_flag(false,shm_str);
+
+    if(!write_to_pipe(fd, answer)){end_routine(shm_str, plist_str, shm_id, plist_id);}
 }
-
-
-
-
 

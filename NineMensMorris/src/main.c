@@ -61,39 +61,50 @@ int pArg;
  * globale pipe mit getter, damit think()
  * ohne Argumente aufgerufen werden kann
  */
-
-int fd[2];
-
-int* get_pipe(){
-   return fd;
-}
-
-
 void forkingAction(){
 
 // pipes
+char log_msg [200];
+char *answer = NULL;
+int fd[2];
 pipe(fd);
 
 
 // shm
 int shm_id = create_shm(SHMSZ);
-shm_struct* shm_str = attach_shm(shm_id);;
+if(shm_id < 0){end_routine(NULL, NULL, shm_id, 0);}
+
+shm_struct* shm_str = attach_shm(shm_id);
+if (shm_str == NULL){end_routine(shm_str, NULL, shm_id, 0);}
 
 int plist_id = create_shm(PLISTSZ);
+if(plist_id < 0){end_routine(shm_str, NULL, shm_id, plist_id);}
+
 plist_struct* plist_str = attach_plist(plist_id);
+if (plist_str == NULL){end_routine(shm_str, plist_str, shm_id, plist_id);}
 
 clear_shm(shm_str);
 clear_plist(plist_str);
 
 // signale
-init_sig_action();
+void think (){
+    calc_turn(shm_str, plist_str, shm_id, plist_id, fd);
+}
+void sig_int_handler(){
+    end_routine(shm_str, plist_str, shm_id, plist_id);
+}
+
+struct sigaction sig_str;
+sig_str.sa_handler = think;
+sigaction (SIGUSR1, &sig_str, NULL);
+
 
 int pid = fork();
 
   switch (pid){
       case -1:
         logPrnt('r', 'e', "Failed to fork in main.c: ");
-        exit(EXIT_FAILURE);
+        end_routine(shm_str, plist_str, shm_id, plist_id);
       break;
 
       case 0:  //Kind =^ sendet || starte Connection + Parser hier
@@ -101,38 +112,39 @@ int pid = fork();
         // pipes
         close(fd[WRITE]);
 
+        //signals
+        signal (SIGINT, sig_int_handler);
 
         // shm
-        fill_shm_struct(shm_str);
+        if (!fill_shm_struct(shm_str)){end_routine(shm_str, plist_str, shm_id, plist_id);}
 
         // example fill
         plist_str -> count = 2;
 
-
-
         //parser
         set_think_flag(true, shm_str);
         start_thinking();
-        read_from_pipe(get_pipe());
 
+        //warte auf die antwort
+        if ((answer = read_from_pipe(fd)) == NULL){end_routine(shm_str, plist_str, shm_id, plist_id);}
+        
 
-        // end routine for child
-        kill(getppid(), SIGKILL);
-        end_routine();
+        sprintf(log_msg, "\nKind empfängt von Thinker: '%s' \n", answer);
+        logPrnt('g','p', log_msg);
+        end_routine(shm_str, plist_str, shm_id, plist_id);
       
       break;
 
       case 1 ... INT_MAX: // Eltern =^ empfängt Daten || starte Thinker hier
 
         close(fd[READ]);
-
-        while(true){}
+        wait(NULL);
 
       break;
 
       default :
         logPrnt('r', 'e', "pid lower than -1 : This case should never happen!\n");
-        end_routine();
+        end_routine(shm_str, plist_str, shm_id, plist_id);
       break;
 
   } 

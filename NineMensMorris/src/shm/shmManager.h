@@ -78,7 +78,7 @@ typedef struct{
  * detaches, deletes plist - / shm - structs
  * und TERMINIERT
  */
-void end_routine();
+void end_routine(shm_struct *shm_str, plist_struct *plist_str, int shm_id, int plist_id);
 
 /**
  * Key ist IPC_PRIVATE
@@ -88,16 +88,6 @@ void end_routine();
  */
 int create_shm(size_t size);
 
-/**
- * Nur für Prozesse die nicht durch fork() entstanden sind
- * Magic number muss gesetzt werden
- * Size ist SHMSZ
- * 
- * gibt die shm_id zurück
- *
- * depricated function
- */
-//int locate_shm();
 
 /**
  * "befestigt" die Struktur an der shm_id 
@@ -124,18 +114,18 @@ void clear_plist(plist_struct *plist_s);
 /**
  * "entfernt" die Struktur
  */
-void detach_shm(shm_struct *shm_s);
+int detach_shm(shm_struct *shm_s);
 
 /**
  * "entfernt" die Struktur
  */
-void detach_plist(plist_struct *plist_s);
+int detach_plist(plist_struct *plist_s);
 
 /**
  * sendet IPC_RIMD nach der id
  * => das Segment wird zur Zerstörung freigegeben
  */
-void delete_by_shmid(int shm_id);
+int delete_by_shmid(int shm_id);
 
 /**
  * shm_str -> think = to_set
@@ -144,39 +134,9 @@ void set_think_flag(bool to_set, shm_struct* shm_str);
 
 /**
  * überprüft ob der think-flag gesetzt wurde
- *
- * für true passiert nicht
- *
- * für false TERMINIERT das Programm 
+ *  
  */
-void check_think_flag(shm_struct* shm_str);
-
-/**
- * "getter" für den shm struct pointer 
- * lediglich damit die think() keine argumente hat
- */
-shm_struct* get_shm_struct();
-
-
-/**
- * "getter" für den plist struct pointer 
- * lediglich damit die think() keine argumente hat
- */
-plist_struct* get_plist_struct();
-
-
-/**
- * "getter" für die shm id
- * lediglich damit die think() keine argumente hat
- */
-int get_shm_id();
-
-
-/**
- * "getter" für die plist id
- * lediglich damit die think() keine argumente hat
- */
-int get_plist_id();
+int check_think_flag(shm_struct* shm_str);
 
 /**
  * printet die Daten von der shm_struct
@@ -184,7 +144,7 @@ int get_plist_id();
  * 
  * nur für Testzwecke
  */
-void read_shm_struct(shm_struct *shm_str);
+int read_shm_struct(shm_struct *shm_str);
 
 /**
  * füllt die struct mit Beispieldateien
@@ -192,6 +152,6 @@ void read_shm_struct(shm_struct *shm_str);
  * nur für Testzwecke
  *
  */
-void fill_shm_struct(shm_struct *shm_str);
+int fill_shm_struct(shm_struct *shm_str);
 
 

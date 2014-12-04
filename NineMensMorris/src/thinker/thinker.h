@@ -37,9 +37,8 @@ char* read_from_pipe(int *fd);
 /**
  * Safe write
  *
- * setzt den think flag auf false
  */
-void write_to_pipe(int *fd, char *str);
+int write_to_pipe(int *fd, char *str);
 
 /**
  * die main KI methode
@@ -48,6 +47,7 @@ void write_to_pipe(int *fd, char *str);
  * 
  * schreibt wenn er fertig mit der Berechnung ist den nächsten Zug
  * in die pipe mit der Größe von ANSWERLENGTH 
+ *
+ * setzt den think flag am Ende der Berechnung auf false
  */
-void think();
-
+void calc_turn(shm_struct *shm_str, plist_struct *plist_str, int shm_id, int plist_id, int *fd);

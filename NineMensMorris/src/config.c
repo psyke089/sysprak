@@ -1,11 +1,6 @@
 #include "config.h"
 #include "logger/logger.h"
 
-//Delimiter für die Trennbedinung pro Zeile
-char *delimiter = " ";
-char *ptr;
-char line[MSGLEN];
-
 
 
 FILE* openCommonConfig(FILE* file){
@@ -23,7 +18,7 @@ FILE* openCommonConfig(FILE* file){
 
 
 FILE* openPathConfig(char *optarg){
-  //char* log_msg = 0;
+  char log_msg[200];
   FILE* file = NULL;
   char path[PATHLEN];
 
@@ -31,17 +26,16 @@ FILE* openPathConfig(char *optarg){
                logPrnt('r', 'e', "\nCouldn't copy the c-Flag to path\n");
    }
    if ((path[strlen(path) - 1] != 'f') || ((file = fopen(path, "r")) == NULL) ){
-    //vasprintf(&log_msg, "\nCouldn't open path = ' %s '!\n", path);
-    //strcpy(log_msg, "\nCouldn't open path!\n");
-    //logPrnt('r', 'e', log_msg);
-    //free(log_msg);
-   } 
+    //asprintf invalid in C99 in mac
+    //asprintf(&log_msg, "\nCouldn't open path = ' %s '!\n", path);
+    sprintf(log_msg,"\nCouldn't open path = ' %s '!\n", path);
+    logPrnt('r', 'e', log_msg);
+    } 
    else {
-    //vasprintf(&log_msg, "\nUsing = ' %s '!\n", path);
-    //strcpy(log_msg, "\nUsing new path!\n");
-    //logPrnt('g', 'p', log_msg);
-    //free(log_msg);
-   }
+    //asprintf(&log_msg, "\nUsing = ' %s '!\n", path);
+    sprintf(log_msg, "\nUsing = ' %s '!\n", path);
+    logPrnt('g', 'p', log_msg);
+    }
 
    return file;
 }
@@ -75,6 +69,10 @@ void printConfigString(configData conf_str){
 
 configData readConfig(FILE *file){
 
+  //Delimiter für die Trennbedinung pro Zeile
+  char *delimiter = " ";
+  char line[MSGLEN];
+  char *ptr;
   //Temporäres Struct configTemp erzeugen
   configData configTemp;
 
@@ -110,7 +108,6 @@ configData readConfig(FILE *file){
 
   fclose(file);
 
-  //Struct zurueckgeben
   return configTemp;
 }
 
