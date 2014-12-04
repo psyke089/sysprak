@@ -1,4 +1,4 @@
-CFLAGS = -g -Wall -Werror -std=c99 -D_XOPEN_SOURCE=600 
+CFLAGS = -g -Wall -Werror -std=c99 -D_XOPEN_SOURCE=600
 MACFAGS = -g -Wall -Werror -std=c99 -D_XOPEN_SOURCE=600 -D_GNU_SOURCE
 OUT = -o bin/client
 CC = gcc

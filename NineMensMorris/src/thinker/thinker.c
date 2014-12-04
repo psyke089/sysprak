@@ -66,6 +66,20 @@ int slctP(int circle, int num) {
     }
 }
 
+char* convertPositionToString(int x, int y){
+  static char coords[2];
+
+  switch(x) {
+    case 0: coords[0] = 'A'; break;
+    case 1: coords[0] = 'B'; break;
+    case 2: coords[0] = 'C'; break;
+  }
+
+  //Cast digit zu char
+  coords[1] = (char)(((int)'0')+y);
+
+  return coords;
+}
 
 void calc_turn(shm_struct *shm_str, plist_struct *plist_str, int shm_id, int plist_id, int *fd){
   
@@ -73,7 +87,96 @@ void calc_turn(shm_struct *shm_str, plist_struct *plist_str, int shm_id, int pli
     if (!check_think_flag(shm_str)){end_routine(shm_str, plist_str, shm_id, plist_id);}
 
     // testoutput
-    printf(GREEN "\nDer Beispielfill von plist_str -> count ist = %i\n" RESET, plist_str -> count);
+    printf(GREEN "\nDer Beispielfill von plist_str -> countMyPieces ist = %i\n" RESET, plist_str -> countMyPieces);
+
+    // Berechne die antwort und speichere sie in answer
+
+    char answer[ANSWERLENGTH] = "A1";
+
+    srand(time(NULL));
+
+    int randomnumber;
+
+    plist_str -> piece_list[2][0] = 1;
+    plist_str -> piece_list[2][1] = 1;
+    plist_str -> piece_list[2][2] = 1;
+
+    //0.Mühlenfall: Wenn eine Mühle vorhanden ist, müssen gegnerische Steine geschlagen werden
+    if(plist_str -> piecesToRemove>0){
+
+      int countEnemyPieces = 0;
+
+      for(int x = 0; x<3; x++){
+        for(int y = 0; y<8; y++){
+          if(plist_str -> piece_list[x][y] == 2){
+            countEnemyPieces++;
+          }
+        }
+      }
+
+      randomnumber = (rand() % countEnemyPieces)+1;
+
+      countEnemyPieces = 0;
+
+      for(int x = 0; x<3; x++){
+        for(int y = 0; y<8; y++){
+          if(plist_str -> piece_list[x][y] == 0){
+            countEnemyPieces++;
+            if(countEnemyPieces == randomnumber){
+
+              strcpy(answer,convertPositionToString(x,y));
+              printf("%s\n",answer);
+            }
+          }
+        }
+      }
+
+    }
+
+    //1. Setzphase
+    if(plist_str -> unplacedPieces > 0 && plist_str -> piecesToRemove == 0){
+
+    int countFreeSpaces = 0;
+   
+
+    for(int x = 0; x<3; x++){
+      for(int y = 0; y<8; y++){
+        if(plist_str -> piece_list[x][y] == 0){
+          countFreeSpaces++;
+        }
+      }
+    }
+
+    randomnumber = (rand() % countFreeSpaces)+1;
+    
+    countFreeSpaces = 0;
+ 
+    for(int x = 0; x<3; x++){
+      for(int y = 0; y<8; y++){
+        if(plist_str -> piece_list[x][y] == 0){
+          countFreeSpaces++;
+          if(countFreeSpaces == randomnumber){
+
+            strcpy(answer,convertPositionToString(x,y));
+            printf("%s\n",answer);
+          }
+        }
+      }
+    }
+
+    }
+
+    //2. Schieb-Phase
+
+    if(plist_str -> unplacedPieces == 0 && plist_str -> countMyPieces > 3 && plist_str -> piecesToRemove == 0){
+
+
+
+
+    }
+
+
+
 
 
     // TODO
@@ -91,9 +194,7 @@ void calc_turn(shm_struct *shm_str, plist_struct *plist_str, int shm_id, int pli
      * Spring-Phase - Methode
      *
      */
-    // berechne die antwort und speichere sie in answer
 
-    char answer[ANSWERLENGTH] = "A1";
 
     set_think_flag(false,shm_str);
 

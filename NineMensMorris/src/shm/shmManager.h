@@ -69,8 +69,10 @@ typedef struct{
  *
  */
  typedef struct{
-    char piece_list[3][8];
-    int count;
+    int piece_list[3][8];
+    int countMyPieces;
+    int piecesToRemove;
+    int unplacedPieces;
  } plist_struct;
 
 

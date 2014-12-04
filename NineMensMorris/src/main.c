@@ -146,7 +146,9 @@ int pid = fork();
         if (!fill_shm_struct(shm_str)){end_routine(shm_str, plist_str, shm_id, plist_id);}
 
         // example fill
-        plist_str -> count = 2;
+        plist_str -> countMyPieces = 9;
+        plist_str -> piecesToRemove = 0;
+        plist_str -> unplacedPieces = 9;
 
         //parser
         set_think_flag(true, shm_str);
@@ -158,7 +160,6 @@ int pid = fork();
 
         sprintf(log_msg, "\nKind empfängt von Thinker: '%s' \n", answer);
         logPrnt('g','p', log_msg);
-        sleep(10);
         end_routine(shm_str, plist_str, shm_id, plist_id);
       
       break;
