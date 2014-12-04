@@ -4,12 +4,13 @@
 
 void end_routine(shm_struct *shm_str, plist_struct *plist_str, int shm_id, int plist_id){
 
-  detach_shm(shm_str);
-  detach_plist(plist_str);
+   if (shm_str != NULL){detach_shm(shm_str);}
+   if (plist_str != NULL){detach_plist(plist_str);}
 
-  delete_by_shmid(shm_id);
-  delete_by_shmid(plist_id);
 
+   if (shm_id > 0){delete_by_shmid(shm_id);}
+   if (plist_id > 0){delete_by_shmid(plist_id);}
+   
   logPrnt('g', 'p', "\nDelete routine was executed!\n");
 
   exit(EXIT_SUCCESS);
@@ -26,21 +27,6 @@ int create_shm(size_t size){
 
   return shm_id;
 }
-
-// obsolete function
-/*int locate_shm(){
-
-  int shm_id;
-  key_t key = 0; 
-  
-  if ((shm_id = shmget(key, SHMSZ, 0666)) < 0) {
-    perror(RED "Could not locate shared memory segment" RESET);
-    end_routine();
-  }
-  
-  return shm_id;
-
-}*/
 
 
 shm_struct* attach_shm(int shm_id){

@@ -72,16 +72,16 @@ pipe(fd);
 
 // shm
 int shm_id = create_shm(SHMSZ);
-if(shm_id < 0){end_routine(NULL, NULL, shm_id, 0);}
+if(shm_id < 0){end_routine(NULL, NULL, (-1), (-1));}
 
 shm_struct* shm_str = attach_shm(shm_id);
-if (shm_str == NULL){end_routine(shm_str, NULL, shm_id, 0);}
+if (shm_str == NULL){end_routine(NULL, NULL, shm_id, (-1));}
 
 int plist_id = create_shm(PLISTSZ);
-if(plist_id < 0){end_routine(shm_str, NULL, shm_id, plist_id);}
+if(plist_id < 0){end_routine(shm_str, NULL, shm_id, (-1));}
 
 plist_struct* plist_str = attach_plist(plist_id);
-if (plist_str == NULL){end_routine(shm_str, plist_str, shm_id, plist_id);}
+if (plist_str == NULL){end_routine(shm_str, NULL, shm_id, plist_id);}
 
 clear_shm(shm_str);
 clear_plist(plist_str);
@@ -131,6 +131,7 @@ int pid = fork();
 
         sprintf(log_msg, "\nKind empfängt von Thinker: '%s' \n", answer);
         logPrnt('g','p', log_msg);
+        sleep(10);
         end_routine(shm_str, plist_str, shm_id, plist_id);
       
       break;
