@@ -97,9 +97,91 @@ void calc_turn(shm_struct *shm_str, plist_struct *plist_str, int shm_id, int pli
 
     int randomnumber;
 
+    int arrayOfNeighbors[3][8][4];
+
     plist_str -> piece_list[2][0] = 1;
     plist_str -> piece_list[2][1] = 1;
     plist_str -> piece_list[2][2] = 1;
+
+    //arrayOfNeighbors mit nachbarn befüllen
+    for(int x = 0; x<3; x++){
+      for(int y = 0; y<8; y++){
+        if (plist_str -> piece_list[x][--y]!=0){
+          arrayOfNeighbors[x][y][0] = plist_str -> piece_list[x][y-1];
+        }
+
+        if (plist_str -> piece_list[x][++y]!=0){
+          arrayOfNeighbors[x][y][1] = plist_str -> piece_list[x][y+1];
+        }
+
+      }
+    }
+
+    //A1
+    if(plist_str -> piece_list[0][1]!=0){
+      arrayOfNeighbors[1][1][2] = plist_str -> piece_list[0][1];
+    }
+
+    //A3
+    if(plist_str -> piece_list[0][3]!=0){
+      arrayOfNeighbors[1][3][2] = plist_str -> piece_list[0][3];
+    }
+
+    //A5
+    if(plist_str -> piece_list[0][5]!=0){
+      arrayOfNeighbors[1][5][2] = plist_str -> piece_list[0][5];
+    }
+
+    //A7
+    if(plist_str -> piece_list[0][7]!=0){
+      arrayOfNeighbors[1][7][2] = plist_str -> piece_list[0][7];
+    }
+
+    //C1
+    if(plist_str -> piece_list[2][1]!=0){
+      arrayOfNeighbors[1][1][3] = plist_str -> piece_list[2][1];
+    }
+
+    //C3
+    if(plist_str -> piece_list[2][3]!=0){
+      arrayOfNeighbors[1][1][3] = plist_str -> piece_list[2][3];
+    }
+
+    //C5
+    if(plist_str -> piece_list[2][5]!=0){
+      arrayOfNeighbors[1][1][3] = plist_str -> piece_list[2][5];
+    }
+
+    //C7
+    if(plist_str -> piece_list[2][7]!=0){
+      arrayOfNeighbors[1][1][3] = plist_str -> piece_list[2][7];
+    }
+
+    //B1
+    if(plist_str -> piece_list[1][1]!=0){
+      arrayOfNeighbors[0][1][3] = plist_str -> piece_list[2][7];
+      arrayOfNeighbors[2][1][2] = plist_str -> piece_list[2][7];
+    }
+
+    //B3
+    if(plist_str -> piece_list[1][3]!=0){
+      arrayOfNeighbors[0][3][3] = plist_str -> piece_list[1][3];
+      arrayOfNeighbors[2][3][2] = plist_str -> piece_list[1][3];
+    }
+
+
+    //B5
+    if(plist_str -> piece_list[1][5]!=0){
+      arrayOfNeighbors[0][5][3] = plist_str -> piece_list[1][5];
+      arrayOfNeighbors[2][5][2] = plist_str -> piece_list[1][5];
+    }
+
+    //B7
+    if(plist_str -> piece_list[1][7]!=0){
+      arrayOfNeighbors[0][7][3] = plist_str -> piece_list[1][7];
+      arrayOfNeighbors[2][7][2] = plist_str -> piece_list[1][7];
+    }
+
 
     //0.Mühlenfall: Wenn eine Mühle vorhanden ist, müssen gegnerische Steine geschlagen werden
     if(plist_str -> piecesToRemove>0){
@@ -174,10 +256,6 @@ void calc_turn(shm_struct *shm_str, plist_struct *plist_str, int shm_id, int pli
 
 
     }
-
-
-
-
 
     // TODO
     /**
