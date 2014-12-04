@@ -11,7 +11,7 @@
  * Config
  */
 
-#define NAMELENGTH 100
+#define NAMELENGTH 30
 #define MAXPLAYERS 8
 #define SHMSZ (sizeof(shm_struct))
 #define PLISTSZ (sizeof(plist_struct))

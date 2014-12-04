@@ -30,10 +30,3 @@
 #define MAGENTA "\x1b[35m"
 #define CYAN    "\x1b[36m"
 #define RESET   "\x1b[0m"
-
-
-/**
- * "getter" für die pipe
- * lediglich damit die think() keine argumente hat
- */
-int* get_pipe();
