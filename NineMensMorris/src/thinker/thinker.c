@@ -100,16 +100,9 @@ void calc_turn(shm_struct *shm_str, plist_struct *plist_str, int shm_id, int pli
 
     int arrayOfNeighbors[3][8][4] = {{{0}}};
 
-    //memset(&arrayOfNeighbors, 1, sizeof(arrayOfNeighbors));
-
     //Linux Fehler "set but not used"
     if(arrayOfNeighbors[0][0][0]==0){arrayOfNeighbors[0][0][0] = 0;}
-
-    plist_str -> piece_list[2][0] = 1;
-    plist_str -> piece_list[2][1] = 1;
-    plist_str -> piece_list[2][2] = 1;
-
-
+    /*
     for(int x = 0; x<3; x++){
       for(int y = 0; y<8; y++){
         for(int z = 0; z<4; z++){
@@ -123,9 +116,7 @@ void calc_turn(shm_struct *shm_str, plist_struct *plist_str, int shm_id, int pli
           plist_str -> piece_list[x][y] = 2;
       }
     }
-
-
-
+    */
 
     //arrayOfNeighbors mit Nachbarn befüllen
     for(int x = 0; x<3; x++){
@@ -214,16 +205,16 @@ void calc_turn(shm_struct *shm_str, plist_struct *plist_str, int shm_id, int pli
       arrayOfNeighbors[0][7][3] = plist_str -> piece_list[1][7];
       arrayOfNeighbors[2][7][2] = plist_str -> piece_list[1][7];
     }
-
+    /*
     //Ausgabe
-     for(int x = 0; x<3; x++){
+    for(int x = 0; x<3; x++){
       for(int y = 0; y<8; y++){
         for(int z = 0; z<4; z++){
           printf("%i %i %i: %i \n",x,y,z,arrayOfNeighbors[x][y][z]);
         }
       }
     }
-
+    */
     //0.Mühlenfall: Wenn eine Mühle vorhanden ist, müssen gegnerische Steine geschlagen werden
     if(plist_str -> piecesToRemove>0){
 
@@ -248,7 +239,7 @@ void calc_turn(shm_struct *shm_str, plist_struct *plist_str, int shm_id, int pli
             if(countEnemyPieces == randomnumber){
 
               strcpy(answer,convertPositionToString(x,y));
-              printf("%s\n",answer);
+              //printf("%s\n",answer);
             }
           }
         }
@@ -291,10 +282,10 @@ void calc_turn(shm_struct *shm_str, plist_struct *plist_str, int shm_id, int pli
 
     //2. Schieb-Phase
 
-//    if(plist_str -> unplacedPieces == 0 && plist_str -> countMyPieces > 3 && plist_str -> piecesToRemove == 0){
+    if(plist_str -> unplacedPieces == 0 && plist_str -> countMyPieces > 3 && plist_str -> piecesToRemove == 0){
 
 
-//    }
+    }
 
     // TODO
     /**
