@@ -153,11 +153,11 @@ void sig_int_handler(){
         }
 
         // example fill
-        /*
+        
         plist_str -> countMyPieces = 9;
         plist_str -> piecesToRemove = 0;
         plist_str -> unplacedPieces = 9;
-        */
+        
 
         sock = performConnection(shm_str, plist_str, conf_str);
         parseMessages(sock, shm_str, plist_str, conf_str.game_id, fd);

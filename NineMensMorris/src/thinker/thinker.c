@@ -94,8 +94,8 @@ void calc_turn(shm_struct *shm_str, plist_struct *plist_str, int shm_id, int pli
 
     // Berechne die antwort und speichere sie in answer
 
-    static char answer[ANSWERLENGTH] = "A1";
-/*
+    char answer[ANSWERLENGTH] = "A1";
+
     srand(time(NULL));
 
     int randomnumber;
@@ -105,6 +105,7 @@ void calc_turn(shm_struct *shm_str, plist_struct *plist_str, int shm_id, int pli
 
     //Linux Fehler "set but not used"
     if(arrayOfNeighbors[0][0][0]==0){arrayOfNeighbors[0][0][0] = 0;}
+    
     /*
     for(int x = 0; x<3; x++){
       for(int y = 0; y<8; y++){
@@ -275,7 +276,7 @@ void calc_turn(shm_struct *shm_str, plist_struct *plist_str, int shm_id, int pli
           if(countFreeSpaces == randomnumber){
 
             strcpy(answer,convertPositionToString(x,y));
-            printf("%s\n",answer);
+            //printf("%s\n",answer);
           }
         }
       }
@@ -289,7 +290,7 @@ void calc_turn(shm_struct *shm_str, plist_struct *plist_str, int shm_id, int pli
 
 
     }
-*/
+
     // TODO
     /**
      * Methode die die derzeitige Phase bestimmt
