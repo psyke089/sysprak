@@ -1,3 +1,6 @@
+#ifndef shmManager_h
+#define shmManager_h
+
 #include <sys/ipc.h>
 #include <sys/shm.h>
 #include <stdio.h>
@@ -26,8 +29,6 @@
 #define MAGENTA "\x1b[35m"
 #define CYAN    "\x1b[36m"
 #define RESET   "\x1b[0m"
-
-
 
 /**
  * Player Struct
@@ -74,6 +75,7 @@ typedef struct{
     int piecesToRemove;
     int unplacedPieces;
  } plist_struct;
+
 
 
 /**
@@ -156,4 +158,4 @@ int read_shm_struct(shm_struct *shm_str);
  */
 int fill_shm_struct(shm_struct *shm_str);
 
-
+#endif

@@ -1,5 +1,5 @@
-#include "../main.h"
-#include "../logger/logger.h"
+#ifndef connector_h
+#define connector_h
 
 #include <sys/socket.h>
 #include <sys/types.h>
@@ -12,7 +12,6 @@
 #include <errno.h>
 
 #define MSGL 4096
-
 
 /**
  * performConnection.c
@@ -28,15 +27,16 @@ void get_message(int sock, char* buf);
 
 void send_message(int sock, char* buf);
 
-int performConnection();
+int performConnection(shm_struct *shm_str, plist_struct *plist_str, configData conf_str);
 
 /**
  * parser.c
  */
 
-void parseMessages(int sock);
+void parseMessages(int sock, shm_struct *shm_str, plist_struct *plist_str, char *game_id, int *pipe_fd);
 
 void processMessage(char *buf);
 
 void tokenizeLine(char *line);
 
+#endif

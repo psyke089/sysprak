@@ -1,3 +1,8 @@
+#include "../main.h"
+#include "../thinker/thinker.h"
+#include "../config.h"
+#include "../logger/logger.h"     
+#include "../shm/shmManager.h"
 #include "connector.h"
 
 /**
@@ -155,23 +160,17 @@ void send_message(int sock, char* buf)
  * Stellt die Verbindung her und startet den parser.
  */
 
-int performConnection()
+int performConnection(shm_struct *shm_str, plist_struct *plist_str, configData conf_str)
 {
 
-  int le_socket;
+  int sock;
   struct sockaddr_in server_addr;
-
 
   printf("\n");
 
   server_addr = init_server_addr();
-  le_socket = create_socket();
-  connect_to_socket(le_socket, server_addr);
+  sock = create_socket();
+  connect_to_socket(sock, server_addr);
 
-
-  parseMessages(le_socket);
-
-
-  close(le_socket);
-  return 0;
+  return sock;
 }

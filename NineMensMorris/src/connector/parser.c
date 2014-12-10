@@ -1,6 +1,10 @@
+#include "../main.h"
+#include "../thinker/thinker.h"
+#include "../config.h"
+#include "../logger/logger.h"     
+#include "../shm/shmManager.h"
 #include "connector.h"
 
-char id[11];
 char msg_queue[32][128];
 char tokens[32][32];
 
@@ -86,7 +90,7 @@ void tokenizeLine(char *line)
  * sock: Der Socket, von dem gelesen werden soll.
  */
 
-void parseMessages(int sock)
+void parseMessages(int sock, shm_struct *shm_str, plist_struct *plist_str, char *game_id, int *pipe_fd)
 {
 
   int breaker = 1;
@@ -100,7 +104,7 @@ void parseMessages(int sock)
   int total_players;
   int max_move_time;
   int captured_pieces;
-  char gameid[20];
+  char game_type[20];
 
   int pl_players;
   int pl_pieces;
@@ -148,15 +152,15 @@ void parseMessages(int sock)
 
           }else if(strcmp(msg_queue[linenum], "+ Client version accepted - please send Game-ID to join") == 0) {
 
-            sprintf(out_buf, "ID %s\n", id);
+            sprintf(out_buf, "ID %s\n", game_id);
             send_message(sock, out_buf);
 
           }else if(strcmp(msg_queue[linenum], "+ PLAYING NMMorris") == 0) {
 
             if(strcmp(msg_queue[linenum + 1], "") != 0){
               linenum++;
-              sscanf(msg_queue[linenum], "+ %[^\t\n]", gameid);
-              printf("Game ID: %s\n\n",gameid);
+              sscanf(msg_queue[linenum], "+ %[^\t\n]", game_type);
+              printf("Game ID: %s\n\n",game_type);
             }else{
               get_message(sock, in_buf);
               processMessage(in_buf);
@@ -228,6 +232,13 @@ void parseMessages(int sock)
           }else if(strcmp(msg_queue[linenum], "+ OKTHINK") == 0) {
 
             printf("thinking...\n");
+            
+            set_think_flag(true, shm_str);
+            start_thinking();
+
+            //warte auf die antwort
+            sprintf(out_buf, "PLAY %s\n", read_from_pipe(pipe_fd));
+            send_message(sock, out_buf);
 
           }else{
 
@@ -259,6 +270,10 @@ void parseMessages(int sock)
           }else if(strcmp(msg_queue[linenum], "- We expected you to THINK!") == 0){
 
             printf("Server expects client to think.\n");
+
+          }else if(strcmp(msg_queue[linenum], "- Destination is already occupied") == 0){
+
+            printf("Destination occupied.\n");
 
           }else{
             printf("Unexpected server error: %s\n", msg_queue[linenum]);

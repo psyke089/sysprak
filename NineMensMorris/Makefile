@@ -33,19 +33,24 @@ client: src/logger/logger.h\
 				src/logger/logger.c\
 				src/shm/shmManager.c\
 				src/shm/shmManager.h\
-				src/thinker/thinker.c\
 				src/thinker/thinker.h\
+				src/thinker/thinker.c\
 				src/config.h\
 				src/config.c\
+				src/connector/connector.h\
+				src/connector/performConnection.c\
+				src/connector/parser.c\
 				src/main.h\
 				src/main.c
-						
+
 	$(CC) $(CFLAGS) $(OUT) \
 		src/config.c\
 		src/main.c\
 		src/logger/logger.c\
 		src/shm/shmManager.c\
-		src/thinker/thinker.c
+		src/thinker/thinker.c\
+		src/connector/performConnection.c\
+		src/connector/parser.c
 
 mac: maccomp clean
 maccomp:  src/logger/logger.h\
@@ -58,15 +63,15 @@ maccomp:  src/logger/logger.h\
 				src/config.c\
 				src/main.h\
 				src/main.c
-						
+
 	$(CC) $(MACFLAGS) $(OUT)\
 		src/config.c\
 		src/main.c\
 		src/logger/logger.c\
 		src/shm/shmManager.c\
 		src/thinker/thinker.c
-		
-		
+
+
 
 clean:
 	rm -f src/*.o

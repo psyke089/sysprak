@@ -1,3 +1,6 @@
+#ifndef main_h
+#define main_h
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -30,3 +33,5 @@
 #define MAGENTA "\x1b[35m"
 #define CYAN    "\x1b[36m"
 #define RESET   "\x1b[0m"
+
+#endif

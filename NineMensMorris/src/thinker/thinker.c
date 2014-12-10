@@ -1,6 +1,9 @@
-#include "thinker.h"
-#include "../logger/logger.h"
 #include "../main.h"
+#include "thinker.h"
+#include "../config.h"
+#include "../logger/logger.h"     
+#include "../shm/shmManager.h"
+#include "../connector/connector.h"
 
 void start_thinking(){
     kill (getppid(), SIGUSR1);
@@ -91,8 +94,8 @@ void calc_turn(shm_struct *shm_str, plist_struct *plist_str, int shm_id, int pli
 
     // Berechne die antwort und speichere sie in answer
 
-    char answer[ANSWERLENGTH] = "A1";
-
+    static char answer[ANSWERLENGTH] = "A1";
+/*
     srand(time(NULL));
 
     int randomnumber;
@@ -256,7 +259,7 @@ void calc_turn(shm_struct *shm_str, plist_struct *plist_str, int shm_id, int pli
 
 
     }
-
+*/
     // TODO
     /**
      * Methode die die derzeitige Phase bestimmt

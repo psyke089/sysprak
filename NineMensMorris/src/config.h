@@ -1,3 +1,6 @@
+#ifndef config_h
+#define config_h
+
 #define _GNU_SOURCE
 
 #include <stdio.h>
@@ -29,6 +32,7 @@ typedef struct {
   int portnummer;
   char artdesspiels[MSGLEN];
   int loglevel;
+  char game_id[11];
 }configData;
 
 
@@ -78,3 +82,5 @@ configData readConfig(FILE* file);
  * Terminiert immer
  */
 void printHowToUse ();
+
+#endif

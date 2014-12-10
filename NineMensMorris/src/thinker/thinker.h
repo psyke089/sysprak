@@ -1,3 +1,6 @@
+#ifndef thinker_h
+#define thinker_h
+	
 #define _GNU_SOURCE 
 
 #include <signal.h>
@@ -51,3 +54,5 @@ int write_to_pipe(int *fd, char *str);
  * setzt den think flag am Ende der Berechnung auf false
  */
 void calc_turn(shm_struct *shm_str, plist_struct *plist_str, int shm_id, int plist_id, int *fd);
+
+#endif
