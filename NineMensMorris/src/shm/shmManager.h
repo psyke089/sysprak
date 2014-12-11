@@ -50,7 +50,7 @@ typedef struct{
   char gameName[NAMELENGTH];
   char gameID[11];
   int playerCount;
-  player_struct p_structs[MAXPLAYERS];
+  player_struct player_str[MAXPLAYERS];
   int p_pid;
   int c_pid;
   bool think;

@@ -120,6 +120,11 @@ void parseMessages(int sock, shm_struct *shm_str, plist_struct *plist_str, int *
 
   printf("\n");
 
+  int snd_coord = 0;
+  int fst_coord = 0;
+  snd_coord++;
+  fst_coord++;
+
   while(breaker)
   {
 
@@ -159,13 +164,17 @@ void parseMessages(int sock, shm_struct *shm_str, plist_struct *plist_str, int *
               linenum++;
               sscanf(msg_queue[linenum], "+ %[^\t\n]", game_type);
               printf("Game Name: %s\n\n",game_type);
+
               strcpy(shm_str -> gameName, game_type);
+
             }else{
               get_message(sock, in_buf);
               processMessage(in_buf);
               sprintf(game_type, "%s",msg_queue[0]);
               printf("Game Name: %s\n\n",game_type);
+
               strcpy(shm_str -> gameName, game_type);
+
             }
             sprintf(out_buf, "PLAYER\n");
             send_message(sock, out_buf);
@@ -173,8 +182,13 @@ void parseMessages(int sock, shm_struct *shm_str, plist_struct *plist_str, int *
           }else if(sscanf(msg_queue[linenum], "+ YOU %d %[^\t\n]", &my_pos, my_name) == 2) {
 
             printf("My position: %d\n", my_pos);
-            printf("My ID: %s\n\n", my_name);
+            printf("My Name: %s\n\n", my_name);
 
+            shm_str -> player_str[0].playerID = my_pos;
+            strcpy(shm_str -> player_str[0].playerName,  my_name);
+            shm_str -> player_str[0].isReady =  1;
+            shm_str -> player_str[0].isLoggedIn =  1;
+          
           }else if(sscanf(msg_queue[linenum], "+ TOTAL %d", &total_players) == 1) {
 
             printf("Total Players: %d\n\n", total_players);
@@ -203,7 +217,10 @@ void parseMessages(int sock, shm_struct *shm_str, plist_struct *plist_str, int *
               }else{
                 printf("Opponent ready?: NO\n\n");
               }
-
+            shm_str -> player_str[1].playerID = opponent_pos;
+            strcpy(shm_str -> player_str[1].playerName,  opponent_name);
+            shm_str -> player_str[1].isReady =  opponent_ready;
+            shm_str -> player_str[1].isLoggedIn =  1;
             }
 
           }else if(strcmp(msg_queue[linenum], "+ ENDPLAYERS") == 0) {
@@ -224,6 +241,16 @@ void parseMessages(int sock, shm_struct *shm_str, plist_struct *plist_str, int *
 
           }else if(sscanf(msg_queue[linenum], "+ PIECE%d.%d %[A-C0-7]", &piece_player, &piece_id, piece_pos) == 3) {
 
+            // hier piece_pos spalten und dann in plist_str speichern
+            fst_coord = piece_pos[0] - 65;
+            printf("fst = %i \n", fst_coord);
+            snd_coord = atoi(&piece_pos[1]); 
+            printf("snd = %i \n", snd_coord);
+            switch (piece_player){
+              case 0: plist_str -> piece_list[fst_coord][snd_coord] = 1; break; // computer ist 1
+              case 1: plist_str -> piece_list[fst_coord][snd_coord] = 2; break; // gegenspieler ist 2
+              default:plist_str -> piece_list[fst_coord][snd_coord] = 0; break; // leer is 0
+            } 
             printf("Player %d, piece %d at position %s\n", piece_player, piece_id, piece_pos);
 
           }else if(strcmp(msg_queue[linenum], "+ ENDPIECELIST") == 0) {

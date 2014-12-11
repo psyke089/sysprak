@@ -133,10 +133,10 @@ int read_shm_struct(shm_struct* shm_str){
                 BLUE "isReady     = %i\n"
                 BLUE "isLoggedIn  = %i\n",
                     (i+1),
-                    shm_str -> p_structs[i].playerID,
-                    shm_str -> p_structs[i].playerName,
-                    shm_str -> p_structs[i].isReady,
-                    shm_str -> p_structs[i].isLoggedIn);
+                    shm_str -> player_str[i].playerID,
+                    shm_str -> player_str[i].playerName,
+                    shm_str -> player_str[i].isReady,
+                    shm_str -> player_str[i].isLoggedIn);
         }
         return 1;
 }
@@ -171,8 +171,8 @@ int fill_shm_struct(shm_struct* shm_str){
           return 0;
         }
         shm_str -> playerCount  = 2;
-        shm_str -> p_structs[0] = player1; 
-        shm_str -> p_structs[1] = player2;
+        shm_str -> player_str[0] = player1; 
+        shm_str -> player_str[1] = player2;
         shm_str -> c_pid        = getpid();
         shm_str -> p_pid        = getppid();
         shm_str -> think        = false;
