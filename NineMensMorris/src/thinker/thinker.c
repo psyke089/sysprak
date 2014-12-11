@@ -100,6 +100,7 @@ void calc_turn(shm_struct *shm_str, plist_struct *plist_str, int shm_id, int pli
 
     char *answer = malloc (ANSWERLENGTH * sizeof(char*));
 
+
     srand(time(NULL));
 
     int randomnumber;
@@ -107,7 +108,7 @@ void calc_turn(shm_struct *shm_str, plist_struct *plist_str, int shm_id, int pli
     //0 Links (y-1) im Ring
     //1 Recht (y+1) im Ring
     //2 Innerer Ringnachbar (x+1)
-    //3 Außerer Ringnachbar (x-1) im Ring
+    //3 Äußerer Ringnachbar (x-1) im Ring
     int arrayOfNeighbors[3][8][4] = {{{0}}};
 
     //Linux Fehler "set but not used"
@@ -415,7 +416,8 @@ void calc_turn(shm_struct *shm_str, plist_struct *plist_str, int shm_id, int pli
             }
     
     if(!write_to_pipe(fd, answer)){end_routine(shm_str, plist_str, shm_id, plist_id);}
-
+    strcpy (answer,"      ");
     free(answer);
+
 }
 
