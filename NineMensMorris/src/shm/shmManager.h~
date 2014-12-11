@@ -72,7 +72,7 @@ typedef struct{
  typedef struct{
     int piece_list[3][8];
     int countMyPieces;
-    int countEnemyPieces;
+    int countEnemyPieces
     int piecesToRemove;
     int unplacedPieces;
  } plist_struct;

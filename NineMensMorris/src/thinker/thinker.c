@@ -223,6 +223,7 @@ void calc_turn(shm_struct *shm_str, plist_struct *plist_str, int shm_id, int pli
       }
     }
     */
+
     //0.Mühlenfall: Wenn eine Mühle vorhanden ist, müssen gegnerische Steine geschlagen werden
     if(plist_str -> piecesToRemove>0){
 
@@ -242,12 +243,12 @@ void calc_turn(shm_struct *shm_str, plist_struct *plist_str, int shm_id, int pli
 
       for(int x = 0; x<3; x++){
         for(int y = 0; y<8; y++){
-          if(plist_str -> piece_list[x][y] == 0){
+          if(plist_str -> piece_list[x][y] == 2){
             countEnemyPieces++;
             if(countEnemyPieces == randomnumber){
 
               strcpy(answer,convertPositionToString(x,y));
-              //printf("%s\n",answer);
+              printf("%s\n",answer);
             }
           }
         }
@@ -258,33 +259,42 @@ void calc_turn(shm_struct *shm_str, plist_struct *plist_str, int shm_id, int pli
     //1. Setzphase
     if(plist_str -> unplacedPieces > 0 && plist_str -> piecesToRemove == 0){
 
-    int countFreeSpaces = 0;
-   
+      if(plist_str -> unplacedPieces > 6){
+        if(plist_str -> unplacedPieces == 9){strcpy(answer,convertPositionToString(0,0));plist_str -> unplacedPieces--;printf("%i\n",plist_str -> unplacedPieces);}
 
-    for(int x = 0; x<3; x++){
-      for(int y = 0; y<8; y++){
-        if(plist_str -> piece_list[x][y] == 0){
-          countFreeSpaces++;
-        }
-      }
-    }
+        else if(plist_str -> unplacedPieces == 8){strcpy(answer,convertPositionToString(0,1));plist_str -> unplacedPieces--;printf("%i\n",plist_str -> unplacedPieces);} 
 
-    randomnumber = (rand() % countFreeSpaces)+1;
-    
-    countFreeSpaces = 0;
- 
-    for(int x = 0; x<3; x++){
-      for(int y = 0; y<8; y++){
-        if(plist_str -> piece_list[x][y] == 0){
-          countFreeSpaces++;
-          if(countFreeSpaces == randomnumber){
+        else{strcpy(answer,convertPositionToString(0,2));plist_str -> unplacedPieces--;printf("%i\n",plist_str -> unplacedPieces);} 
+      }else{
 
-            strcpy(answer,convertPositionToString(x,y));
-            //printf("%s\n",answer);
+      int countFreeSpaces = 0;
+
+      for(int x = 0; x<3; x++){
+        for(int y = 0; y<8; y++){
+          if(plist_str -> piece_list[x][y] == 0){
+            countFreeSpaces++;
           }
         }
       }
-    }
+
+      randomnumber = (rand() % countFreeSpaces)+1;
+      
+      countFreeSpaces = 0;
+   
+      for(int x = 0; x<3; x++){
+        for(int y = 0; y<8; y++){
+          if(plist_str -> piece_list[x][y] == 0){
+            countFreeSpaces++;
+            if(countFreeSpaces == randomnumber){
+
+              strcpy(answer,convertPositionToString(x,y));
+              plist_str -> unplacedPieces--;
+              //printf("%s\n",answer);
+            }
+          }
+        }
+      }
+      }
 
     }
 

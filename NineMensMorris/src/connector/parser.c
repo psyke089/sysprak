@@ -234,6 +234,7 @@ void parseMessages(int sock, shm_struct *shm_str, plist_struct *plist_str, int *
           }else if(sscanf(msg_queue[linenum], "+ CAPTURE %d", &captured_pieces) == 1) {
 
             printf("Captured pieces: %d\n\n", captured_pieces);
+            plist_str -> piecesToRemove = captured_pieces;
 
           }else if(sscanf(msg_queue[linenum], "+ PIECELIST %d,%d", &pl_players, &pl_pieces) == 2) {
 
@@ -247,8 +248,12 @@ void parseMessages(int sock, shm_struct *shm_str, plist_struct *plist_str, int *
             snd_coord = atoi(&piece_pos[1]); 
             printf("snd = %i \n", snd_coord);
             switch (piece_player){
-              case 0: plist_str -> piece_list[fst_coord][snd_coord] = 1; break; // computer ist 1
-              case 1: plist_str -> piece_list[fst_coord][snd_coord] = 2; break; // gegenspieler ist 2
+              case 0: plist_str -> piece_list[fst_coord][snd_coord] = 2; 
+              plist_str -> countEnemyPieces++;
+              break; // gegenspieler ist 2
+              case 1: plist_str -> piece_list[fst_coord][snd_coord] = 1;
+              plist_str -> countMyPieces++;
+              break; // computer ist 1
               default:plist_str -> piece_list[fst_coord][snd_coord] = 0; break; // leer is 0
             } 
             printf("Player %d, piece %d at position %s\n", piece_player, piece_id, piece_pos);
