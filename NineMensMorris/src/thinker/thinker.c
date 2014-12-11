@@ -106,8 +106,8 @@ void calc_turn(shm_struct *shm_str, plist_struct *plist_str, int shm_id, int pli
 
     //0 Links (y-1) im Ring
     //1 Recht (y+1) im Ring
-    //2 Unten (x+1) im Ring
-    //3 Oben  (x-1) im Ring
+    //2 Innerer Ringnachbar (x+1)
+    //3 Außerer Ringnachbar (x-1) im Ring
     int arrayOfNeighbors[3][8][4] = {{{0}}};
 
     //Linux Fehler "set but not used"
@@ -164,106 +164,55 @@ void calc_turn(shm_struct *shm_str, plist_struct *plist_str, int shm_id, int pli
     }
 
     //A1
-    if(plist_str -> piece_list[0][1]!=0){
-      arrayOfNeighbors[1][1][2] = plist_str -> piece_list[0][1];
-    }else{
-      arrayOfNeighbors[1][1][2] = 0;
-    }
+      arrayOfNeighbors[1][1][3] = plist_str -> piece_list[0][1];
 
     //A3
-    if(plist_str -> piece_list[0][3]!=0){
-      arrayOfNeighbors[1][3][2] = plist_str -> piece_list[0][3];
-    }else{
-      arrayOfNeighbors[1][3][2] = 0;
-    }
+      arrayOfNeighbors[1][3][3] = plist_str -> piece_list[0][3];
 
     //A5
-    if(plist_str -> piece_list[0][5]!=0){
-      arrayOfNeighbors[1][5][2] = plist_str -> piece_list[0][5];
-    }else{
-      arrayOfNeighbors[1][5][2] = 0;
-    }
+      arrayOfNeighbors[1][5][3] = plist_str -> piece_list[0][5];
 
     //A7
-    if(plist_str -> piece_list[0][7]!=0){
-      arrayOfNeighbors[1][7][2] = plist_str -> piece_list[0][7];
-    }else{
-      arrayOfNeighbors[1][7][2] = 0;
-    }
+      arrayOfNeighbors[1][7][3] = plist_str -> piece_list[0][7];
 
-    //C1
-    if(plist_str -> piece_list[2][1]!=0){
-      arrayOfNeighbors[1][1][3] = plist_str -> piece_list[2][1];
-    }else{
-      arrayOfNeighbors[1][1][3] = 0;
-    }
+
+    //C1 
+      arrayOfNeighbors[1][1][2] = plist_str -> piece_list[2][1];
 
     //C3
-    if(plist_str -> piece_list[2][3]!=0){
-      arrayOfNeighbors[1][3][3] = plist_str -> piece_list[2][3];
-    }else{
-      arrayOfNeighbors[1][3][3] = 0;
-    }
+      arrayOfNeighbors[1][3][2] = plist_str -> piece_list[2][3];
 
     //C5
-    if(plist_str -> piece_list[2][5]!=0){
-      arrayOfNeighbors[1][5][3] = plist_str -> piece_list[2][5];
-    }else{
-      arrayOfNeighbors[1][5][3] = 0;
-    }
-
+      arrayOfNeighbors[1][5][2] = plist_str -> piece_list[2][5];
 
     //C7
-    if(plist_str -> piece_list[2][7]!=0){
-      arrayOfNeighbors[1][7][3] = plist_str -> piece_list[2][7];
-    }else{
-      arrayOfNeighbors[1][7][3] = 0;
-    }
+      arrayOfNeighbors[1][7][2] = plist_str -> piece_list[2][7];
 
 
     //B1
-    if(plist_str -> piece_list[1][1]!=0){
       arrayOfNeighbors[0][1][2] = plist_str -> piece_list[1][1];
       arrayOfNeighbors[2][1][3] = plist_str -> piece_list[1][1];
-    }else{
-      arrayOfNeighbors[0][1][2] = 0;
-      arrayOfNeighbors[2][1][3] = 0;
-    }
 
     //B3
-    if(plist_str -> piece_list[1][3]!=0){
       arrayOfNeighbors[0][3][2] = plist_str -> piece_list[1][3];
       arrayOfNeighbors[2][3][3] = plist_str -> piece_list[1][3];
-    }else{
-      arrayOfNeighbors[0][3][2] = 0;
-      arrayOfNeighbors[2][3][3] = 0;
-    }
 
     //B5
-    if(plist_str -> piece_list[1][5]!=0){
       arrayOfNeighbors[0][5][2] = plist_str -> piece_list[1][5];
       arrayOfNeighbors[2][5][3] = plist_str -> piece_list[1][5];
-    }else{
-      arrayOfNeighbors[0][5][2] = 0;
-      arrayOfNeighbors[2][5][3] = 0;
-    }
 
     //B7
-    if(plist_str -> piece_list[1][7]!=0){
       arrayOfNeighbors[0][7][2] = plist_str -> piece_list[1][7];
       arrayOfNeighbors[2][7][3] = plist_str -> piece_list[1][7];
-    }else{
-      arrayOfNeighbors[0][7][2] = 0;
-      arrayOfNeighbors[2][7][3] = 0;
-    }
+
 
     
     //Ausgabe
      for(int x = 0; x<3; x++){
        for(int y = 0; y<8; y++){
-   //      for(int z = 0; z<4; z++){
-           printf("piece_list[%i][%i]: %i \n ", x,y,plist_str -> piece_list[x][y]); // arrayOfNeighbors[%i][%i][%i]: %i \n",x,y,plist_str -> piece_list[x][y],x,y,z,arrayOfNeighbors[x][y][z]);
-   //      }
+         for(int z = 0; z<4; z++){
+           printf("piece_list[%i][%i]: %i arrayOfNeighbors[%i][%i][%i]: %i \n",x,y,plist_str -> piece_list[x][y],x,y,z,arrayOfNeighbors[x][y][z]);
+         }
        }
      }
     
@@ -298,6 +247,63 @@ void calc_turn(shm_struct *shm_str, plist_struct *plist_str, int shm_id, int pli
         }
       }
    
+    }
+
+    //2. Schieb-Phase
+
+    if(plist_str -> unplacedPieces == 0 && plist_str -> countMyPieces > 3 && plist_str -> piecesToRemove == 0){
+
+           int countMyPiecesWithFreeNeighbor = 0;
+
+            for(int x = 0; x<3; x++){
+              for(int y = 0; y<8; y++){
+                if(plist_str -> piece_list[x][y] == 1 &&
+                    (arrayOfNeighbors[x][y][0] == 0 
+                  || arrayOfNeighbors[x][y][1] == 0 
+                  || arrayOfNeighbors[x][y][2] == 0
+                  || arrayOfNeighbors[x][y][3] == 0)){
+                  countMyPiecesWithFreeNeighbor++;
+                }
+              }
+            }
+
+            randomnumber = (rand() % countMyPiecesWithFreeNeighbor)+1;
+
+            countMyPiecesWithFreeNeighbor = 0;
+
+            for(int x = 0; x<3; x++){
+              for(int y = 0; y<8; y++){
+                if(plist_str -> piece_list[x][y] == 1 &&
+                    (arrayOfNeighbors[x][y][0] == 0 
+                  || arrayOfNeighbors[x][y][1] == 0 
+                  || arrayOfNeighbors[x][y][2] == 0
+                  || arrayOfNeighbors[x][y][3] == 0)){
+                  countMyPiecesWithFreeNeighbor++;
+                  if(countMyPiecesWithFreeNeighbor == randomnumber){
+                    //free(answer);
+                    strcpy(answer,convertPositionToString(x,y));
+                    strcat(answer,":");
+
+                    if(arrayOfNeighbors[x][y][0] == 0){
+                    if(y==0){y=8;}
+                    strcat(answer,convertPositionToString(x,y-1));
+                    }else if(arrayOfNeighbors[x][y][1] == 0){
+                      if(y==7){y=-1;}
+                      strcat(answer,convertPositionToString(x,y+1));
+                      if(y==-1){y=7;}
+                    }else if(arrayOfNeighbors[x][y][2] == 0){
+                      strcat(answer,convertPositionToString(x+1,y));   
+                    }else{
+                      strcat(answer,convertPositionToString(x-1,y));  
+                    }
+                    //strcat(answer,".");
+                    printf("\nSchiebphase: %s unplaced: %i\n\n\n",answer,plist_str -> unplacedPieces);
+
+                  }
+                }
+              }
+            }
+
     }
 
     //1. Setzphase
@@ -342,67 +348,42 @@ void calc_turn(shm_struct *shm_str, plist_struct *plist_str, int shm_id, int pli
 
     }
 
-    //2. Schieb-Phase
-
-    if(plist_str -> unplacedPieces == 0 && plist_str -> countMyPieces > 3 && plist_str -> piecesToRemove == 0){
-
-           int countMyPiecesWithFreeNeighbor = 0;
-
-            for(int x = 0; x<3; x++){
-              for(int y = 0; y<8; y++){
-                if(plist_str -> piece_list[x][y] == 1 &&
-                    (arrayOfNeighbors[x][y][0] == 0 
-                  || arrayOfNeighbors[x][y][1] == 0 
-                  || arrayOfNeighbors[x][y][2] == 0
-                  || arrayOfNeighbors[x][y][3] == 0)){
-                  countMyPiecesWithFreeNeighbor++;
-                }
-              }
-            }
-
-            randomnumber = (rand() % countMyPiecesWithFreeNeighbor)+1;
-
-            countMyPiecesWithFreeNeighbor = 0;
-
-            for(int x = 0; x<3; x++){
-              for(int y = 0; y<8; y++){
-                if(plist_str -> piece_list[x][y] == 1 &&
-                    (arrayOfNeighbors[x][y][0] == 0 
-                  || arrayOfNeighbors[x][y][1] == 0 
-                  || arrayOfNeighbors[x][y][2] == 0
-                  || arrayOfNeighbors[x][y][3] == 0)){
-                  countMyPiecesWithFreeNeighbor++;
-                  if(countMyPiecesWithFreeNeighbor == randomnumber){
-                    free(answer);
-                    strcpy(answer,convertPositionToString(x,y));
-                    strcat(answer,":");
-
-                    if(arrayOfNeighbors[x][y][0] == 0){
-                    if(y==0){y=8;}
-                    strcat(answer,convertPositionToString(x,y-1));
-                    }else if(arrayOfNeighbors[x][y][1] == 0){
-                      if(y==7){y=-1;}
-                      strcat(answer,convertPositionToString(x,y+1));
-                      if(y==-1){y=7;}
-                    }else if(arrayOfNeighbors[x][y][2] == 0){
-                      strcat(answer,convertPositionToString(x+1,y));   
-                    }else{
-                      strcat(answer,convertPositionToString(x-1,y));  
-                    }
-                    //strcat(answer,".");
-                    printf("\nSchiebphase: %s unplaced: %i\n\n\n",answer,plist_str -> unplacedPieces);
-
-                  }
-                }
-              }
-            }
-
-    }
-
-
+    //3. Sprungphase
     if(plist_str -> unplacedPieces == 0 && plist_str -> countMyPieces <= 3){
-     //     free(answer);
-      strcpy(answer, "DONE!");
+
+      for(int x = 0; x<3; x++){
+        for(int y = 0; y<8; y++){
+          if(plist_str -> piece_list[x][y] == 1){
+            //free(answer);
+            strcpy(answer,convertPositionToString(x,y));
+            strcat(answer,":");
+          }
+        }
+      }
+
+      int countFreeSpaces = 0;
+
+     for(int x = 0; x<3; x++){
+        for(int y = 0; y<8; y++){
+          if(plist_str -> piece_list[x][y] == 0){
+            countFreeSpaces++;
+          }
+        }
+      }
+
+      randomnumber = (rand() % countFreeSpaces)+1;
+
+      countFreeSpaces = 0;
+
+      for(int x = 0; x<3; x++){
+        for(int y = 0; y<8; y++){
+          countFreeSpaces++;
+          if(countFreeSpaces == randomnumber){
+            strcat(answer,convertPositionToString(x,y));
+          }                   
+        }
+      }
+
     }
     // TODO
     /**
@@ -434,5 +415,7 @@ void calc_turn(shm_struct *shm_str, plist_struct *plist_str, int shm_id, int pli
             }
     
     if(!write_to_pipe(fd, answer)){end_routine(shm_str, plist_str, shm_id, plist_id);}
+
+    free(answer);
 }
 

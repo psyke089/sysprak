@@ -155,7 +155,7 @@ void sig_int_handler(){
 
       //  plist_str -> countMyPieces = 9  ;
         plist_str -> piecesToRemove = 0;
-        plist_str -> unplacedPieces = 10;
+        plist_str -> unplacedPieces = 9;
         
 
         sock = performConnection();
