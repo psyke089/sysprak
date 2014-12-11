@@ -27,13 +27,13 @@ void get_message(int sock, char* buf);
 
 void send_message(int sock, char* buf);
 
-int performConnection(shm_struct *shm_str, plist_struct *plist_str, configData conf_str);
+int performConnection();
 
 /**
  * parser.c
  */
 
-void parseMessages(int sock, shm_struct *shm_str, plist_struct *plist_str, char *game_id, int *pipe_fd);
+void parseMessages(int sock, shm_struct *shm_str, plist_struct *plist_str, int *pipe_fd);
 
 void processMessage(char *buf);
 

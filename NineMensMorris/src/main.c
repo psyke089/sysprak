@@ -58,7 +58,7 @@ configData parseArgs(int argc, char *argv[]){
 
 // FÜR BENUTZUNG UNTER MAC OS AUSKOMMENTIEREN
 
-int shm_id_mac;
+/*int shm_id_mac;
 shm_struct* shm_str_mac;
 int plist_id_mac;
 plist_struct* plist_str_mac;
@@ -69,7 +69,7 @@ void think (){
 }
 void sig_int_handler(){
     end_routine(shm_str_mac, plist_str_mac, shm_id_mac, plist_id_mac);
-}
+}*/
 //####################################################
 
 
@@ -103,12 +103,12 @@ void sig_int_handler(){
   if (plist_str == NULL){end_routine(shm_str, NULL, shm_id, plist_id);}
 
   //shm FÜR BENUTZUNG UNTER MAC OS AUSKOMMENTIEREN
-
+/*
   shm_id_mac = shm_id;
   shm_str_mac = shm_str;
   plist_id_mac = plist_id;
   plist_str_mac = plist_str;
-  fd_mac = fd;
+  fd_mac = fd;*/
   //##############################################
 
   clear_shm(shm_str);
@@ -116,13 +116,13 @@ void sig_int_handler(){
 
   // signale FÜR BENUTZUNG UNTER LINUX AUSKOMMENTIEREN
 
-  /*void think (){
+  void think (){
       calc_turn(shm_str, plist_str, shm_id, plist_id, fd);
   }
   void sig_int_handler(){
       end_routine(shm_str, plist_str, shm_id, plist_id);
   }
-  */
+  
   //#################################################
   struct sigaction sig_str;
   sig_str.sa_handler = think;
@@ -146,27 +146,22 @@ void sig_int_handler(){
         signal (SIGINT, sig_int_handler);
 
         // shm
-        if (!fill_shm_struct(shm_str)){
-          end_routine(shm_str, plist_str, shm_id, plist_id);
-        }
+        strcpy(shm_str -> gameID, conf_str.game_id);
+        //if (!fill_shm_struct(shm_str)){
+        //  end_routine(shm_str, plist_str, shm_id, plist_id);}
 
         // example fill
         
+
         plist_str -> countMyPieces = 9;
         plist_str -> piecesToRemove = 0;
         plist_str -> unplacedPieces = 9;
         
 
-        sock = performConnection(shm_str, plist_str, conf_str);
-        parseMessages(sock, shm_str, plist_str, conf_str.game_id, fd);
+        sock = performConnection();
+        parseMessages(sock, shm_str, plist_str, fd);
+        printf("This is game name: %s\n", shm_str -> gameName);
 
-        //warte auf die antwort und printet sie aus
-        //
-        //if ((answer = read_from_pipe(fd)) == NULL){
-        //  end_routine(shm_str, plist_str, shm_id, plist_id);
-        //}
-
-        printf("closing socket :P\n");
         close(sock);
         kill(getppid(), SIGUSR2);
         exit(EXIT_SUCCESS);

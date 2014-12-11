@@ -11,7 +11,6 @@ void end_routine(shm_struct *shm_str, plist_struct *plist_str, int shm_id, int p
 
    if (shm_id > 0){delete_by_shmid(shm_id);}
    if (plist_id > 0){delete_by_shmid(plist_id);}
-   
   logPrnt('g', 'p', "\nDelete routine was executed!\n");
 
   exit(EXIT_SUCCESS);

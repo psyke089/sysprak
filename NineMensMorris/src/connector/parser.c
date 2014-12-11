@@ -88,7 +88,7 @@ void tokenizeLine(char *line)
  * sock: Der Socket, von dem gelesen werden soll.
  */
 
-void parseMessages(int sock, shm_struct *shm_str, plist_struct *plist_str, char *game_id, int *pipe_fd)
+void parseMessages(int sock, shm_struct *shm_str, plist_struct *plist_str, int *pipe_fd)
 {
 
   int breaker = 1;
@@ -96,8 +96,8 @@ void parseMessages(int sock, shm_struct *shm_str, plist_struct *plist_str, char 
   char in_buf[MSGL];
   char out_buf[MSGL];
 
-  bzero(in_buf, MSGL);
-  bzero(out_buf, MSGL);
+  memset(in_buf, 0, MSGL);
+  memset(out_buf, 0, MSGL);
 
   int total_players;
   int max_move_time;
@@ -150,7 +150,7 @@ void parseMessages(int sock, shm_struct *shm_str, plist_struct *plist_str, char 
 
           }else if(strcmp(msg_queue[linenum], "+ Client version accepted - please send Game-ID to join") == 0) {
 
-            sprintf(out_buf, "ID %s\n", game_id);
+            sprintf(out_buf, "ID %s\n", shm_str -> gameID);
             send_message(sock, out_buf);
 
           }else if(strcmp(msg_queue[linenum], "+ PLAYING NMMorris") == 0) {
@@ -158,11 +158,14 @@ void parseMessages(int sock, shm_struct *shm_str, plist_struct *plist_str, char 
             if(strcmp(msg_queue[linenum + 1], "") != 0){
               linenum++;
               sscanf(msg_queue[linenum], "+ %[^\t\n]", game_type);
-              printf("Game ID: %s\n\n",game_type);
+              printf("Game Name: %s\n\n",game_type);
+              strcpy(shm_str -> gameName, game_type);
             }else{
               get_message(sock, in_buf);
               processMessage(in_buf);
-              printf("Game ID: %s\n\n",msg_queue[0]);
+              sprintf(game_type, "%s",msg_queue[0]);
+              printf("Game Name: %s\n\n",game_type);
+              strcpy(shm_str -> gameName, game_type);
             }
             sprintf(out_buf, "PLAYER\n");
             send_message(sock, out_buf);
@@ -175,6 +178,7 @@ void parseMessages(int sock, shm_struct *shm_str, plist_struct *plist_str, char 
           }else if(sscanf(msg_queue[linenum], "+ TOTAL %d", &total_players) == 1) {
 
             printf("Total Players: %d\n\n", total_players);
+            shm_str -> playerCount = total_players;
 
             if(strcmp(msg_queue[linenum + 1], "") != 0){
               linenum++;
@@ -182,7 +186,7 @@ void parseMessages(int sock, shm_struct *shm_str, plist_struct *plist_str, char 
 
               sscanf(tokens[1], "%d", &opponent_pos);
 
-              bzero(opponent_name, 20);
+              memset(opponent_name, 0, 20);
               int i = 2;
               while( strcmp(tokens[i+1], "") != 0){
                 strcat(tokens[i], " ");

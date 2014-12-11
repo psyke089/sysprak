@@ -22,7 +22,7 @@ struct sockaddr_in init_server_addr()
   }
 
   // server_addr initilaisieren
-  bzero((char *) &ret, sizeof(ret));
+  memset ((char *) &ret, 0, sizeof(ret));
 
   //Server-IP in sockaddr_in struct kopieren
   memcpy(&ret.sin_addr, hp->h_addr_list[0], hp->h_length);
@@ -158,7 +158,7 @@ void send_message(int sock, char* buf)
  * Stellt die Verbindung her und startet den parser.
  */
 
-int performConnection(shm_struct *shm_str, plist_struct *plist_str, configData conf_str)
+int performConnection()
 {
 
   int sock;
