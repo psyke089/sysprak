@@ -144,6 +144,8 @@ void parseMessages(int sock, shm_struct *shm_str, plist_struct *plist_str, int *
         case '+':
 
           if(strcmp(msg_queue[linenum], "+ WAIT") == 0) {
+            //memset(plist_str -> piece_list, 0, 3*8*sizeof(int));
+            //bzero(plist_str -> piece_list, 3 * 8 * sizeof(int));
 
             sprintf(out_buf, "OKWAIT\n");
             send_message(sock, out_buf);
@@ -243,19 +245,31 @@ void parseMessages(int sock, shm_struct *shm_str, plist_struct *plist_str, int *
           }else if(sscanf(msg_queue[linenum], "+ PIECE%d.%d %[A-C0-7]", &piece_player, &piece_id, piece_pos) == 3) {
 
             // hier piece_pos spalten und dann in plist_str speichern
-            fst_coord = piece_pos[0] - 65;
-            printf("fst = %i \n", fst_coord);
-            snd_coord = atoi(&piece_pos[1]); 
-            printf("snd = %i \n", snd_coord);
-            switch (piece_player){
-              case 0: plist_str -> piece_list[fst_coord][snd_coord] = 2; 
-              plist_str -> countEnemyPieces++;
-              break; // gegenspieler ist 2
-              case 1: plist_str -> piece_list[fst_coord][snd_coord] = 1;
-              plist_str -> countMyPieces++;
-              break; // computer ist 1
-              default:plist_str -> piece_list[fst_coord][snd_coord] = 0; break; // leer is 0
+
+           
+
+            if(strlen(piece_pos) == 2){
+                   fst_coord = piece_pos[0] - 65;
+                   printf("fst = %i \n", fst_coord);
+
+                  snd_coord = atoi(&piece_pos[1]); 
+                  printf("snd = %i \n", snd_coord);
+                  switch (piece_player){
+                    case 1:
+                            plist_str -> piece_list[fst_coord][snd_coord] = 1;
+                            plist_str -> countMyPieces++;
+                            printf("AI should be 1: %i", piece_player);
+                    break; // computer ist 1
+                    case 0: 
+                            plist_str -> piece_list[fst_coord][snd_coord] = 2; 
+                            plist_str -> countEnemyPieces++;
+                            printf("p0 should be 0: %i", piece_player);
+                    break; // gegenspieler ist 2
+                    default:printf("Für mehr Spieler noch erweitern!");
+                    break; // leer is 0
+                  }
             } 
+
             printf("Player %d, piece %d at position %s\n", piece_player, piece_id, piece_pos);
 
           }else if(strcmp(msg_queue[linenum], "+ ENDPIECELIST") == 0) {
@@ -272,6 +286,7 @@ void parseMessages(int sock, shm_struct *shm_str, plist_struct *plist_str, int *
 
             //warte auf die antwort
             sprintf(out_buf, "PLAY %s\n", read_from_pipe(pipe_fd));
+
             send_message(sock, out_buf);
 
           }else{

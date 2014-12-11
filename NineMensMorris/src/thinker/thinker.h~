@@ -10,7 +10,7 @@
 /**
  * Config
  */
-#define ANSWERLENGTH 7
+#define ANSWERLENGTH 5
 
 /**
  * Pipehelper
