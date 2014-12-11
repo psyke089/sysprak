@@ -1,6 +1,6 @@
 #ifndef thinker_h
 #define thinker_h
-	
+
 #define _GNU_SOURCE 
 
 #include <signal.h>
@@ -10,7 +10,7 @@
 /**
  * Config
  */
-#define ANSWERLENGTH 3
+#define ANSWERLENGTH 5
 
 /**
  * Pipehelper

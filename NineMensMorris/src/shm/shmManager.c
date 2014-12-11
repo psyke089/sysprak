@@ -1,9 +1,6 @@
-#include "../main.h"
-#include "../thinker/thinker.h"
-#include "../config.h"
-#include "../logger/logger.h"     
+#include "../logger/logger.h"
 #include "shmManager.h"
-#include "../connector/connector.h"
+
 
 
 void end_routine(shm_struct *shm_str, plist_struct *plist_str, int shm_id, int plist_id){

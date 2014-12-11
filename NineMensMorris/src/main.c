@@ -84,8 +84,7 @@ void sig_int_handler(){
  void forkingAction(configData conf_str){
 
   // pipes
-  char log_msg [200];
-  char *answer = NULL;
+  // char *answer = NULL;
   int fd[2];
   pipe(fd);
 
@@ -131,7 +130,6 @@ void sig_int_handler(){
 
   int sock;
   int pid = fork();
-  int child_status;
 
   switch (pid){
       case -1:
@@ -162,27 +160,23 @@ void sig_int_handler(){
         sock = performConnection(shm_str, plist_str, conf_str);
         parseMessages(sock, shm_str, plist_str, conf_str.game_id, fd);
 
-        //warte auf die antwort
+        //warte auf die antwort und printet sie aus
+        //
         //if ((answer = read_from_pipe(fd)) == NULL){
         //  end_routine(shm_str, plist_str, shm_id, plist_id);
         //}
 
-
-        sprintf(log_msg, "\nKind empfängt von Thinker: '%s' \n", answer);
-        logPrnt('g','p', log_msg);
-
         printf("closing socket :P\n");
         close(sock);
-        end_routine(shm_str, plist_str, shm_id, plist_id);
-
+        kill(getppid(), SIGUSR2);
+        exit(EXIT_SUCCESS);
       break;
 
       case 1 ... INT_MAX: // Eltern =^ empfängt Daten || starte Thinker hier
 
         close(fd[READ]);
-
-        //TODO: Wie auf kind warten ?!?!?! :(
-        waitpid(-1, &child_status, 0);
+        signal(SIGUSR2, sig_int_handler);
+        while(1){}
 
       break;
 

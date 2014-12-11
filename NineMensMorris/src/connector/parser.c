@@ -1,8 +1,6 @@
 #include "../main.h"
 #include "../thinker/thinker.h"
 #include "../config.h"
-#include "../logger/logger.h"     
-#include "../shm/shmManager.h"
 #include "connector.h"
 
 char msg_queue[32][128];

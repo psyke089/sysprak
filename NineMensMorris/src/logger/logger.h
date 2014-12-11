@@ -1,3 +1,6 @@
+#ifndef logger_h
+#define logger_h
+
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -48,3 +51,4 @@ char* getTimeAsString (char p);
 
 void prntColor(char color, char isError, char* input );
 
+#endif

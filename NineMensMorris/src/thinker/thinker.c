@@ -1,9 +1,7 @@
-#include "../main.h"
 #include "thinker.h"
 #include "../config.h"
-#include "../logger/logger.h"     
-#include "../shm/shmManager.h"
-#include "../connector/connector.h"
+#include "../logger/logger.h"
+//#include "../shm/shmManager.h"
 
 void start_thinking(){
     kill (getppid(), SIGUSR1);
@@ -20,11 +18,17 @@ char* read_from_pipe(int *fd){
    }
    else {
     
-    //  asprintf invalid in C99 für mac
+    // FÜR LINUX AUSKOMMENTIEREN 
     //  asprintf(&log_msg, "\nRead %i bytes from the pipe: %s\n", bytes, buffer);
+    //##########################################
+
+    // FÜR MAC AUSKOMMENTIEREN
     char log_msg[50];
     sprintf(log_msg, "\nRead %i bytes from pipe!\n", bytes);
+    //##########################################
+
     logPrnt('g', 'p', log_msg); 
+   
    }
 
    return buffer;
