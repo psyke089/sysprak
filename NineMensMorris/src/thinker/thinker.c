@@ -158,7 +158,7 @@ char* get_enemy_piece(plist_struct *plist_str){
     
     int counter = 0;
     int rnd = (rand() % plist_str -> countEnemyPieces)+1;
-    static char answer[ANSWERLENGTH];
+    static char *answer = malloc (ANSWERLENGTH * sizeof(char*));
 
     for(int x = 0; x<3; x++){
       for(int y = 0; y<8; y++){
@@ -181,7 +181,7 @@ char* set_phase(plist_struct *plist_str){
     int counter = 0;
     int countFreeSpaces = 24 - plist_str -> countMyPieces + plist_str -> countEnemyPieces;
     int rnd = (rand() % countFreeSpaces)+1;
-    static char answer[ANSWERLENGTH];
+    static char *answer = malloc (ANSWERLENGTH * sizeof(char*));
 
     for(int x = 0; x<3; x++){
       for(int y = 0; y<8; y++){
@@ -207,7 +207,7 @@ char* set_phase(plist_struct *plist_str){
  */
 char* set_sure_mill(plist_struct *plist_str){
 
-    static char answer[ANSWERLENGTH];
+    static char *answer = malloc (ANSWERLENGTH * sizeof(char*));
 
       if(plist_str -> unplacedPieces == 9){
           strcpy(answer,convertPositionToString(0,0));
@@ -231,7 +231,7 @@ char* set_sure_mill(plist_struct *plist_str){
 char* slide_phase(plist_struct *plist_str, neighbors_struct wrap){
 
       srand(time(NULL));
-      static char answer[ANSWERLENGTH];
+      static char *answer = malloc (ANSWERLENGTH * sizeof(char*));
       point useful[8];
       int counter = 0;
 
@@ -297,7 +297,7 @@ char* jump_phase(plist_struct *plist_str){
 
       srand(time(NULL));
 
-      static char answer[ANSWERLENGTH];
+      static char *answer = malloc (ANSWERLENGTH * sizeof(char*));
       int countFreeSpaces = 24 - plist_str -> countMyPieces + plist_str -> countEnemyPieces;
       int rnd = (rand() % countFreeSpaces)+1;
       int counter = 0;
