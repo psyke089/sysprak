@@ -19,6 +19,25 @@
 #define WRITE 1
 
 /**
+ * Ein Triple für die schöne Darstellung von 
+ * Nachbarn und Koordinaten
+ */
+typedef struct{
+  int x;
+  int y;
+  int neighbors[4];
+} point;
+
+#define NEIGHBOR_SIZE (sizeof(neighbors_struct))
+/**
+ * Ein wrapper für die Nachbarn
+ */
+typedef struct{
+  int arrayOfNeighbors[3][8][4];
+}neighbors_struct;
+
+
+/**
  * sendet SIGUSR1
  *
  * an parent pid
