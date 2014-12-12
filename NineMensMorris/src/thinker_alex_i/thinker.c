@@ -1,7 +1,6 @@
 #include "thinker.h"
 #include "../config.h"
 #include "../logger/logger.h"
-//#include "../shm/shmManager.h"
 
 void start_thinking(){
     kill (getppid(), SIGUSR1);
