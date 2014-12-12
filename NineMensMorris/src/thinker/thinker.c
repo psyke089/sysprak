@@ -90,7 +90,6 @@ void calc_turn(shm_struct *shm_str, plist_struct *plist_str, int shm_id, int pli
 
     char *answer = malloc (ANSWERLENGTH * sizeof(char*));
 
-
     srand(time(NULL));
 
     int randomnumber;
@@ -104,22 +103,6 @@ void calc_turn(shm_struct *shm_str, plist_struct *plist_str, int shm_id, int pli
     //Linux Fehler "set but not used"
     if(arrayOfNeighbors[0][0][0]==0){arrayOfNeighbors[0][0][0] = 0;}
     
-    /*
-    for(int x = 0; x<3; x++){
-      for(int y = 0; y<8; y++){
-        for(int z = 0; z<4; z++){
-          arrayOfNeighbors[x][y][z] = 1;
-        }
-      }
-    }
-
-    for(int x = 0; x<3; x++){
-      for(int y = 0; y<8; y++){
-          plist_str -> piece_list[x][y] = 2;
-      }
-    }
-    */
-
     //arrayOfNeighbors mit Nachbarn befüllen
     for(int x = 0; x<3; x++){
       for(int y = 0; y<8; y++){
@@ -211,15 +194,7 @@ void calc_turn(shm_struct *shm_str, plist_struct *plist_str, int shm_id, int pli
     //0.Mühlenfall: Wenn eine Mühle vorhanden ist, müssen gegnerische Steine geschlagen werden
     if(plist_str -> piecesToRemove>0){
 
-      int countEnemyPieces = 0;
-
-      for(int x = 0; x<3; x++){
-        for(int y = 0; y<8; y++){
-          if(plist_str -> piece_list[x][y] == 2){
-            countEnemyPieces++;
-          }
-        }
-      }
+      int countEnemyPieces = plist_str -> countEnemyPieces;
 
       randomnumber = (rand() % countEnemyPieces)+1;
 
@@ -308,15 +283,8 @@ void calc_turn(shm_struct *shm_str, plist_struct *plist_str, int shm_id, int pli
         else{strcpy(answer,convertPositionToString(0,2));plist_str -> unplacedPieces--;printf("%i\n",plist_str -> unplacedPieces);} 
       }else{
 */
-      int countFreeSpaces = 0;
 
-      for(int x = 0; x<3; x++){
-        for(int y = 0; y<8; y++){
-          if(plist_str -> piece_list[x][y] == 0){
-            countFreeSpaces++;
-          }
-        }
-      }
+      int countFreeSpaces = 24 - (plist_str -> countMyPieces) - (plist_str -> countEnemyPieces);
 
       randomnumber = (rand() % countFreeSpaces)+1;
       
@@ -334,7 +302,7 @@ void calc_turn(shm_struct *shm_str, plist_struct *plist_str, int shm_id, int pli
             }
           }
         }
-      /*A0-A3 }*/
+
       }
 
     }
@@ -352,15 +320,7 @@ void calc_turn(shm_struct *shm_str, plist_struct *plist_str, int shm_id, int pli
         }
       }
 
-      int countFreeSpaces = 0;
-
-     for(int x = 0; x<3; x++){
-        for(int y = 0; y<8; y++){
-          if(plist_str -> piece_list[x][y] == 0){
-            countFreeSpaces++;
-          }
-        }
-      }
+      int countFreeSpaces = 24 - (plist_str -> countMyPieces) - (plist_str -> countEnemyPieces);
 
       randomnumber = (rand() % countFreeSpaces)+1;
 
@@ -410,4 +370,3 @@ void calc_turn(shm_struct *shm_str, plist_struct *plist_str, int shm_id, int pli
     free(answer);
 
 }
-
