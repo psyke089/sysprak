@@ -39,8 +39,8 @@ client_alex_h: src/logger/logger.h\
 				src/logger/logger.c\
 				src/shm/shmManager.c\
 				src/shm/shmManager.h\
-				src/thinker/thinker_alex_h.h\
-				src/thinker/thinker_alex_h.c\
+				src/thinker_alex_h/thinker.h\
+				src/thinker_alex_h/thinker.c\
 				src/config.h\
 				src/config.c\
 				src/connector/connector.h\
@@ -54,7 +54,7 @@ client_alex_h: src/logger/logger.h\
 		src/main.c\
 		src/logger/logger.c\
 		src/shm/shmManager.c\
-		src/thinker/thinker_alex_h.c\
+		src/thinker/thinker.c\
 		src/connector/performConnection.c\
 		src/connector/parser.c
 
@@ -62,8 +62,8 @@ client_tim: src/logger/logger.h\
 				src/logger/logger.c\
 				src/shm/shmManager.c\
 				src/shm/shmManager.h\
-				src/thinker/thinker_tim.h\
-				src/thinker/thinker_tim.c\
+				src/thinker_tim/thinker.h\
+				src/thinker_tim/thinker.c\
 				src/config.h\
 				src/config.c\
 				src/connector/connector.h\
@@ -77,7 +77,7 @@ client_tim: src/logger/logger.h\
 		src/main.c\
 		src/logger/logger.c\
 		src/shm/shmManager.c\
-		src/thinker/thinker_alex_i.c\
+		src/thinker/thinker.c\
 		src/connector/performConnection.c\
 		src/connector/parser.c
 
@@ -87,8 +87,8 @@ client_alex_i: src/logger/logger.h\
 				src/logger/logger.c\
 				src/shm/shmManager.c\
 				src/shm/shmManager.h\
-				src/thinker/thinker_alex_i.h\
-				src/thinker/thinker_alex_i.c\
+				src/thinker_alex_i/thinker.h\
+				src/thinker_alex_i/thinker.c\
 				src/config.h\
 				src/config.c\
 				src/connector/connector.h\
@@ -102,7 +102,7 @@ client_alex_i: src/logger/logger.h\
 		src/main.c\
 		src/logger/logger.c\
 		src/shm/shmManager.c\
-		src/thinker/thinker_alex_i.c\
+		src/thinker/thinker.c\
 		src/connector/performConnection.c\
 		src/connector/parser.c
 
@@ -110,8 +110,8 @@ client_phil: src/logger/logger.h\
 				src/logger/logger.c\
 				src/shm/shmManager.c\
 				src/shm/shmManager.h\
-				src/thinker/thinker_alex_i.h\
-				src/thinker/thinker_alex_i.c\
+				src/thinker_phil/thinker.h\
+				src/thinker_phil/thinker.c\
 				src/config.h\
 				src/config.c\
 				src/connector/connector.h\
@@ -125,7 +125,7 @@ client_phil: src/logger/logger.h\
 		src/main.c\
 		src/logger/logger.c\
 		src/shm/shmManager.c\
-		src/thinker/thinker_alex_i.c\
+		src/thinker/thinker.c\
 		src/connector/performConnection.c\
 		src/connector/parser.c
 clean:
