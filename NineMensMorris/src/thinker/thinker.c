@@ -158,20 +158,20 @@ char* get_enemy_piece(plist_struct *plist_str){
     
     int counter = 0;
     int rnd = (rand() % plist_str -> countEnemyPieces)+1;
-    static char *answer = malloc (ANSWERLENGTH * sizeof(char*));
+    static char answer_1[ANSWERLENGTH];
 
     for(int x = 0; x<3; x++){
       for(int y = 0; y<8; y++){
         if(plist_str -> piece_list[x][y] == 2){
           counter++;
           if(counter == rnd){
-            strcpy(answer, convertPositionToString(x,y));
+            strcpy(answer_1, convertPositionToString(x,y));
             break;
           }
         }  
       }
     }
-    return answer;
+    return answer_1;
 }
 
 char* set_phase(plist_struct *plist_str){
@@ -181,14 +181,14 @@ char* set_phase(plist_struct *plist_str){
     int counter = 0;
     int countFreeSpaces = 24 - plist_str -> countMyPieces + plist_str -> countEnemyPieces;
     int rnd = (rand() % countFreeSpaces)+1;
-    static char *answer = malloc (ANSWERLENGTH * sizeof(char*));
+    static char answer_2[ANSWERLENGTH];
 
     for(int x = 0; x<3; x++){
       for(int y = 0; y<8; y++){
         if(plist_str -> piece_list[x][y] == 0){
           counter++;
           if(counter == rnd){
-            strcpy(answer, convertPositionToString(x,y));
+            strcpy(answer_2, convertPositionToString(x,y));
             plist_str -> unplacedPieces--;
             break;
           }
@@ -196,7 +196,7 @@ char* set_phase(plist_struct *plist_str){
       }
     }
 
-    return answer;
+    return answer_2;
 }
 
 
@@ -207,31 +207,31 @@ char* set_phase(plist_struct *plist_str){
  */
 char* set_sure_mill(plist_struct *plist_str){
 
-    static char *answer = malloc (ANSWERLENGTH * sizeof(char*));
+    static char answer_3[ANSWERLENGTH];
 
       if(plist_str -> unplacedPieces == 9){
-          strcpy(answer,convertPositionToString(0,0));
+          strcpy(answer_3,convertPositionToString(0,0));
           plist_str -> unplacedPieces--;
       }
       else if(plist_str -> unplacedPieces == 8){
-          strcpy(answer,convertPositionToString(0,1));
+          strcpy(answer_3,convertPositionToString(0,1));
           plist_str -> unplacedPieces--;
       }
       else if(plist_str -> unplacedPieces == 7){
-          strcpy(answer,convertPositionToString(0,2));
+          strcpy(answer_3,convertPositionToString(0,2));
           plist_str -> unplacedPieces--;
       }
       else{
-        strcpy(answer, set_phase(plist_str));
+        strcpy(answer_3, set_phase(plist_str));
       }
 
-    return answer;
+    return answer_3;
 }
 
 char* slide_phase(plist_struct *plist_str, neighbors_struct wrap){
 
       srand(time(NULL));
-      static char *answer = malloc (ANSWERLENGTH * sizeof(char*));
+      static char answer_4[ANSWERLENGTH];
       point useful[8];
       int counter = 0;
 
@@ -270,26 +270,26 @@ char* slide_phase(plist_struct *plist_str, neighbors_struct wrap){
       int old_x = useful[rnd].x;
       int old_y = useful[rnd].y;
 
-      strcpy(answer,convertPositionToString(old_x,old_y));
-      strcat(answer,":");
+      strcpy(answer_4,convertPositionToString(old_x,old_y));
+      strcat(answer_4,":");
 
             if(useful[rnd].neighbors[0]){
               int new_y = !old_y ? 7:old_y-1;
-              strcat(answer, convertPositionToString(old_x, new_y));
+              strcat(answer_4, convertPositionToString(old_x, new_y));
             }
             else if(useful[rnd].neighbors[1]){
               int new_y = old_y==7 ? 0:old_y+1;
-              strcat(answer,convertPositionToString(old_x,new_y));
+              strcat(answer_4,convertPositionToString(old_x,new_y));
             }
             else if(useful[rnd].neighbors[2]){
               int new_x = old_x+1;
-              strcat(answer,convertPositionToString(new_x,old_y));
+              strcat(answer_4,convertPositionToString(new_x,old_y));
             }
             else{
               int new_x = old_x-1;
-              strcat(answer,convertPositionToString(new_x,old_y));
+              strcat(answer_4,convertPositionToString(new_x,old_y));
             }
-      return answer;
+      return answer_4;
 }
 
 
@@ -297,7 +297,7 @@ char* jump_phase(plist_struct *plist_str){
 
       srand(time(NULL));
 
-      static char *answer = malloc (ANSWERLENGTH * sizeof(char*));
+      static char answer_5[ANSWERLENGTH];
       int countFreeSpaces = 24 - plist_str -> countMyPieces + plist_str -> countEnemyPieces;
       int rnd = (rand() % countFreeSpaces)+1;
       int counter = 0;
@@ -305,8 +305,8 @@ char* jump_phase(plist_struct *plist_str){
       for(int x = 0; x<3; x++){
         for(int y = 0; y<8; y++){
           if(plist_str -> piece_list[x][y] == 1){
-            strcpy(answer,convertPositionToString(x,y));
-            strcat(answer,":");
+            strcpy(answer_5,convertPositionToString(x,y));
+            strcat(answer_5,":");
             break;
           }
         }
@@ -318,13 +318,13 @@ char* jump_phase(plist_struct *plist_str){
           if(plist_str -> piece_list[x][y] == 0){
             counter++;
              if(counter == rnd){
-                strcat(answer,convertPositionToString(x,y));
+                strcat(answer_5,convertPositionToString(x,y));
                 break;
              }
           }   
         }
       }
-    return answer;
+    return answer_5;
 }
 
 
