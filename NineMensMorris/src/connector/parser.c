@@ -144,8 +144,6 @@ void parseMessages(int sock, shm_struct *shm_str, plist_struct *plist_str, int *
         case '+':
 
           if(strcmp(msg_queue[linenum], "+ WAIT") == 0) {
-            //memset(plist_str -> piece_list, 0, 3*8*sizeof(int));
-            //bzero(plist_str -> piece_list, 3 * 8 * sizeof(int));
 
             sprintf(out_buf, "OKWAIT\n");
             send_message(sock, out_buf);
@@ -244,29 +242,22 @@ void parseMessages(int sock, shm_struct *shm_str, plist_struct *plist_str, int *
 
           }else if(sscanf(msg_queue[linenum], "+ PIECE%d.%d %[A-C0-7]", &piece_player, &piece_id, piece_pos) == 3) {
 
-            // hier piece_pos spalten und dann in plist_str speichern
-
-           
-
             if(strlen(piece_pos) == 2){
-                   fst_coord = piece_pos[0] - 65;
-                   printf("fst = %i \n", fst_coord);
-
+              
+                  fst_coord = piece_pos[0] - 65;
                   snd_coord = atoi(&piece_pos[1]); 
-                  printf("snd = %i \n", snd_coord);
+
                   switch (piece_player){
-                    case 1:
+                    case 1: // KI-Spielsteine werden mit 1 in der Liste gespeichert
                             plist_str -> piece_list[fst_coord][snd_coord] = 1;
                             plist_str -> countMyPieces++;
-                            printf("AI should be 1: %i", piece_player);
-                    break; // computer ist 1
-                    case 0: 
+                    break; 
+                    case 0: // Gegnerische Spielsteine werden mit 2 in der Liste gespeichert
                             plist_str -> piece_list[fst_coord][snd_coord] = 2; 
                             plist_str -> countEnemyPieces++;
-                            printf("p0 should be 0: %i", piece_player);
-                    break; // gegenspieler ist 2
+                    break; 
                     default:printf("Für mehr Spieler noch erweitern!");
-                    break; // leer is 0
+                    break;
                   }
             } 
 
