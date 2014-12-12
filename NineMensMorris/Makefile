@@ -102,7 +102,7 @@ client_alex_i: src/logger/logger.h\
 		src/main.c\
 		src/logger/logger.c\
 		src/shm/shmManager.c\
-		src/thinker/thinker.c\
+		src/thinker_alex_i/thinker.c\
 		src/connector/performConnection.c\
 		src/connector/parser.c
 
