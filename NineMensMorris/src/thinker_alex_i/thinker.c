@@ -196,7 +196,7 @@ char* set_phase(plist_struct *plist_str){
         if(plist_str -> piece_list[x][y] == 0){
           counter++;
           if(counter == rnd){
-            answer_2 = convert_pos_to_string(x,y);
+            answer = convert_pos_to_string(x,y);
             plist_str -> unplacedPieces--;
             break;
           }
