@@ -127,7 +127,6 @@ neighbors_struct get_neighbors(plist_struct *plist_str){
     
     neighbors_struct wrap;
     int length = 0;
-    printf(RED "Trying to fill neighbors!\n" RESET);
       for(int x = 0; x<3; x++){
        for(int y = 0; y<8; y++){
          if(plist_str -> piece_list[x][y] == 1){
@@ -239,6 +238,21 @@ char* set_sure_mill(plist_struct *plist_str){
     return answer;
 }
 
+// Kopiert aus http://stackoverflow.com/questions/6127503/shuffle-array-in-c
+void shuffle(points_struct *array_neighbors, int length){
+    
+    if (length > 1){
+        
+        for (int i = 0; i < length - 1; i++){
+
+          int j = i + rand() / (RAND_MAX / (length - i) + 1);
+          points_struct t = array_neighbors[j];
+          array_neighbors[j] = array_neighbors[i];
+          array_neighbors[i] = t;
+        }
+    }
+}
+
 char* slide_phase(plist_struct *plist_str, neighbors_struct wrap){
 
 
@@ -250,6 +264,8 @@ char* slide_phase(plist_struct *plist_str, neighbors_struct wrap){
       free(answer_from);
       char *answer_to   = malloc (2*sizeof(char*));
       free(answer_to);
+
+      shuffle(wrap.array_neighbors, wrap.length);
 
       for (int i = 0; i < wrap.length; i++){
         for (int j = 0; j < 4; j++){
@@ -297,11 +313,8 @@ char* jump_phase(plist_struct *plist_str, neighbors_struct wrap){
  
      
       int count_free_spaces = 24 - plist_str -> countMyPieces - plist_str -> countEnemyPieces;
-      printf("JUMP Free spaces = %i\n", count_free_spaces);
       int rnd_token = rand() % 3;
       int rnd_spaces = rand() % count_free_spaces;
-      printf("JUMP Rnd_spaces = %i\n", rnd_spaces);
-
       int counter = 0;
 
       for (int i = 0; i < wrap.length; i++){
@@ -312,11 +325,7 @@ char* jump_phase(plist_struct *plist_str, neighbors_struct wrap){
     
       for(int x = 0; x<3; x++){
         for(int y = 0; y<8; y++){
-         
-          printf("x = %i | y = %i  ==> %i\n", x, y, plist_str -> piece_list[x][y]);
-
           if(plist_str -> piece_list[x][y] == 0){
-             printf("JUMP counter = %i\n", counter);
                 if(counter == rnd_spaces){
                     answer_to = convert_pos_to_string(x,y);
                     x = 3;  // not happy with this solution
@@ -342,11 +351,11 @@ void calc_turn(shm_struct *shm_str, plist_struct *plist_str, int shm_id, int pli
     neighbors_struct wrap;
     wrap = get_neighbors(plist_str);
 
-    print_neighbors(wrap);
+    //print_neighbors(wrap);
 
     //0.Mühlenfall: Wenn eine Mühle vorhanden ist, müssen gegnerische Steine geschlagen werden
     if(plist_str -> piecesToRemove > 0){
-      printf("I'm in Mill-Phase!\n");
+      printf("I'm in "GREEN "Mill" RESET "-Phase!\n");
       mill_answer = get_enemy_piece(plist_str);
       answer = NULL;
       answer = mill_answer;
@@ -354,7 +363,7 @@ void calc_turn(shm_struct *shm_str, plist_struct *plist_str, int shm_id, int pli
 
     //1. Setzphase: Es dürfen nicht alle Steine verteilt sein und kein Stein muss geschlagen werden
     else if(plist_str -> unplacedPieces > 0 && plist_str -> piecesToRemove == 0){
-      printf("I'm in Set-Phase!\n");
+      printf("I'm in "GREEN "Set" RESET "-Phase!\n");
       answer = set_phase(plist_str);
       //answer = set_sure_mill(plist_str);
     }
@@ -362,7 +371,7 @@ void calc_turn(shm_struct *shm_str, plist_struct *plist_str, int shm_id, int pli
     //2. Schieb-Phase: Es müssen alle Steine verteilt sein, die KI muss mehr als 3 Steine besitzen
     //                 und kein Stein muss geschlagen werden
     else if(plist_str -> unplacedPieces == 0 && plist_str -> countMyPieces > 3 && plist_str -> piecesToRemove == 0){
-      printf("I'm in Slide-Phase!\n");
+      printf("I'm in " GREEN "Slide" RESET "-Phase!\n");
       answer = slide_phase(plist_str, wrap);
     }
 
@@ -370,16 +379,16 @@ void calc_turn(shm_struct *shm_str, plist_struct *plist_str, int shm_id, int pli
 
     //3. Sprungphase: Es müssen alle Steine verteilt sein und die KI muss genau 3 oder weniger Steine besitzen
     else if(plist_str -> unplacedPieces == 0 && plist_str -> countMyPieces <= 3){
-      printf("I'm in Jump-Phase!\n");
+      printf("I'm in " GREEN "Jump" RESET "-Phase!\n");
       answer = jump_phase(plist_str, wrap);
     }
     //4. Fehlerfall: 
     else {
-      printf("Thinker konnte keine Phase erkennen!\n");
+      printf(RED "Thinker konnte keine Phase erkennen!\n");
     }
 
     //5. Endroutine: Steinecount für beide Spieler zurücksetzen, Flag zurücksetzen, Feld leeren
-    //               Antwort schicken, Antwort leeren
+    //               Antwort schicken
 
     plist_str -> countMyPieces = 0;
     plist_str -> countEnemyPieces = 0;

@@ -243,7 +243,7 @@ void parseMessages(int sock, shm_struct *shm_str, plist_struct *plist_str, int *
           }else if(sscanf(msg_queue[linenum], "+ PIECE%d.%d %[A-C0-7]", &piece_player, &piece_id, piece_pos) == 3) {
             
 
-            if (my_pos == 0){ // wenn die KI der erste Spieler ist
+            if (my_pos == 0){ // wenn die KI der erste Spieler ist (dirty)
             
                 if(strlen(piece_pos) == 2){
                   
@@ -264,7 +264,7 @@ void parseMessages(int sock, shm_struct *shm_str, plist_struct *plist_str, int *
                           }
                 } 
              }
-             else {       // wenn die KI der zweite Spieler ist
+             else {       // wenn die KI der zweite Spieler ist (dirty)
                 
                 if(strlen(piece_pos) == 2){
                   
