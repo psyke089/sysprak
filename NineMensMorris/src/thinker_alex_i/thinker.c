@@ -161,22 +161,22 @@ char* get_enemy_piece(plist_struct *plist_str){
     int counter = 0;
     int rnd = (rand() % plist_str -> countEnemyPieces+1);
     
-    char *answer_1 = malloc (2*sizeof(char*));
-    free(answer_1);
-    printf("MILL answer should be NULL = %s\n", answer_1);
+    char *answer = malloc (2*sizeof(char*));
+    free(answer);
+    printf("MILL answer should be NULL = %s\n", answer);
 
     for(int x = 0; x<3; x++){
       for(int y = 0; y<8; y++){
         if(plist_str -> piece_list[x][y] == 2){
           counter++;
           if(counter == rnd){
-             answer_1 = convert_pos_to_string(x,y);
+             answer = convert_pos_to_string(x,y);
           }
         }  
       }
     }
 
-    return answer_1;
+    return answer;
 }
 
 char* set_phase(plist_struct *plist_str){
@@ -356,9 +356,13 @@ void calc_turn(shm_struct *shm_str, plist_struct *plist_str, int shm_id, int pli
     //0.Mühlenfall: Wenn eine Mühle vorhanden ist, müssen gegnerische Steine geschlagen werden
     if(plist_str -> piecesToRemove > 0){
       printf("I'm in "GREEN "Mill" RESET "-Phase!\n");
+      mill_answer = NULL;
       mill_answer = get_enemy_piece(plist_str);
       answer = NULL;
       answer = mill_answer;
+      printf("MILL mill_answer should be size of 2 = %s\n", mill_answer);
+      printf("MILL answer should be size of 2 = %s\n", answer);
+      sleep(1);
     }
 
     //1. Setzphase: Es dürfen nicht alle Steine verteilt sein und kein Stein muss geschlagen werden
@@ -397,7 +401,7 @@ void calc_turn(shm_struct *shm_str, plist_struct *plist_str, int shm_id, int pli
     set_think_flag(false,shm_str);
 
     memset(plist_str -> piece_list, 0, 3*8*sizeof(int));
-    
+    printf("ANSWER should be appropriate = %s\n", answer);
     if(!write_to_pipe(fd, answer)){end_routine(shm_str, plist_str, shm_id, plist_id);}
 }
 

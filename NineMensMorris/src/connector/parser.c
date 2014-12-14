@@ -301,6 +301,7 @@ void parseMessages(int sock, shm_struct *shm_str, plist_struct *plist_str, int *
             start_thinking();
 
             //warte auf die antwort
+
             sprintf(out_buf, "PLAY %s\n", read_from_pipe(pipe_fd));
 
             send_message(sock, out_buf);
