@@ -241,7 +241,10 @@ void parseMessages(int sock, shm_struct *shm_str, plist_struct *plist_str, int *
             printf("Piecelist for %d players and %d pieces per player:\n\n", pl_players, pl_pieces);
 
           }else if(sscanf(msg_queue[linenum], "+ PIECE%d.%d %[A-C0-7]", &piece_player, &piece_id, piece_pos) == 3) {
-            if (my_pos == 0){
+            
+
+            if (my_pos == 0){ // wenn die KI der erste Spieler ist
+            
                 if(strlen(piece_pos) == 2){
                   
                       fst_coord = piece_pos[0] - 65;
@@ -261,7 +264,8 @@ void parseMessages(int sock, shm_struct *shm_str, plist_struct *plist_str, int *
                           }
                 } 
              }
-             else {
+             else {       // wenn die KI der zweite Spieler ist
+                
                 if(strlen(piece_pos) == 2){
                   
                       fst_coord = piece_pos[0] - 65;
