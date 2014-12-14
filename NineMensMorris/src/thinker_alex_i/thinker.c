@@ -162,22 +162,22 @@ char* get_enemy_piece(plist_struct *plist_str){
     int counter = 0;
     int rnd = (rand() % plist_str -> countEnemyPieces+1);
     
-    char *answer_1 = malloc (ANSWERLENGTH *sizeof(char*));
-    free(answer_1);
-    printf("MILL answer should be NULL = %s\n", answer_1);
+    char *answer = malloc (ANSWERLENGTH *sizeof(char*));
+    free(answer);
+    printf("MILL answer should be NULL = %s\n", answer);
 
     for(int x = 0; x<3; x++){
       for(int y = 0; y<8; y++){
         if(plist_str -> piece_list[x][y] == 2){
           counter++;
           if(counter == rnd){
-             answer_1 = convert_pos_to_string(x,y);
+             answer = convert_pos_to_string(x,y);
           }
         }  
       }
     }
 
-    return answer_1;
+    return answer;
 }
 
 char* set_phase(plist_struct *plist_str){
@@ -341,7 +341,7 @@ void calc_turn(shm_struct *shm_str, plist_struct *plist_str, int shm_id, int pli
     neighbors_struct wrap;
     wrap = get_neighbors(plist_str);
 
-    //print_neighbors(wrap);
+    print_neighbors(wrap);
 
     //0.Mühlenfall: Wenn eine Mühle vorhanden ist, müssen gegnerische Steine geschlagen werden
     if(plist_str -> piecesToRemove > 0){
