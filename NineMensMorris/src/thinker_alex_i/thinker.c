@@ -35,7 +35,7 @@ int write_to_pipe(int *fd, char *str){
    return 1;
 }
 
-char* convertPositionToString(int fst_coord, int snd_coord){
+char* convert_pos_to_string(int fst_coord, int snd_coord){
   
   char *coords = malloc (2*sizeof(char*));
   
@@ -161,22 +161,22 @@ char* get_enemy_piece(plist_struct *plist_str){
     
     int counter = 0;
     int rnd = (rand() % plist_str -> countEnemyPieces+1);
-    printf("Random Enemy Number: %i\n", rnd);
-
+    
     char *answer_1 = malloc (ANSWERLENGTH *sizeof(char*));
     free(answer_1);
+    printf("MILL answer should be NULL = %s\n", answer_1);
+
     for(int x = 0; x<3; x++){
       for(int y = 0; y<8; y++){
         if(plist_str -> piece_list[x][y] == 2){
           counter++;
           if(counter == rnd){
-            printf("Counter should be equals rnd: %i\n", counter);
-            answer_1 = convertPositionToString(x,y);
-            break;
+             answer_1 = convert_pos_to_string(x,y);
           }
         }  
       }
     }
+
     return answer_1;
 }
 
@@ -185,21 +185,18 @@ char* set_phase(plist_struct *plist_str){
     srand(time(NULL));
     
     int counter = 0;
-    int countFreeSpaces = 24 - plist_str -> countMyPieces - plist_str -> countEnemyPieces;
-    int rnd = (rand() % countFreeSpaces+1);
+    int count_free_spaces = 24 - plist_str -> countMyPieces - plist_str -> countEnemyPieces;
+    int rnd = (rand() % count_free_spaces+1);
 
-    char *answer_2 = malloc (ANSWERLENGTH * sizeof(char*));
-    free(answer_2);
-    printf("Set Phase answer_2 should be null = %s\n", answer_2);
+    char *answer = malloc (ANSWERLENGTH * sizeof(char*));
+    free(answer);
 
     for(int x = 0; x<3; x++){
       for(int y = 0; y<8; y++){
         if(plist_str -> piece_list[x][y] == 0){
           counter++;
           if(counter == rnd){
-            printf("Set Phase convertPositionToString should be size=2 = %s\n",convertPositionToString(x,y));
-            answer_2 = convertPositionToString(x,y);
-            printf("Set Phase answer_2 should be size=2 = %s\n", answer_2);
+            answer_2 = convert_pos_to_string(x,y);
             plist_str -> unplacedPieces--;
             break;
           }
@@ -207,8 +204,7 @@ char* set_phase(plist_struct *plist_str){
       }
     }
 
-    return answer_2;
-
+    return answer;
 }
 
 
@@ -219,28 +215,28 @@ char* set_phase(plist_struct *plist_str){
  */
 char* set_sure_mill(plist_struct *plist_str){
 
-    char *answer_3 = malloc (ANSWERLENGTH *sizeof(char*));
+    char *answer = malloc (ANSWERLENGTH *sizeof(char*));
  
 
       if(plist_str -> unplacedPieces == 9){
-          printf("convPos(0,0) = %s\n", convertPositionToString(0,0));
-          answer_3 = convertPositionToString(0,0);
+          printf("convPos(0,0) = %s\n", convert_pos_to_string(0,0));
+          answer = convert_pos_to_string(0,0);
           plist_str -> unplacedPieces--;
       }
       else if(plist_str -> unplacedPieces == 8){
-          answer_3 = convertPositionToString(0,1);
+          answer = convert_pos_to_string(0,1);
           plist_str -> unplacedPieces--;
       }
       else if(plist_str -> unplacedPieces == 7){
-          answer_3 = convertPositionToString(0,2);
-          printf("Mill 3rd & answer = %s\n", answer_3);
+          answer = convert_pos_to_string(0,2);
+          printf("Mill 3rd & answer = %s\n", answer);
           plist_str -> unplacedPieces--;
       }
       else{
-          answer_3 = set_phase(plist_str);
+          answer = set_phase(plist_str);
       }
 
-    return answer_3;
+    return answer;
 }
 
 char* slide_phase(plist_struct *plist_str, neighbors_struct wrap){
@@ -248,8 +244,8 @@ char* slide_phase(plist_struct *plist_str, neighbors_struct wrap){
 
       token to;
       srand(time(NULL));
-      char *answer_4 = malloc (ANSWERLENGTH*sizeof(char*));
-      free(answer_4);
+      char *answer = malloc (ANSWERLENGTH*sizeof(char*));
+      free(answer);
       char *answer_from = malloc (2*sizeof(char*));
       free(answer_from);
       char *answer_to   = malloc (2*sizeof(char*));
@@ -258,67 +254,81 @@ char* slide_phase(plist_struct *plist_str, neighbors_struct wrap){
       for (int i = 0; i < wrap.length; i++){
         for (int j = 0; j < 4; j++){
           if(wrap.array_neighbors[i].neighbors[j] == 0){
-            printf("i = %i | j = %i", i , j);
 
-            answer_from = convertPositionToString(wrap.array_neighbors[i].x, wrap.array_neighbors[i].y);
+            answer_from = convert_pos_to_string(wrap.array_neighbors[i].x, wrap.array_neighbors[i].y);
 
             switch(j){
               case 0: to = check_clock_wise(plist_str, wrap.array_neighbors[i].x, wrap.array_neighbors[i].y);
-                      answer_to = convertPositionToString(to.x, to.y);
+                      answer_to = convert_pos_to_string(to.x, to.y);
               break; 
               case 1: to = check_counter_clock_wise(plist_str, wrap.array_neighbors[i].x, wrap.array_neighbors[i].y);
-                      answer_to = convertPositionToString(to.x, to.y);
+                      answer_to = convert_pos_to_string(to.x, to.y);
               break; 
               case 2: to = check_level_up(plist_str, wrap.array_neighbors[i].x, wrap.array_neighbors[i].y);
-                      answer_to = convertPositionToString(to.x, to.y);
+                      answer_to = convert_pos_to_string(to.x, to.y);
               break; 
               case 3: to = check_level_down(plist_str, wrap.array_neighbors[i].x, wrap.array_neighbors[i].y);
-                      answer_to = convertPositionToString(to.x, to.y);
+                      answer_to = convert_pos_to_string(to.x, to.y);
               break; 
-              default: printf("Error while setting neighbor!\n"); break;
+              default: printf("Error while setting neighbor!\n"); 
+              break;
             }
 
           }
         }
       }
 
-      sprintf(answer_4, "%s:%s", answer_from, answer_to);
-      return answer_4;
+      sprintf(answer, "%s:%s", answer_from, answer_to);
+      return answer;
 }
 
 
-char* jump_phase(plist_struct *plist_str){
+char* jump_phase(plist_struct *plist_str, neighbors_struct wrap){
 
       srand(time(NULL));
 
-      char *answer_5 = malloc (ANSWERLENGTH*sizeof(char*));
-      int countFreeSpaces = 24 - plist_str -> countMyPieces - plist_str -> countEnemyPieces;
-      int rnd = (rand() % countFreeSpaces)+1;
+      char *answer = malloc (ANSWERLENGTH*sizeof(char*));
+      free(answer);
+      printf("JUMP answer should be NULL = %s\n", answer);  // why does this happen
+      char *answer_from = malloc (2*sizeof(char*));
+      free(answer_from);
+      char *answer_to   = malloc (2*sizeof(char*));
+      free(answer_to);
+ 
+     
+      int count_free_spaces = 24 - plist_str -> countMyPieces - plist_str -> countEnemyPieces;
+      printf("JUMP Free spaces = %i\n", count_free_spaces);
+      int rnd_token = rand() % 3;
+      int rnd_spaces = rand() % count_free_spaces;
+      printf("JUMP Rnd_spaces = %i\n", rnd_spaces);
+
       int counter = 0;
 
+      for (int i = 0; i < wrap.length; i++){
+        if(i == rnd_token){
+           answer_from = convert_pos_to_string(wrap.array_neighbors[i].x, wrap.array_neighbors[i].y);
+        }
+      }  
+    
       for(int x = 0; x<3; x++){
         for(int y = 0; y<8; y++){
-          if(plist_str -> piece_list[x][y] == 1){
-            answer_5 = convertPositionToString(x,y);
-            strcat(answer_5,":");
-            break;
+         
+          printf("x = %i | y = %i  ==> %i\n", x, y, plist_str -> piece_list[x][y]);
+
+          if(plist_str -> piece_list[x][y] == 0){
+             printf("JUMP counter = %i\n", counter);
+                if(counter == rnd_spaces){
+                    answer_to = convert_pos_to_string(x,y);
+                    x = 3;  // not happy with this solution
+                    y = 8;  // not happy with this solution
+                }
+             counter++;
           }
         }
       }
+    sprintf(answer, "%s:%s", answer_from, answer_to);
 
-
-      for(int x = 0; x<3; x++){
-        for(int y = 0; y<8; y++){
-          if(plist_str -> piece_list[x][y] == 0){
-            counter++;
-             if(counter == rnd){
-                answer_5 = convertPositionToString(x,y);
-                break;
-             }
-          }   
-        }
-      }
-    return answer_5;
+    return answer;
 }
 
 
@@ -331,7 +341,7 @@ void calc_turn(shm_struct *shm_str, plist_struct *plist_str, int shm_id, int pli
     neighbors_struct wrap;
     wrap = get_neighbors(plist_str);
 
-    print_neighbors(wrap);
+    //print_neighbors(wrap);
 
     //0.Mühlenfall: Wenn eine Mühle vorhanden ist, müssen gegnerische Steine geschlagen werden
     if(plist_str -> piecesToRemove > 0){
@@ -358,7 +368,7 @@ void calc_turn(shm_struct *shm_str, plist_struct *plist_str, int shm_id, int pli
     //3. Sprungphase: Es müssen alle Steine verteilt sein und die KI muss genau 3 oder weniger Steine besitzen
     else if(plist_str -> unplacedPieces == 0 && plist_str -> countMyPieces <= 3){
       printf("I'm in Jump-Phase!\n");
-      answer = jump_phase(plist_str);
+      answer = jump_phase(plist_str, wrap);
     }
     //4. Fehlerfall: 
     else {
@@ -377,7 +387,5 @@ void calc_turn(shm_struct *shm_str, plist_struct *plist_str, int shm_id, int pli
     memset(plist_str -> piece_list, 0, 3*8*sizeof(int));
     
     if(!write_to_pipe(fd, answer)){end_routine(shm_str, plist_str, shm_id, plist_id);}
-   // free(answer);
-
 }
 
