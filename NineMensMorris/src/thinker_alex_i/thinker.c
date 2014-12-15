@@ -9,6 +9,7 @@ void start_thinking(){
 char* read_from_pipe(int *fd){
 
    static char buffer[ANSWERLENGTH];
+   memset(buffer, 0, ANSWERLENGTH);
    char *log_msg;
    int bytes;
 
