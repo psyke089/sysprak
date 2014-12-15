@@ -118,6 +118,9 @@ void parseMessages(int sock, shm_struct *shm_str, plist_struct *plist_str, int *
   int piece_id;
   char piece_pos[2];
 
+  char winner_name[20];
+  int winner_id;
+
   printf("\n");
 
   int snd_coord = 0;
@@ -217,10 +220,11 @@ void parseMessages(int sock, shm_struct *shm_str, plist_struct *plist_str, int *
               }else{
                 printf("Opponent ready?: NO\n\n");
               }
-            shm_str -> player_str[1].playerID = opponent_pos;
-            strcpy(shm_str -> player_str[1].playerName,  opponent_name);
-            shm_str -> player_str[1].isReady =  opponent_ready;
-            shm_str -> player_str[1].isLoggedIn =  1;
+
+              shm_str -> player_str[1].playerID = opponent_pos;
+              strcpy(shm_str -> player_str[1].playerName,  opponent_name);
+              shm_str -> player_str[1].isReady =  opponent_ready;
+              shm_str -> player_str[1].isLoggedIn =  1;
             }
 
           }else if(strcmp(msg_queue[linenum], "+ ENDPLAYERS") == 0) {
@@ -276,6 +280,20 @@ void parseMessages(int sock, shm_struct *shm_str, plist_struct *plist_str, int *
             sprintf(out_buf, "PLAY %s\n", read_from_pipe(pipe_fd));
 
             send_message(sock, out_buf);
+
+          }else if(strcmp(msg_queue[linenum], "+ MOVEOK") == 0) {
+
+            //nothing to do...
+
+          }else if(sscanf(msg_queue[linenum], "+ GAMEOVER %d %[^\t\n]", &winner_id, winner_name) == 2) {
+
+            printf("Game Over!\n");
+            printf("...and the winner is: %s\n", winner_name);
+
+          }else if(strcmp(msg_queue[linenum], "+ QUIT") == 0) {
+
+            printf("quitting...\n");
+            breaker = 0;
 
           }else{
 
