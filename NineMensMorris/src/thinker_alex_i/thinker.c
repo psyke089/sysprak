@@ -163,8 +163,6 @@ char* get_enemy_piece(plist_struct *plist_str){
     int rnd = (rand() % plist_str -> countEnemyPieces+1);
     
     char *answer = malloc (2*sizeof(char*));
-  //  free(answer);
-    printf("MILL answer should be NULL = %s\n", answer);
 
     for(int x = 0; x<3; x++){
       for(int y = 0; y<8; y++){
@@ -179,6 +177,54 @@ char* get_enemy_piece(plist_struct *plist_str){
 
     return answer;
 }
+
+/*char* check_mill_possibility(plist_struct *plist_str, neighbors_struct wrap){
+ 
+  char* answer = malloc(2*(sizeof(char*)));
+  token temp_token_1;
+  token temp_token_2;
+  bool is_found;
+
+    for(int i = 0; i < wrap.length; i++){
+          if((wrap.array_neighbors[i].y % 2) == 0){
+               temp_token_1 = check_clock_wise(plist_str, check_wrap.array_neighbors[i].x, check_wrap.array_neighbors[i].y);
+               if(temp_token_1.value == 1){
+                  temp_token_2 = check_clock_wise(plist_str, temp_token_1.x, temp_token_1.y);
+                  if(temp_token_2.value == 0){
+                    answer = convert_pos_to_string(temp_token_2.x, temp_token_2.y);
+                    return answer;
+                  }
+               }
+                if(temp_token_1.value == 0){
+                  temp_token_2 = check_clock_wise(plist_str, temp_token_1.x, temp_token_1.y);
+                  if(temp_token_2.value == 1){
+                    answer = convert_pos_to_string(temp_token_1.x, temp_token_1.y);
+                    return answer;
+                  }
+               }
+          }
+    }
+
+    for(int i = 0; i < wrap.length; i++){
+          if((wrap.array_neighbors[i].y % 2) == 0){
+               temp_token_1 = check_counter_clock_wise(plist_str, check_wrap.array_neighbors[i].x, check_wrap.array_neighbors[i].y);
+               if(temp_token_1.value == 1){
+                  temp_token_2 = check_counter_clock_wise(plist_str, temp_token_1.x, temp_token_1.y);
+                  if(temp_token_2.value == 0){
+                    answer = convert_pos_to_string(temp_token_2.x, temp_token_2.y);
+                    return answer;
+                  }
+               }
+                if(temp_token_1.value == 0){
+                  temp_token_2 = check_counter_clock_wise(plist_str, temp_token_1.x, temp_token_1.y);
+                  if(temp_token_2.value == 1){
+                    answer = convert_pos_to_string(temp_token_1.x, temp_token_1.y);
+                    return answer;
+                  }
+               }
+          }
+    }
+}*/
 
 char* set_phase(plist_struct *plist_str){
 
@@ -260,11 +306,8 @@ char* slide_phase(plist_struct *plist_str, neighbors_struct wrap){
       token to;
       srand(time(NULL));
       char *answer = malloc (ANSWERLENGTH*sizeof(char*));
-     // free(answer);
       char *answer_from = malloc (2*sizeof(char*));
-      //free(answer_from);
       char *answer_to   = malloc (2*sizeof(char*));
-      //free(answer_to);
 
       shuffle(wrap.array_neighbors, wrap.length);
 
