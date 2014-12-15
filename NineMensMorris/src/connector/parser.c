@@ -188,7 +188,7 @@ void parseMessages(int sock, shm_struct *shm_str, plist_struct *plist_str, int *
             strcpy(shm_str -> player_str[0].playerName,  my_name);
             shm_str -> player_str[0].isReady =  1;
             shm_str -> player_str[0].isLoggedIn =  1;
-          
+
           }else if(sscanf(msg_queue[linenum], "+ TOTAL %d", &total_players) == 1) {
 
             printf("Total Players: %d\n\n", total_players);
@@ -241,50 +241,21 @@ void parseMessages(int sock, shm_struct *shm_str, plist_struct *plist_str, int *
             printf("Piecelist for %d players and %d pieces per player:\n\n", pl_players, pl_pieces);
 
           }else if(sscanf(msg_queue[linenum], "+ PIECE%d.%d %[A-C0-7]", &piece_player, &piece_id, piece_pos) == 3) {
-            
 
-            if (my_pos == 0){ // wenn die KI der erste Spieler ist (dirty)
-            
-                if(strlen(piece_pos) == 2){
-                  
-                      fst_coord = piece_pos[0] - 65;
-                      snd_coord = atoi(&piece_pos[1]); 
-    
-                          switch (piece_player){
-                            case 0: // KI-Spielsteine werden mit 1 in der Liste gespeichert
-                                    plist_str -> piece_list[fst_coord][snd_coord] = 1;
-                                    plist_str -> countMyPieces++;
-                            break; 
-                            case 1: // Gegnerische Spielsteine werden mit 2 in der Liste gespeichert
-                                    plist_str -> piece_list[fst_coord][snd_coord] = 2; 
-                                    plist_str -> countEnemyPieces++;
-                            break; 
-                            default:printf("Für mehr Spieler noch erweitern!");
-                            break;
-                          }
-                } 
-             }
-             else {       // wenn die KI der zweite Spieler ist (dirty)
-                
-                if(strlen(piece_pos) == 2){
-                  
-                      fst_coord = piece_pos[0] - 65;
-                      snd_coord = atoi(&piece_pos[1]); 
-    
-                          switch (piece_player){
-                            case 1: // KI-Spielsteine werden mit 1 in der Liste gespeichert
-                                    plist_str -> piece_list[fst_coord][snd_coord] = 1;
-                                    plist_str -> countMyPieces++;
-                            break; 
-                            case 0: // Gegnerische Spielsteine werden mit 2 in der Liste gespeichert
-                                    plist_str -> piece_list[fst_coord][snd_coord] = 2; 
-                                    plist_str -> countEnemyPieces++;
-                            break; 
-                            default:printf("Für mehr Spieler noch erweitern!");
-                            break;
-                          }
-                } 
-             }
+            if(strlen(piece_pos) == 2) {
+
+              fst_coord = piece_pos[0] - 65;
+              snd_coord = atoi(&piece_pos[1]);
+              
+              if(piece_player == my_pos) {
+                plist_str -> piece_list[fst_coord][snd_coord] = 1;
+                plist_str -> countMyPieces++;
+              }else{
+                plist_str -> piece_list[fst_coord][snd_coord] = 2;
+                plist_str -> countEnemyPieces++;
+              }
+
+            }
 
             printf("Player %d, piece %d at position %s\n", piece_player, piece_id, piece_pos);
 
@@ -296,7 +267,7 @@ void parseMessages(int sock, shm_struct *shm_str, plist_struct *plist_str, int *
           }else if(strcmp(msg_queue[linenum], "+ OKTHINK") == 0) {
 
             printf("thinking...\n");
-            
+
             set_think_flag(true, shm_str);
             start_thinking();
 
