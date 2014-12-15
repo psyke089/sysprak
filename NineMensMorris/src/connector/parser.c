@@ -19,13 +19,13 @@ void processMessage(char *buf)
   int lineCount = 0;
 
   char tmp[MSGL];
-  bzero(tmp, MSGL);
+  memset(tmp, 0, MSGL);
 
   sprintf(tmp, "%s", buf);
 
   for (int i = 0; i < 32; ++i)
   {
-    bzero(msg_queue[i], 128);
+    memset(msg_queue[i], 0, 128);
   }
 
   char *line = strtok(tmp, "\n");
@@ -60,7 +60,7 @@ void tokenizeLine(char *line)
 
   for (int i = 0; i < 32; ++i)
   {
-    bzero(tokens[i], 32);
+    memset(tokens[i], 0, 32);
   }
 
   sprintf(tmp, "%s", line);

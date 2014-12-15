@@ -89,12 +89,12 @@ void get_message(int sock, char* buf)
   size_t bytes_received = 0;
   size_t n;
 
-  bzero(buf, MSGL);
+  memset(buf, 0, MSGL);
   int notbremse = 128;
 
   do{
 
-    bzero(msg, MSGL);
+    memset(msg, 0, MSGL);
     n = recv(sock, msg, MSGL, 0);
 
     if (n < 0)
