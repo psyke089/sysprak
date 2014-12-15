@@ -285,6 +285,11 @@ void parseMessages(int sock, shm_struct *shm_str, plist_struct *plist_str, int *
 
             //nothing to do...
 
+          }else if(strcmp(msg_queue[linenum], "+ GAMEOVER") == 0) {
+
+            printf("Game Over!\n");
+            printf("...50 turns without mill...\n");
+
           }else if(sscanf(msg_queue[linenum], "+ GAMEOVER %d %[^\t\n]", &winner_id, winner_name) == 2) {
 
             printf("Game Over!\n");
