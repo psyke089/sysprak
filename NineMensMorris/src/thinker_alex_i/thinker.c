@@ -163,7 +163,7 @@ char* get_enemy_piece(plist_struct *plist_str){
     int rnd = (rand() % plist_str -> countEnemyPieces+1);
     
     char *answer = malloc (2*sizeof(char*));
-    free(answer);
+  //  free(answer);
     printf("MILL answer should be NULL = %s\n", answer);
 
     for(int x = 0; x<3; x++){
@@ -189,7 +189,7 @@ char* set_phase(plist_struct *plist_str){
     int rnd = (rand() % count_free_spaces+1);
 
     char *answer = malloc (ANSWERLENGTH * sizeof(char*));
-    free(answer);
+    //free(answer);
 
     for(int x = 0; x<3; x++){
       for(int y = 0; y<8; y++){
@@ -260,11 +260,11 @@ char* slide_phase(plist_struct *plist_str, neighbors_struct wrap){
       token to;
       srand(time(NULL));
       char *answer = malloc (ANSWERLENGTH*sizeof(char*));
-      free(answer);
+     // free(answer);
       char *answer_from = malloc (2*sizeof(char*));
-      free(answer_from);
+      //free(answer_from);
       char *answer_to   = malloc (2*sizeof(char*));
-      free(answer_to);
+      //free(answer_to);
 
       shuffle(wrap.array_neighbors, wrap.length);
 
@@ -305,12 +305,12 @@ char* jump_phase(plist_struct *plist_str, neighbors_struct wrap){
       srand(time(NULL));
 
       char *answer = malloc (ANSWERLENGTH*sizeof(char*));
-      free(answer);
+     // free(answer);
       printf("JUMP answer should be NULL = %s\n", answer);  // why does this happen
       char *answer_from = malloc (2*sizeof(char*));
-      free(answer_from);
+     // free(answer_from);
       char *answer_to   = malloc (2*sizeof(char*));
-      free(answer_to);
+     // free(answer_to);
  
      
       int count_free_spaces = 24 - plist_str -> countMyPieces - plist_str -> countEnemyPieces;
@@ -347,7 +347,6 @@ void calc_turn(shm_struct *shm_str, plist_struct *plist_str, int shm_id, int pli
     if (!check_think_flag(shm_str)){end_routine(shm_str, plist_str, shm_id, plist_id);}
 
     char *answer = NULL;
-    char *mill_answer = NULL;
 
     neighbors_struct wrap;
     wrap = get_neighbors(plist_str);
@@ -357,13 +356,7 @@ void calc_turn(shm_struct *shm_str, plist_struct *plist_str, int shm_id, int pli
     //0.Mühlenfall: Wenn eine Mühle vorhanden ist, müssen gegnerische Steine geschlagen werden
     if(plist_str -> piecesToRemove > 0){
       printf("I'm in "GREEN "Mill" RESET "-Phase!\n");
-      mill_answer = NULL;
-      mill_answer = get_enemy_piece(plist_str);
-      answer = NULL;
-      answer = mill_answer;
-      printf("MILL mill_answer should be size of 2 = %s\n", mill_answer);
-      printf("MILL answer should be size of 2 = %s\n", answer);
-      sleep(1);
+      answer = get_enemy_piece(plist_str);
     }
 
     //1. Setzphase: Es dürfen nicht alle Steine verteilt sein und kein Stein muss geschlagen werden
@@ -402,7 +395,7 @@ void calc_turn(shm_struct *shm_str, plist_struct *plist_str, int shm_id, int pli
     set_think_flag(false,shm_str);
 
     memset(plist_str -> piece_list, 0, 3*8*sizeof(int));
-    printf("ANSWER should be appropriate = %s\n", answer);
     if(!write_to_pipe(fd, answer)){end_routine(shm_str, plist_str, shm_id, plist_id);}
+    free(answer);
 }
 
