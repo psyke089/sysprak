@@ -247,11 +247,19 @@ void parseMessages(int sock, shm_struct *shm_str, plist_struct *plist_str, int *
               fst_coord = piece_pos[0] - 65;
               snd_coord = atoi(&piece_pos[1]);
               
+<<<<<<< HEAD
               plist_str -> piece_list[fst_coord][snd_coord] = piece_player + 1;
               
               if(piece_player == my_pos) {
                 plist_str -> countMyPieces++;
               }else{
+=======
+              if(piece_player == my_pos) {
+                plist_str -> piece_list[fst_coord][snd_coord] = 1;
+                plist_str -> countMyPieces++;
+              }else{
+                plist_str -> piece_list[fst_coord][snd_coord] = 2;
+>>>>>>> 720df21f9c17a2b3589a8238e4e3df102ee7cfbc
                 plist_str -> countEnemyPieces++;
               }
 
