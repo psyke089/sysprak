@@ -177,56 +177,92 @@ char* get_enemy_piece(plist_struct *plist_str){
 
     return answer;
 }
-
-/*char* check_mill_possibility(plist_struct *plist_str, neighbors_struct wrap){
+/*
+complex_mill_answer check_mill_possibility(plist_struct *plist_str, neighbors_struct wrap){
  
+  complex_mill_answer complex;
+
   char* answer = malloc(2*(sizeof(char*)));
   token temp_token_1;
   token temp_token_2;
   bool is_found;
 
     for(int i = 0; i < wrap.length; i++){
-          if((wrap.array_neighbors[i].y % 2) == 0){
-               temp_token_1 = check_clock_wise(plist_str, check_wrap.array_neighbors[i].x, check_wrap.array_neighbors[i].y);
+          if((wrap.array_neighbors[i].y % 2) == 0 && (!is_found)){
+               temp_token_1 = check_clock_wise(plist_str, wrap.array_neighbors[i].x, wrap.array_neighbors[i].y);
                if(temp_token_1.value == 1){
                   temp_token_2 = check_clock_wise(plist_str, temp_token_1.x, temp_token_1.y);
                   if(temp_token_2.value == 0){
                     answer = convert_pos_to_string(temp_token_2.x, temp_token_2.y);
-                    return answer;
+                    printf ("1 was true\n");
+                    complex.answer = answer;
+                    complex.x1 = wrap.array_neighbors[i].x;
+                    complex.y1 = wrap.array_neighbors[i].y;
+                    complex.x2 = temp_token_1.x;
+                    complex.y2 = temp_token_1.y;
+                    
+
+                    is_found = true;
+
                   }
                }
                 if(temp_token_1.value == 0){
                   temp_token_2 = check_clock_wise(plist_str, temp_token_1.x, temp_token_1.y);
                   if(temp_token_2.value == 1){
                     answer = convert_pos_to_string(temp_token_1.x, temp_token_1.y);
-                    return answer;
+                    printf ("2 was true\n");
+                    complex.answer = answer;
+                    complex.x1 = wrap.array_neighbors[i].x;
+                    complex.y1 = wrap.array_neighbors[i].y;
+                    complex.x2 = temp_token_2.x;
+                    complex.y2 = temp_token_2.y;
+                    
+
+                    is_found = true;
                   }
                }
           }
     }
 
     for(int i = 0; i < wrap.length; i++){
-          if((wrap.array_neighbors[i].y % 2) == 0){
-               temp_token_1 = check_counter_clock_wise(plist_str, check_wrap.array_neighbors[i].x, check_wrap.array_neighbors[i].y);
+          if((wrap.array_neighbors[i].y % 2) == 0 && (!is_found)){
+               temp_token_1 = check_counter_clock_wise(plist_str, wrap.array_neighbors[i].x, wrap.array_neighbors[i].y);
                if(temp_token_1.value == 1){
                   temp_token_2 = check_counter_clock_wise(plist_str, temp_token_1.x, temp_token_1.y);
                   if(temp_token_2.value == 0){
                     answer = convert_pos_to_string(temp_token_2.x, temp_token_2.y);
-                    return answer;
-                  }
+                    printf ("3 was true\n");
+                    complex.answer = answer;
+                    complex.x1 = wrap.array_neighbors[i].x;
+                    complex.y1 = wrap.array_neighbors[i].y;
+                    complex.x2 = temp_token_1.x;
+                    complex.y2 = temp_token_1.y;
+                    
+
+                    is_found = true;
+                   }
                }
                 if(temp_token_1.value == 0){
                   temp_token_2 = check_counter_clock_wise(plist_str, temp_token_1.x, temp_token_1.y);
                   if(temp_token_2.value == 1){
                     answer = convert_pos_to_string(temp_token_1.x, temp_token_1.y);
-                    return answer;
+                    printf ("4 was true\n");
+                    complex.answer = answer;
+                    complex.x1 = wrap.array_neighbors[i].x;
+                    complex.y1 = wrap.array_neighbors[i].y;
+                    complex.x2 = temp_token_2.x;
+                    complex.y2 = temp_token_2.y;
+                    
+                    is_found = true;
                   }
                }
           }
     }
+    printf("this is answer from mill = %s \n", answer);
+    return complex;
 }*/
 
-char* set_phase(plist_struct *plist_str){
+char* set_phase(plist_struct *plist_str, neighbors_struct wrap){
 
     srand(time(NULL));
     
@@ -235,7 +271,6 @@ char* set_phase(plist_struct *plist_str){
     int rnd = (rand() % count_free_spaces+1);
 
     char *answer = malloc (ANSWERLENGTH * sizeof(char*));
-    //free(answer);
 
     for(int x = 0; x<3; x++){
       for(int y = 0; y<8; y++){
@@ -249,7 +284,14 @@ char* set_phase(plist_struct *plist_str){
         }  
       }
     }
+    // ###########################Testing################################
+/*        complex_mill_answer complex = check_mill_possibility(plist_str, wrap);
 
+    if (complex.answer[0] == 'A' || complex.answer[0] == 'B' || complex.answer[0] == 'C'){
+        return complex.answer;
+    }*/
+    // ##################################################################
+    
     return answer;
 }
 
@@ -259,7 +301,7 @@ char* set_phase(plist_struct *plist_str){
  * Zweiter Zug auf A1
  * Dritter Zug auf A2
  */
-char* set_sure_mill(plist_struct *plist_str){
+char* set_sure_mill(plist_struct *plist_str, neighbors_struct wrap){
 
     char *answer = malloc (ANSWERLENGTH *sizeof(char*));
  
@@ -279,7 +321,7 @@ char* set_sure_mill(plist_struct *plist_str){
           plist_str -> unplacedPieces--;
       }
       else{
-          answer = set_phase(plist_str);
+          answer = set_phase(plist_str, wrap);
       }
 
     return answer;
@@ -348,13 +390,16 @@ char* jump_phase(plist_struct *plist_str, neighbors_struct wrap){
       srand(time(NULL));
 
       char *answer = malloc (ANSWERLENGTH*sizeof(char*));
-     // free(answer);
-      printf("JUMP answer should be NULL = %s\n", answer);  // why does this happen
+
+      printf("JUMP answer should be NULL = %s\n", answer);
       char *answer_from = malloc (2*sizeof(char*));
-     // free(answer_from);
+
       char *answer_to   = malloc (2*sizeof(char*));
-     // free(answer_to);
- 
+
+      //######################Testing############################ 
+     // char *temp_1 = malloc (ANSWERLENGTH * sizeof(char*)); 
+      //######################Testing############################ 
+     
      
       int count_free_spaces = 24 - plist_str -> countMyPieces - plist_str -> countEnemyPieces;
       int rnd_token = rand() % 3;
@@ -379,6 +424,30 @@ char* jump_phase(plist_struct *plist_str, neighbors_struct wrap){
           }
         }
       }
+
+
+
+    // ##########################Testing#################################
+/*   complex_mill_answer complex;
+     complex = check_mill_possibility(plist_str, wrap);
+
+    if(complex.answer != NULL){
+      printf("This is complex.answer = %s \n ", complex.answer);
+      for (int i = 0; i < wrap.length; i++){
+        if((wrap.array_neighbors[i].x != complex.x1) && (wrap.array_neighbors[i].y != complex.y1) && (wrap.array_neighbors[i].x != complex.x2) && (wrap.array_neighbors[i].y != complex.y2)){
+           answer_from = convert_pos_to_string(wrap.array_neighbors[i].x, wrap.array_neighbors[i].y);
+           printf("Found answer_from = %s \n", answer_from);
+        }
+      } 
+      if (complex.answer[0] == 'A' || complex.answer[0] == 'B' || complex.answer[0] == 'C'){
+          sprintf(answer, "%s:%s", answer_from, complex.answer);
+      }
+    }
+    else {
+          sprintf(answer, "%s:%s", answer_from, answer_to);
+    }*/
+    // #########################Testing#################################
+
     sprintf(answer, "%s:%s", answer_from, answer_to);
 
     return answer;
@@ -394,7 +463,7 @@ void calc_turn(shm_struct *shm_str, plist_struct *plist_str, int shm_id, int pli
     neighbors_struct wrap;
     wrap = get_neighbors(plist_str);
 
-    //print_neighbors(wrap);
+    print_neighbors(wrap);
 
     //0.Mühlenfall: Wenn eine Mühle vorhanden ist, müssen gegnerische Steine geschlagen werden
     if(plist_str -> piecesToRemove > 0){
@@ -405,7 +474,7 @@ void calc_turn(shm_struct *shm_str, plist_struct *plist_str, int shm_id, int pli
     //1. Setzphase: Es dürfen nicht alle Steine verteilt sein und kein Stein muss geschlagen werden
     else if(plist_str -> unplacedPieces > 0 && plist_str -> piecesToRemove == 0){
       printf("I'm in "GREEN "Set" RESET "-Phase!\n");
-      answer = set_phase(plist_str);
+      answer = set_phase(plist_str, wrap);
       //answer = set_sure_mill(plist_str);
     }
 

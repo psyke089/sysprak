@@ -44,7 +44,13 @@ typedef struct{
   int length;
 }neighbors_struct;
 
-
+typedef struct{
+  int x1;
+  int y1;
+  int x2;
+  int y2;
+  char* answer;
+}complex_mill_answer;
 /**
  * sendet SIGUSR1
  *
