@@ -19,7 +19,7 @@ char* read_from_pipe(int *fd){
    }
    else {
       asprintf(&log_msg, "\nRead %i bytes from the pipe: %s\n", bytes, buffer);
-      logPrnt('g', 'p', log_msg); 
+      logPrnt('g', 'p', log_msg);
    }
 
    return buffer;
@@ -28,7 +28,7 @@ char* read_from_pipe(int *fd){
 
 
 int write_to_pipe(int *fd, char *str){
- 
+
    if (str == NULL || write(fd[WRITE], str, strlen(str)) <= 0) {
         logPrnt('r', 'e', "\nCouldn't write to pipe!\n");
         return 0;
@@ -36,16 +36,57 @@ int write_to_pipe(int *fd, char *str){
    return 1;
 }
 
+
+char* print_helper(int i){
+
+  char* helper;
+  char* mul     = "(*)";
+  char* hashtag = "(#)";
+  char* plus    = " + ";
+
+  if (i==2){
+    helper = mul;
+  }
+  else if(i==1){
+    helper = hashtag;
+  }
+  else{
+    helper = plus;
+  }
+
+  return helper;
+ }
+
+void print_field(plist_struct *plist_str){
+
+
+  printf("%s----------%s----------%s\n", print_helper(plist_str ->  piece_list[0][0]), print_helper(plist_str ->  piece_list[0][1]), print_helper(plist_str ->  piece_list[0][2]));
+  printf(" |            |            |\n");
+  printf(" |  %s------%s------%s  |\n", print_helper(plist_str ->  piece_list[1][0]), print_helper(plist_str ->  piece_list[1][1]), print_helper(plist_str ->  piece_list[1][2]));
+  printf(" |   |        |        |   |\n");
+  printf(" |   |  %s--%s--%s  |   |\n"  , print_helper(plist_str ->  piece_list[2][0]), print_helper(plist_str ->  piece_list[2][1]), print_helper(plist_str ->  piece_list[2][2]));
+  printf(" |   |   |         |   |   |\n");
+  printf("%s-%s-%s       %s-%s-%s\n" , print_helper(plist_str ->  piece_list[0][7]), print_helper(plist_str ->  piece_list[1][7]), print_helper(plist_str ->  piece_list[2][7]), print_helper(plist_str ->  piece_list[2][3]), print_helper(plist_str ->  piece_list[1][3]), print_helper(plist_str ->  piece_list[0][3]));
+  printf(" |   |   |         |   |   |\n");
+  printf(" |   |  %s--%s--%s  |   |\n"  , print_helper(plist_str ->  piece_list[2][6]), print_helper(plist_str ->  piece_list[2][5]), print_helper(plist_str ->  piece_list[2][4]));
+  printf(" |   |        |        |   |\n");
+  printf(" |  %s------%s------%s  |\n"  , print_helper(plist_str ->  piece_list[1][6]), print_helper(plist_str ->  piece_list[1][5]), print_helper(plist_str ->  piece_list[1][4]));
+  printf(" |            |            |\n");
+  printf("%s----------%s----------%s\n" , print_helper(plist_str ->  piece_list[0][6]), print_helper(plist_str ->  piece_list[0][5]), print_helper(plist_str ->  piece_list[0][4]));
+
+}
+
+
 char* convert_pos_to_string(int fst_coord, int snd_coord){
-  
+
   char *coords = malloc (2*sizeof(char*));
-  
+
   switch(fst_coord) {
     case 0: sprintf(coords, "A%d", snd_coord); break;
     case 1: sprintf(coords, "B%d", snd_coord); break;
     case 2: sprintf(coords, "C%d", snd_coord); break;
   }
-  
+
   return coords;
 }
 
@@ -69,8 +110,8 @@ token check_clock_wise(plist_struct *plist_str, int fst_coord, int snd_coord){
 
     return c_wise;
 }
-  
-  
+
+
 
 /**
  * !fst_coord==0    <==> Nicht im A Level
@@ -81,7 +122,7 @@ token check_level_up(plist_struct *plist_str, int fst_coord, int snd_coord){
     token up;
 
     switch ((!(fst_coord==0)) && snd_coord % 2){
-      case 0: 
+      case 0:
                up.x = fst_coord;
                up.y = snd_coord;
                up.value = 3;
@@ -96,7 +137,7 @@ token check_level_up(plist_struct *plist_str, int fst_coord, int snd_coord){
                return up;
 
     }
-    
+
 }
 
 /**
@@ -108,7 +149,7 @@ token check_level_down(plist_struct *plist_str, int fst_coord, int snd_coord){
     token down;
 
     switch ((!(fst_coord==2)) && (snd_coord % 2)==1){
-      case 0:  
+      case 0:
                down.x = fst_coord;
                down.y = snd_coord;
                down.value = 3;
@@ -125,7 +166,7 @@ token check_level_down(plist_struct *plist_str, int fst_coord, int snd_coord){
 }
 
 neighbors_struct get_neighbors(plist_struct *plist_str){
-    
+
     neighbors_struct wrap;
     int length = 0;
       for(int x = 0; x<3; x++){
@@ -158,10 +199,10 @@ void print_neighbors(neighbors_struct wrap){
 char* get_enemy_piece(plist_struct *plist_str){
 
     srand(time(NULL));
-    
+
     int counter = 0;
     int rnd = (rand() % plist_str -> countEnemyPieces+1);
-    
+
     char *answer = malloc (2*sizeof(char*));
 
     for(int x = 0; x<3; x++){
@@ -171,7 +212,7 @@ char* get_enemy_piece(plist_struct *plist_str){
           if(counter == rnd){
              answer = convert_pos_to_string(x,y);
           }
-        }  
+        }
       }
     }
 
@@ -265,7 +306,7 @@ complex_mill_answer check_mill_possibility(plist_struct *plist_str, neighbors_st
 char* set_phase(plist_struct *plist_str, neighbors_struct wrap){
 
     srand(time(NULL));
-    
+
     int counter = 0;
     int count_free_spaces = 24 - plist_str -> countMyPieces - plist_str -> countEnemyPieces;
     int rnd = (rand() % count_free_spaces+1);
@@ -281,7 +322,7 @@ char* set_phase(plist_struct *plist_str, neighbors_struct wrap){
             plist_str -> unplacedPieces--;
             break;
           }
-        }  
+        }
       }
     }
     // ###########################Testing################################
@@ -304,7 +345,7 @@ char* set_phase(plist_struct *plist_str, neighbors_struct wrap){
 char* set_sure_mill(plist_struct *plist_str, neighbors_struct wrap){
 
     char *answer = malloc (ANSWERLENGTH *sizeof(char*));
- 
+
 
       if(plist_str -> unplacedPieces == 9){
           printf("convPos(0,0) = %s\n", convert_pos_to_string(0,0));
@@ -329,9 +370,9 @@ char* set_sure_mill(plist_struct *plist_str, neighbors_struct wrap){
 
 // Kopiert aus http://stackoverflow.com/questions/6127503/shuffle-array-in-c
 void shuffle(points_struct *array_neighbors, int length){
-    
+
     if (length > 1){
-        
+
         for (int i = 0; i < length - 1; i++){
 
           int j = i + rand() / (RAND_MAX / (length - i) + 1);
@@ -362,17 +403,17 @@ char* slide_phase(plist_struct *plist_str, neighbors_struct wrap){
             switch(j){
               case 0: to = check_clock_wise(plist_str, wrap.array_neighbors[i].x, wrap.array_neighbors[i].y);
                       answer_to = convert_pos_to_string(to.x, to.y);
-              break; 
+              break;
               case 1: to = check_counter_clock_wise(plist_str, wrap.array_neighbors[i].x, wrap.array_neighbors[i].y);
                       answer_to = convert_pos_to_string(to.x, to.y);
-              break; 
+              break;
               case 2: to = check_level_up(plist_str, wrap.array_neighbors[i].x, wrap.array_neighbors[i].y);
                       answer_to = convert_pos_to_string(to.x, to.y);
-              break; 
+              break;
               case 3: to = check_level_down(plist_str, wrap.array_neighbors[i].x, wrap.array_neighbors[i].y);
                       answer_to = convert_pos_to_string(to.x, to.y);
-              break; 
-              default: printf("Error while setting neighbor!\n"); 
+              break;
+              default: printf("Error while setting neighbor!\n");
               break;
             }
 
@@ -391,16 +432,9 @@ char* jump_phase(plist_struct *plist_str, neighbors_struct wrap){
 
       char *answer = malloc (ANSWERLENGTH*sizeof(char*));
 
-      printf("JUMP answer should be NULL = %s\n", answer);
       char *answer_from = malloc (2*sizeof(char*));
-
       char *answer_to   = malloc (2*sizeof(char*));
 
-      //######################Testing############################ 
-     // char *temp_1 = malloc (ANSWERLENGTH * sizeof(char*)); 
-      //######################Testing############################ 
-     
-     
       int count_free_spaces = 24 - plist_str -> countMyPieces - plist_str -> countEnemyPieces;
       int rnd_token = rand() % 3;
       int rnd_spaces = rand() % count_free_spaces;
@@ -410,8 +444,8 @@ char* jump_phase(plist_struct *plist_str, neighbors_struct wrap){
         if(i == rnd_token){
            answer_from = convert_pos_to_string(wrap.array_neighbors[i].x, wrap.array_neighbors[i].y);
         }
-      }  
-    
+      }
+
       for(int x = 0; x<3; x++){
         for(int y = 0; y<8; y++){
           if(plist_str -> piece_list[x][y] == 0){
@@ -455,7 +489,7 @@ char* jump_phase(plist_struct *plist_str, neighbors_struct wrap){
 
 
 void calc_turn(shm_struct *shm_str, plist_struct *plist_str, int shm_id, int plist_id, int *fd){
-  
+
     if (!check_think_flag(shm_str)){end_routine(shm_str, plist_str, shm_id, plist_id);}
 
     char *answer = NULL;
@@ -463,7 +497,9 @@ void calc_turn(shm_struct *shm_str, plist_struct *plist_str, int shm_id, int pli
     neighbors_struct wrap;
     wrap = get_neighbors(plist_str);
 
-    print_neighbors(wrap);
+    //print_neighbors(wrap);
+    print_field(plist_str);
+
 
     //0.Mühlenfall: Wenn eine Mühle vorhanden ist, müssen gegnerische Steine geschlagen werden
     if(plist_str -> piecesToRemove > 0){
@@ -492,7 +528,7 @@ void calc_turn(shm_struct *shm_str, plist_struct *plist_str, int shm_id, int pli
       printf("I'm in " GREEN "Jump" RESET "-Phase!\n");
       answer = jump_phase(plist_str, wrap);
     }
-    //4. Fehlerfall: 
+    //4. Fehlerfall:
     else {
       printf(RED "Thinker konnte keine Phase erkennen!\n");
     }
