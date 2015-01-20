@@ -3,7 +3,6 @@
 #include "./logger.h"
 
 
-//einb. char words[32][64]; // @todo remove wenn eingebunden mit pc
 
 
 int loglevel = 1;   // wird mit setLogLevel nun gesetzt.

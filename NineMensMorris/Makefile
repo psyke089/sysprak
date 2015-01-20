@@ -7,10 +7,6 @@ CC = gcc
 
 
 all:    client clean
-alex_i: client_alex_i clean
-alex_h: client_alex_h clean
-tim:    client_tim    clean
-phil:   client_phil   clean
 
 client: src/logger/logger.h\
 				src/logger/logger.c\
@@ -35,99 +31,6 @@ client: src/logger/logger.h\
 		src/connector/performConnection.c\
 		src/connector/parser.c
 
-client_alex_h: src/logger/logger.h\
-				src/logger/logger.c\
-				src/shm/shmManager.c\
-				src/shm/shmManager.h\
-				src/thinker_alex_h/thinker.h\
-				src/thinker_alex_h/thinker.c\
-				src/config.h\
-				src/config.c\
-				src/connector/connector.h\
-				src/connector/performConnection.c\
-				src/connector/parser.c\
-				src/main.h\
-				src/main.c
-
-	$(CC) $(CFLAGS) -o bin/client_alex_h \
-		src/config.c\
-		src/main.c\
-		src/logger/logger.c\
-		src/shm/shmManager.c\
-		src/thinker/thinker.c\
-		src/connector/performConnection.c\
-		src/connector/parser.c
-
-client_tim: src/logger/logger.h\
-				src/logger/logger.c\
-				src/shm/shmManager.c\
-				src/shm/shmManager.h\
-				src/thinker_tim/thinker.h\
-				src/thinker_tim/thinker.c\
-				src/config.h\
-				src/config.c\
-				src/connector/connector.h\
-				src/connector/performConnection.c\
-				src/connector/parser.c\
-				src/main.h\
-				src/main.c
-
-	$(CC) $(CFLAGS) -o bin/client_tim \
-		src/config.c\
-		src/main.c\
-		src/logger/logger.c\
-		src/shm/shmManager.c\
-		src/thinker/thinker.c\
-		src/connector/performConnection.c\
-		src/connector/parser.c
-
-
-
-client_alex_i: src/logger/logger.h\
-				src/logger/logger.c\
-				src/shm/shmManager.c\
-				src/shm/shmManager.h\
-				src/thinker_alex_i/thinker.h\
-				src/thinker_alex_i/thinker.c\
-				src/config.h\
-				src/config.c\
-				src/connector/connector.h\
-				src/connector/performConnection.c\
-				src/connector/parser.c\
-				src/main.h\
-				src/main.c
-
-	$(CC) $(CFLAGS) -o bin/client_alex_i \
-		src/config.c\
-		src/main.c\
-		src/logger/logger.c\
-		src/shm/shmManager.c\
-		src/thinker_alex_i/thinker.c\
-		src/connector/performConnection.c\
-		src/connector/parser.c
-
-client_phil: src/logger/logger.h\
-				src/logger/logger.c\
-				src/shm/shmManager.c\
-				src/shm/shmManager.h\
-				src/thinker_phil/thinker.h\
-				src/thinker_phil/thinker.c\
-				src/config.h\
-				src/config.c\
-				src/connector/connector.h\
-				src/connector/performConnection.c\
-				src/connector/parser.c\
-				src/main.h\
-				src/main.c
-
-	$(CC) $(CFLAGS) -o bin/client_phil \
-		src/config.c\
-		src/main.c\
-		src/logger/logger.c\
-		src/shm/shmManager.c\
-		src/thinker/thinker.c\
-		src/connector/performConnection.c\
-		src/connector/parser.c
 clean:
 	rm -f src/*.o
 	rm -f src/*.a

@@ -5,6 +5,7 @@
 
 #include <signal.h>
 #include <stdio.h>
+#include <limits.h>
 #include "../shm/shmManager.h"
 
 /**
@@ -18,6 +19,38 @@
 #define READ 0
 #define WRITE 1
 
+typedef struct{
+ int x;
+ int y;
+ int value;
+} token;
+
+/**
+ * Ein Triple für die schöne Darstellung von 
+ * Nachbarn und Koordinaten
+ */
+typedef struct{
+  int x;
+  int y;
+  int neighbors[4];
+} points_struct;
+
+#define NEIGHBOR_SIZE (sizeof(neighbors_struct))
+/**
+ * Ein wrapper für die Nachbarn
+ */
+typedef struct{
+  points_struct array_neighbors[9];
+  int length;
+}neighbors_struct;
+
+typedef struct{
+  int x1;
+  int y1;
+  int x2;
+  int y2;
+  char* answer;
+}complex_mill_answer;
 /**
  * sendet SIGUSR1
  *
