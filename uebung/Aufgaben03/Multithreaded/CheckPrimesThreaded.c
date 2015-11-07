@@ -1,13 +1,13 @@
 /* Includes */
 #include <unistd.h>     /* Symbolic Constants */
-#include <sys/types.h>  /* Primitive System Data Types */ 
+#include <sys/types.h>  /* Primitive System Data Types */
 #include <errno.h>      /* Errors */
 #include <stdio.h>      /* Input/Output */
 #include <stdlib.h>     /* General Utilities */
 #include <pthread.h>    /* POSIX Threads */
 #include <string.h>     /* String handling */
 #include <semaphore.h>  /* Semaphore */
-#include <stdbool.h>    
+#include <stdbool.h>
 
 /* Does not work with N-Threads, can't figure out how to declare the structs
  * needed as arguments for the n-th thread
@@ -29,7 +29,7 @@ void handler ( void *ptr );
 bool isPrimeIt (unsigned long long num, unsigned long long boundsFrom, unsigned long long boundsTo);
 
 /* global vars */
-/* semaphores are declared global so they can be accessed 
+/* semaphores are declared global so they can be accessed
    in main() and in thread routine,
    here, the semaphore is used as a mutex */
 sem_t mutex;
@@ -37,7 +37,7 @@ int counter; /* shared variable */
 
 
 
-int 
+int
 main(){
 
     pthread_t thread_a;
@@ -79,12 +79,12 @@ t_args args4;
 
     sem_init(&mutex, 0, 1);      /* initialize mutex to 1 - binary semaphore */
                                  /* second param = 0 - semaphore is local */
-                                 
+
     pthread_create (&thread_a, NULL, (void *) &handler, (void *) &args1);
     pthread_create (&thread_b, NULL, (void *) &handler, (void *) &args2);
     pthread_create (&thread_c, NULL, (void *) &handler, (void *) &args3);
     pthread_create (&thread_d, NULL, (void *) &handler, (void *) &args4);
-    
+
     /* waiting for them to finish */
 
     pthread_join(thread_a, NULL);
@@ -104,9 +104,9 @@ t_args args4;
     diff = clock() - start;
     int msec = diff * 1000 / CLOCKS_PER_SEC;
     printf ("\nFunction took %ds and %d milliseconds to complete.", msec/1000, msec%1000);
-   
+
     exit(0);
-    
+
 }
 
 
@@ -127,15 +127,15 @@ handler (void *ptr){
     int x = isPrimeIt(c_guessed, c_boundsFrom, c_boundsTo);
 
     sem_wait(&mutex);       /* down semaphore */
-    
+
     /* START CRITICAL REGION */
     printf("Thread %d: Previous Counter Value: %d\n", c_tid, counter);
     printf("Thread %d: Adding the Value from my calculation...\n",c_tid);
     counter = counter + x;
     printf("Thread %d: New Counter Value: %d\n", c_tid, counter);
     printf("Thread %d: Shutting down...\n", c_tid);
-    /* END CRITICAL REGION */    
-    
+    /* END CRITICAL REGION */
+
     sem_post(&mutex);       /* up semaphore */
 
     pthread_exit(0); /* exit thread */
@@ -148,17 +148,19 @@ isPrimeIt (unsigned long long num, unsigned long long boundsFrom, unsigned long 
   if (num == 1)              {test = false;}
   if (num == 2)              {test = true;}     // bugs when there is no else
   else{
-  if (num % 2 == 0)          {test = false;}
-  if (boundsFrom % 2 == 0)   {boundsFrom++;}
-  if (boundsFrom <= 1)       {boundsFrom = 3;}
-  
-  for (unsigned long long i = boundsFrom; i < boundsTo; i++){
-                if (num % i == 0){
-                    test = false;
-                    i = boundsTo;
-                }   else {i +=1;}
+    if (num % 2 == 0)          {test = false;}
+    if (boundsFrom % 2 == 0)   {boundsFrom++;}
+    if (boundsFrom <= 1)       {boundsFrom = 3;}
+    unsigned long long i = 0;
+      for (i = boundsFrom; i < boundsTo; i++){
+                      if (num % i == 0){
+                          test = false;
+                          i = boundsTo;
+                          printf("Found ya! => %llu \n",i);
+                      }   else {i +=1;}
+      }
   }
-}
+
  return test;
 }
 
